@@ -1,0 +1,26 @@
+services:
+  kerigma_app:
+    container_name: kerigma_app
+    image: ggsheet/kerigma_app:1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.docker
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - kerigma_db
+
+  kerigma_db:
+    container_name: kerigma_db
+    image: postgres:16
+    env_file:
+      - .env.docker
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
