@@ -1,6 +1,10 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"strconv"
+	"time"
+)
 
 func (s *PostgresDB) createAccountTable() error {
 	_, err := s.db.Exec(createAccTabQ)
@@ -8,14 +12,15 @@ func (s *PostgresDB) createAccountTable() error {
 	return err
 }
 
-func (s *PostgresDB) CreateAccount(acc *Account) error {
+func (s *PostgresDB) CreateAccount(account *Account) error {
 	_, err := s.db.Query(
 		createAccQ,
-		&acc.FirstName,
-		&acc.LastName,
-		&acc.Email,
-		&acc.CreatedAt,
-		&acc.UpdatedAt,
+		&account.FirstName,
+		&account.LastName,
+		&account.Email,
+		&account.Password,
+		&account.CreatedAt,
+		&account.UpdatedAt,
 	)
 
 	if err != nil {
@@ -35,7 +40,25 @@ func (s *PostgresDB) DeleteAccount(id string) error {
 	return nil
 }
 
-func (s *PostgresDB) UpdateaAccount(*Account) error {
+func (s *PostgresDB) UpdateAccount(id string, account *Account) error {
+	accId, idErr := strconv.Atoi(id)
+	if idErr != nil {
+		return idErr
+	}
+
+	_, err := s.db.Query(
+		updateAccQ,
+		accId,
+		&account.FirstName,
+		&account.LastName,
+		&account.Email,
+		time.Now().In(loc),
+	)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -49,6 +72,7 @@ func (s *PostgresDB) GetAccountById(id string) (*Account, error) {
 		&account.FirstName,
 		&account.LastName,
 		&account.Email,
+		&account.Password,
 		&account.CreatedAt,
 		&account.UpdatedAt,
 	)
@@ -76,6 +100,7 @@ func (s *PostgresDB) GetAccounts() (*[]*Account, error) {
 			&account.FirstName,
 			&account.LastName,
 			&account.Email,
+			&account.Password,
 			&account.CreatedAt,
 			&account.UpdatedAt,
 		)

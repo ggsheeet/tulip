@@ -1,71 +1,82 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/ggsheet/kerigma/internal/database"
+	"github.com/labstack/echo/v4"
 )
 
-func (s *AccountHandlers) handleAccount(w http.ResponseWriter, r *http.Request) error {
-	switch r.Method {
-	case "GET":
-		return s.handleGetAccounts(w)
-	case "POST":
-		return s.handleCreateAccount(w, r)
+func (s *AccountHandlers) handleAccount(c echo.Context) error {
+	switch c.Request().Method {
+	case http.MethodGet:
+		return s.handleGetAccounts(c)
+	case http.MethodPost:
+		return s.handleCreateAccount(c)
+	default:
+		return echo.NewHTTPError(http.StatusMethodNotAllowed, fmt.Sprintf("Method not allowed %s", c.Request().Method))
 	}
-	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *AccountHandlers) handleGetAccounts(w http.ResponseWriter) error {
-	accounts, err := s.accountInterface.GetAccounts()
+func (s *AccountHandlers) handleGetAccounts(c echo.Context) error {
+	accounts, err := s.db.GetAccounts()
 	if err != nil {
 		return err
 	}
-	return WriteJSON(w, http.StatusOK, accounts)
+	return c.JSON(http.StatusOK, accounts)
 }
 
-func (s *AccountHandlers) handleGetAccountById(w http.ResponseWriter, r *http.Request) error {
-	id := r.PathValue("id")
-	account, err := s.accountInterface.GetAccountById(id)
+func (s *AccountHandlers) handleGetAccountById(c echo.Context) error {
+	id := c.Param("id")
+	account, err := s.db.GetAccountById(id)
 	if err != nil {
 		return err
 	}
-	return WriteJSON(w, http.StatusOK, account)
+	return c.JSON(http.StatusOK, account)
 }
 
-func (s *AccountHandlers) handleCreateAccount(w http.ResponseWriter, r *http.Request) error {
-	car := new(database.CreateAccountRequest)
+func (s *AccountHandlers) handleCreateAccount(c echo.Context) error {
+	accReq := new(database.AccountRequest)
 
-	if err := json.NewDecoder(r.Body).Decode(car); err != nil {
+	if err := c.Bind(accReq); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	account := database.NewAccount(accReq.FirstName, accReq.LastName, accReq.Email)
+
+	if err := s.db.CreateAccount(account); err != nil {
 		return err
 	}
+	return c.JSON(http.StatusOK, account)
+}
 
-	account := database.NewAccount(car.FirstName, car.LastName, car.Email)
+func (s *AccountHandlers) handleDeleteAccount(c echo.Context) error {
+	id := c.Param("id")
 
-	if err := s.accountInterface.CreateAccount(account); err != nil {
+	if _, err := s.db.GetAccountById(id); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("ID not found, operation unsuccessful: %v", err))
+	}
+
+	if err := s.db.DeleteAccount(id); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "User deleted successfully"})
+}
+
+func (s *AccountHandlers) handleUpdateAccount(c echo.Context) error {
+	id := c.Param("id")
+	accReq := new(database.AccountRequest)
+
+	if err := c.Bind(accReq); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	account := database.UpdateAccount(accReq.FirstName, accReq.LastName, accReq.Email)
+
+	if err := s.db.UpdateAccount(id, account); err != nil {
 		return err
 	}
-	return WriteJSON(w, http.StatusOK, account)
-}
-
-func (s *AccountHandlers) handleDeleteAccount(w http.ResponseWriter, r *http.Request) error {
-	id := r.PathValue("id")
-
-	if _, err := s.accountInterface.GetAccountById(id); err != nil {
-		return fmt.Errorf("ID not found, operation unsuccessful")
-	} else {
-		err := s.accountInterface.DeleteAccount(id)
-
-		if err != nil {
-			return err
-		}
-		return WriteJSON(w, http.StatusOK, "User deleted successfully")
-	}
-}
-
-func (s *AccountHandlers) handlUpdateAccount(w http.ResponseWriter, r *http.Request) error {
-
-	return nil
+	return c.JSON(http.StatusOK, account)
 }

@@ -1,6 +1,10 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"strconv"
+	"time"
+)
 
 func (s *PostgresDB) createBookTable() error {
 	_, err := s.db.Exec(createBookTabQ)
@@ -20,10 +24,11 @@ func (s *PostgresDB) CreateBook(book *Book) error {
 		&book.Stock,
 		&book.SalesCount,
 		&book.IsActive,
-		&book.LetterSizeID,
+		&book.LetterID,
 		&book.VersionID,
 		&book.CoverID,
 		&book.PublisherID,
+		&book.CategoryID,
 		&book.CreatedAt,
 		&book.UpdatedAt,
 	)
@@ -45,7 +50,35 @@ func (s *PostgresDB) DeleteBook(id string) error {
 	return nil
 }
 
-func (s *PostgresDB) UpdateaBook(*Book) error {
+func (s *PostgresDB) UpdateBook(id string, book *Book) error {
+	bookId, idErr := strconv.Atoi(id)
+	if idErr != nil {
+		return idErr
+	}
+	_, err := s.db.Query(
+		updateBookQ,
+		bookId,
+		&book.Title,
+		&book.Author,
+		&book.Description,
+		&book.CoverURL,
+		&book.ISBN,
+		&book.Price,
+		&book.Stock,
+		&book.SalesCount,
+		&book.IsActive,
+		&book.LetterID,
+		&book.VersionID,
+		&book.CoverID,
+		&book.PublisherID,
+		&book.CategoryID,
+		time.Now().In(loc),
+	)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -65,10 +98,11 @@ func (s *PostgresDB) GetBookById(id string) (*Book, error) {
 		&book.Stock,
 		&book.SalesCount,
 		&book.IsActive,
-		&book.LetterSizeID,
+		&book.LetterID,
 		&book.VersionID,
 		&book.CoverID,
 		&book.PublisherID,
+		&book.CategoryID,
 		&book.CreatedAt,
 		&book.UpdatedAt,
 	)
@@ -102,10 +136,11 @@ func (s *PostgresDB) GetBooks() (*[]*Book, error) {
 			&book.Stock,
 			&book.SalesCount,
 			&book.IsActive,
-			&book.LetterSizeID,
+			&book.LetterID,
 			&book.VersionID,
 			&book.CoverID,
 			&book.PublisherID,
+			&book.CategoryID,
 			&book.CreatedAt,
 			&book.UpdatedAt,
 		)
@@ -117,4 +152,489 @@ func (s *PostgresDB) GetBooks() (*[]*Book, error) {
 		books = append(books, book)
 	}
 	return &books, nil
+}
+
+func (s *PostgresDB) createLetterTable() error {
+	_, err := s.db.Exec(createLetterTabQ)
+
+	return err
+}
+
+func (s *PostgresDB) CreateLetter(letter *Letter) error {
+	_, err := s.db.Query(
+		createLetterQ,
+		&letter.LetterType,
+		&letter.CreatedAt,
+		&letter.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) DeleteLetter(id string) error {
+	_, err := s.db.Exec(deleteLetterQ, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) UpdateLetter(id string, letter *Letter) error {
+	letterId, idErr := strconv.Atoi(id)
+	if idErr != nil {
+		return idErr
+	}
+
+	_, err := s.db.Query(
+		updateLetterQ,
+		letterId,
+		&letter.LetterType,
+		time.Now().In(loc),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) GetLetterById(id string) (*Letter, error) {
+	row := s.db.QueryRow(getLetterQ, id)
+
+	var letter Letter
+
+	err := row.Scan(
+		&letter.ID,
+		&letter.LetterType,
+		&letter.CreatedAt,
+		&letter.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return &letter, nil
+}
+
+func (s *PostgresDB) GetLetters() (*[]*Letter, error) {
+	rows, err := s.db.Query(getLettersQ)
+	if err != nil {
+		return nil, err
+	}
+	letters := []*Letter{}
+	for rows.Next() {
+		letter := new(Letter)
+		err := rows.Scan(
+			&letter.ID,
+			&letter.LetterType,
+			&letter.CreatedAt,
+			&letter.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		letters = append(letters, letter)
+	}
+	return &letters, nil
+}
+
+func (s *PostgresDB) createVersionTable() error {
+	_, err := s.db.Exec(createVersionTabQ)
+
+	return err
+}
+
+func (s *PostgresDB) CreateVersion(version *Version) error {
+	_, err := s.db.Query(
+		createVersionQ,
+		&version.BibleVersion,
+		&version.CreatedAt,
+		&version.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) DeleteVersion(id string) error {
+	_, err := s.db.Exec(deleteVersionQ, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) UpdateVersion(id string, version *Version) error {
+	versionId, idErr := strconv.Atoi(id)
+	if idErr != nil {
+		return idErr
+	}
+
+	_, err := s.db.Query(
+		updateVersionQ,
+		versionId,
+		&version.BibleVersion,
+		time.Now().In(loc),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) GetVersionById(id string) (*Version, error) {
+	row := s.db.QueryRow(getVersionQ, id)
+
+	var version Version
+
+	err := row.Scan(
+		&version.ID,
+		&version.BibleVersion,
+		&version.CreatedAt,
+		&version.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return &version, nil
+}
+
+func (s *PostgresDB) GetVersions() (*[]*Version, error) {
+	rows, err := s.db.Query(getVersionsQ)
+	if err != nil {
+		return nil, err
+	}
+	versions := []*Version{}
+	for rows.Next() {
+		version := new(Version)
+		err := rows.Scan(
+			&version.ID,
+			&version.BibleVersion,
+			&version.CreatedAt,
+			&version.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		versions = append(versions, version)
+	}
+	return &versions, nil
+}
+
+func (s *PostgresDB) createCoverTable() error {
+	_, err := s.db.Exec(createCoverTabQ)
+
+	return err
+}
+
+func (s *PostgresDB) CreateCover(cover *Cover) error {
+	_, err := s.db.Query(
+		createCoverQ,
+		&cover.CoverType,
+		&cover.CreatedAt,
+		&cover.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) DeleteCover(id string) error {
+	_, err := s.db.Exec(deleteCoverQ, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) UpdateCover(id string, cover *Cover) error {
+	coverId, idErr := strconv.Atoi(id)
+	if idErr != nil {
+		return idErr
+	}
+
+	_, err := s.db.Query(
+		updateCoverQ,
+		coverId,
+		&cover.CoverType,
+		time.Now().In(loc),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) GetCoverById(id string) (*Cover, error) {
+	row := s.db.QueryRow(getCoverQ, id)
+
+	var cover Cover
+
+	err := row.Scan(
+		&cover.ID,
+		&cover.CoverType,
+		&cover.CreatedAt,
+		&cover.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return &cover, nil
+}
+
+func (s *PostgresDB) GetCovers() (*[]*Cover, error) {
+	rows, err := s.db.Query(getCoversQ)
+	if err != nil {
+		return nil, err
+	}
+	covers := []*Cover{}
+	for rows.Next() {
+		cover := new(Cover)
+		err := rows.Scan(
+			&cover.ID,
+			&cover.CoverType,
+			&cover.CreatedAt,
+			&cover.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		covers = append(covers, cover)
+	}
+	return &covers, nil
+}
+
+func (s *PostgresDB) createPublisherTable() error {
+	_, err := s.db.Exec(createPublisherTabQ)
+
+	return err
+}
+
+func (s *PostgresDB) CreatePublisher(publisher *Publisher) error {
+	_, err := s.db.Query(
+		createPublisherQ,
+		&publisher.PublisherName,
+		&publisher.CreatedAt,
+		&publisher.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) DeletePublisher(id string) error {
+	_, err := s.db.Exec(deletePublisherQ, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) UpdatePublisher(id string, publisher *Publisher) error {
+	publisherId, idErr := strconv.Atoi(id)
+	if idErr != nil {
+		return idErr
+	}
+
+	_, err := s.db.Query(
+		updatePublisherQ,
+		publisherId,
+		&publisher.PublisherName,
+		time.Now().In(loc),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) GetPublisherById(id string) (*Publisher, error) {
+	row := s.db.QueryRow(getPublisherQ, id)
+
+	var publisher Publisher
+
+	err := row.Scan(
+		&publisher.ID,
+		&publisher.PublisherName,
+		&publisher.CreatedAt,
+		&publisher.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return &publisher, nil
+}
+
+func (s *PostgresDB) GetPublishers() (*[]*Publisher, error) {
+	rows, err := s.db.Query(getPublishersQ)
+	if err != nil {
+		return nil, err
+	}
+	publishers := []*Publisher{}
+	for rows.Next() {
+		publisher := new(Publisher)
+		err := rows.Scan(
+			&publisher.ID,
+			&publisher.PublisherName,
+			&publisher.CreatedAt,
+			&publisher.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		publishers = append(publishers, publisher)
+	}
+	return &publishers, nil
+}
+
+func (s *PostgresDB) createBCategoryTable() error {
+	_, err := s.db.Exec(createBCategoryTabQ)
+
+	return err
+}
+
+func (s *PostgresDB) CreateBCategory(bCategory *BCategory) error {
+	_, err := s.db.Query(
+		createBCategoryQ,
+		&bCategory.BookCategory,
+		&bCategory.CreatedAt,
+		&bCategory.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) DeleteBCategory(id string) error {
+	_, err := s.db.Exec(deleteBCategoryQ, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) UpdateBCategory(id string, bCategory *BCategory) error {
+	bCategoryId, idErr := strconv.Atoi(id)
+	if idErr != nil {
+		return idErr
+	}
+
+	_, err := s.db.Query(
+		updateBCategoryQ,
+		bCategoryId,
+		&bCategory.BookCategory,
+		time.Now().In(loc),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresDB) GetBCategoryById(id string) (*BCategory, error) {
+	row := s.db.QueryRow(getBCategoryQ, id)
+
+	var bCategory BCategory
+
+	err := row.Scan(
+		&bCategory.ID,
+		&bCategory.BookCategory,
+		&bCategory.CreatedAt,
+		&bCategory.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	return &bCategory, nil
+}
+
+func (s *PostgresDB) GetBCategories() (*[]*BCategory, error) {
+	rows, err := s.db.Query(getBCategoriesQ)
+	if err != nil {
+		return nil, err
+	}
+	bCategories := []*BCategory{}
+	for rows.Next() {
+		bCategory := new(BCategory)
+		err := rows.Scan(
+			&bCategory.ID,
+			&bCategory.BookCategory,
+			&bCategory.CreatedAt,
+			&bCategory.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		bCategories = append(bCategories, bCategory)
+	}
+	return &bCategories, nil
 }

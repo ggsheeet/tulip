@@ -1,0 +1,96 @@
+@font-face {
+	font-family: 'Roxborough CF';
+	src: url('../fonts/RoxboroughCF.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('../fonts/DMSans-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('../fonts/DMSans-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('../fonts/DMSans-Bold.woff2') format('woff2');
+	font-weight: 600;
+	font-style: normal;
+}
+
+:root {
+	--font-rox: 'Roxborough CF', serif;
+	--font-dmsans: 'DM Sans';
+	--clr-background: #f5f5f5;
+	--clr-nav: #e7ebf4;
+	--clr-nav-text: #292929;
+	--clr-active-nav-text: #021138;
+	--clr-cart-bubble: #f5f5f5;
+	--clr-cart-num: #292929;
+	--clr-float: #7996e1;
+	--clr-float-text: #f5f5f5;
+	--clr-accent: #122c6f;
+	--clr-text: #484848;
+	--clr-footer: #021138;
+	--clr-footer-text: #f5f5f5;
+	--clr-shadow: #888;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--clr-background: #292929;
+		--clr-nav: #afb6c0;
+		--clr-cart-bubble: #7996e1;
+		--clr-float: #7996e1;
+		--clr-float-text: #292929;
+		--clr-accent: #7996e1;
+		--clr-text: #afb6c0;
+		--clr-footer: #191815;
+		--clr-shadow: #444;
+	}
+}
+html {
+	scroll-behavior: smooth;
+	font-family: var(--font-dmsans);
+	background: var(--clr-background);
+}
+
+.header_styles {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: auto;
+	margin-bottom: 40px;
+}
+
+body {
+    line-height: 1;
+    border: 0;
+    margin: 0;
+    padding: 40px 70px
+}
+
+.main_styles {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: auto;
+}
+
+footer {
+	background-color: var(--clr-footer);
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	color: var(--clr-footer-text);
+}

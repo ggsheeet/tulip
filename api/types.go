@@ -1,27 +1,33 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/ggsheet/kerigma/internal/database"
 )
 
 type APIServer struct {
-	listenAddr string
-	account    *AccountHandlers
-	book       *BookHandlers
-}
-
-type APIFunc func(http.ResponseWriter, *http.Request) error
-
-type APIError struct {
-	Error string
+	account  *AccountHandlers
+	book     *BookHandlers
+	article  *ArticleHandlers
+	resource *ResourceHandlers
+	order    *OrderHandlers
 }
 
 type AccountHandlers struct {
-	accountInterface database.AccountInterface
+	db database.AccountInterface
 }
 
 type BookHandlers struct {
-	bookInterface database.BookInterface
+	db database.BookInterface
+}
+
+type ArticleHandlers struct {
+	db database.ArticleInterface
+}
+
+type ResourceHandlers struct {
+	db database.ResourceInterface
+}
+
+type OrderHandlers struct {
+	db database.OrderInterface
 }
