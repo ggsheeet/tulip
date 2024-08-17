@@ -6,7 +6,7 @@ The tools integrated within this project include:
 
 - Golang
 - HTMX
+- Templ
 - PostgreSQL
 - Docker
 - REST JSON API
-- Templates
