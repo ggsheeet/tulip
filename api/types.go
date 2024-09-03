@@ -4,6 +4,10 @@ import (
 	"github.com/ggsheet/kerigma/internal/database"
 )
 
+type APIError struct {
+	Error string `json:"message"`
+}
+
 type APIServer struct {
 	account  *AccountHandlers
 	book     *BookHandlers

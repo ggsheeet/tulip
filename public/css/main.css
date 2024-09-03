@@ -1,70 +1,271 @@
-.float_tabber {
+.nav_container {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    max-width: 1440px;
+    z-index: 4;
+    background-color: var(--clr-nav);
+    border-radius: 38px;
+
+    .nav_content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        column-gap: 7%;
+        padding: 16px 40px 16px 40px;
+
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30%;
+            padding-top: 7px;
+
+            img {
+                width: 84%;
+                height: auto;
+            }
+        }
+
+        ul {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 63%;
+
+            li {
+                list-style-type: none;
+                
+                .nav_link {
+                    color: var(--clr-nav-text);
+                    text-decoration: none; 
+                    font-family: var(--font-dmsans);
+                    font-weight: 400;
+                    font-size: 30px;
+                }
+
+                .active {
+                    font-weight: 500;
+                    color: var(--clr-active-nav-text);
+                }
+
+                .nav_link:hover {
+                    text-decoration: underline solid 3px var(--clr-nav-text);
+                    text-underline-offset: 3px;
+                }
+
+                .cart_link {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding-bottom: 5px;
+                    
+                    img {
+                        width: auto;
+                        height: 34px;
+                    }      
+                }
+            }
+        }        
+    }
+}
+
+.float_tabber {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     width: 100%;
     max-width: 1440px;
-    column-gap: 5%;
-}
+    column-gap: 5rem;
 
-.float_container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 60%;
-    background-color: var(--clr-float);
-    color: var(--clr-float-text);
-    border-radius: 36px;
-    box-shadow: 0px 4px 12px 0px var(--clr-shadow);
-    padding: 30px 40px;
 
-    .float_text {
+    .float_container {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-        width: 70%;
-        row-gap: 20px;
+        align-items: center;
+        justify-content: space-between;
+        width: 60%;
+        height: clamp(10rem, 15.375rem, 15.375rem);
+        background-color: var(--clr-float);
+        color: var(--clr-float-text);
+        border-radius: 36px;
+        box-shadow: 0px 4px 12px 0px var(--clr-shadow);
+        padding: 30px 40px;
 
-        h1 {
-            font-family: var(--font-dmsans);
-            font-size: 47px;
-            font-weight: 500;
+        .float_text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            width: 70%;
+            row-gap: 20px;
+
+            h1 {
+                font-family: var(--font-dmsans);
+                font-size: 47px;
+                font-weight: 500;
+            }
+
+            p {
+                font-family: var(--font-dmsans);
+                font-size: 32px;
+                font-weight: 400;
+                line-height: 1.4;
+
+                span {
+                    font-family: inherit;
+                    font-size: inherit;
+                    font-weight: 500;
+                }
+            }
+            
         }
         
-        p {
-            font-family: var(--font-dmsans);
-            font-size: 32px;
-            font-weight: 400;
-            line-height: 1.4;
-    
-            span {
-                font-family: inherit;
-                font-size: inherit;
-                font-weight: 500;
+        .float_img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35%;
+            height: auto;
+
+            img {
+                width: 100%;
+                height: auto;
             }
         }
     }
 
-    .float_img {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 30%;
-        height: auto;
 
-        img {
-            width: 100%;
-            height: auto;
+
+    .tabber_container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        width: 35%;
+        height: clamp(10rem, 19.125rem, 19.125rem);
+        overflow: hidden;
+
+        .tabber_tabs {
+            position: absolute;
+            top: 0rem;
+            left: 0rem;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: calc(100% - 0.75rem);
+            min-width: 18.75rem;
+            height: 2.3rem;
+            border: 0.188rem solid var(--clr-float);
+            border-radius: 1.125rem;
+            padding: 0.188rem;
+
+            .tab_radio {
+                display: none;
+            }
+
+            .tab_label {
+                cursor: pointer;
+                width: 40%;
+                text-align: center;
+                font-weight: 500;
+                font-size: 1.625rem;
+                color: var(--clr-float);
+                transition: color 0.3s;
+                z-index: 2;
+                padding: 0.5rem 0.625rem;
+            }
+
+            .tab_radio:checked+.tab_label {
+                color: var(--clr-float-text);
+            }
+
+            .button_overlay {
+                position: absolute;
+                top: 0.188rem;
+                left: 0.188rem;
+                height: calc(100% - 0.375rem);
+                width: 45%;
+                background-color: var(--clr-float);
+                border-radius: 0.75rem;
+                z-index: 1;
+                transition: left 0.5s;
+            }
+
+            #resources_tab:checked~.button_overlay {
+                left: calc(55% - 0.188rem);
+            }
+
+            .tabber_cards {
+                position: absolute;
+                top: 4.3rem;
+                left: 0;
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                height: 14.625rem;
+                row-gap: 1.5rem;
+                overflow-y: auto;
+
+                .tabber_card {
+                    display: flex;
+                    flex: 0 0 7rem;
+                    width: auto;
+                    height: 7rem;
+                    column-gap: 1rem;
+
+                    .card_cover {
+                        width: 35%;
+                        height: 100%;
+                        border-radius: 1.2rem;
+                        overflow: hidden;
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                    }
+
+                    .card_text {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-around;
+                        width: 65%;
+                        padding-right: 0.625rem;
+
+                        h2 {
+                            font-size: 600;
+                            font-size: 1.45rem;
+                            color: var(--clr-text);
+                            line-height: 1.2;
+                        }
+
+                        span {
+                            width: fit-content;
+                            color: var(--clr-float);
+                            border: .125rem solid var(--clr-float);
+                            padding: 0.25rem;
+                        }
+                    }
+                }
+            }
+
+            #articles_tab:checked~.tabber_cards#article_cards {
+                display: flex;
+            }
+
+            #resources_tab:checked~.tabber_cards#resource_cards {
+                display: flex;
+            }
         }
     }
 }
 
-.tabber_container {
+.carousel_container {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    width: 35%;
-    background-color: var(--clr-float);
-    color: var(--clr-float-text);
 }

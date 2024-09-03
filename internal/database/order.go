@@ -102,6 +102,8 @@ func (s *PostgresDB) GetOrders() (*[]*Order, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	orders := []*Order{}
 	for rows.Next() {
 		order := new(Order)

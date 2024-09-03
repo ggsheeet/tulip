@@ -26,7 +26,7 @@ func Float() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"float_container\"><div class=\"float_text\"><h1>Bienvenido a Kerigma!</h1><p>Somos una editorial  <span>Reformada</span>, <span>centrada en el evangelio</span>, comprometidos a divulgar el  <span>mensaje de Cristo</span>.</p></div><div class=\"float_img\"><img src=\"public/icons/bible_icon.svg\"></div></div>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

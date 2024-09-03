@@ -82,7 +82,7 @@ var createArticleTabQ = `
 		id SERIAL PRIMARY KEY,
 		title VARCHAR(255) NOT NULL,
 		author VARCHAR(255) NOT NULL,
-		description VARCHAR(300) NOT NULL,
+		description TEXT NOT NULL,
 		cover_url VARCHAR(255) NOT NULL,
 		category_id INT REFERENCES acategory (id),
 		created_at TIMESTAMP DEFAULT NOW(),
@@ -308,7 +308,7 @@ var getOrderQ = `
 
 var getAccsQ = "SELECT * FROM account ORDER BY created_at ASC;"
 
-var getBooksQ = `SELECT * FROM book WHERE is_active = TRUE ORDER BY id ASC`
+var getBooksQ = `SELECT * FROM book WHERE is_active = TRUE ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 
 var getLettersQ = "SELECT * FROM letter ORDER BY id ASC"
 
@@ -320,11 +320,11 @@ var getPublishersQ = "SELECT * FROM publisher ORDER BY id ASC"
 
 var getBCategoriesQ = "SELECT * FROM bcategory ORDER BY id ASC"
 
-var getArticlesQ = "SELECT * FROM article ORDER BY id ASC"
+var getArticlesQ = "SELECT * FROM article ORDER BY created_at DESC LIMIT $1 OFFSET $2"
 
 var getACategoriesQ = "SELECT * FROM acategory ORDER BY id ASC"
 
-var getResourcesQ = "SELECT * FROM resource ORDER BY id ASC"
+var getResourcesQ = "SELECT * FROM resource ORDER BY created_at DESC LIMIT $1 OFFSET $2"
 
 var getRCategoriesQ = "SELECT * FROM rcategory ORDER BY id ASC"
 

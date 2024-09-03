@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -79,7 +80,7 @@ func (s *PostgresDB) GetAccountById(id string) (*Account, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, err
+			return nil, fmt.Errorf("Account with uuid '%v' does not exist", id)
 		}
 		return nil, err
 	}
@@ -92,6 +93,8 @@ func (s *PostgresDB) GetAccounts() (*[]*Account, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	accounts := []*Account{}
 	for rows.Next() {
 		account := new(Account)

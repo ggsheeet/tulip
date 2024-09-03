@@ -117,11 +117,15 @@ func (s *PostgresDB) GetBookById(id string) (*Book, error) {
 	return &book, nil
 }
 
-func (s *PostgresDB) GetBooks() (*[]*Book, error) {
-	rows, err := s.db.Query(getBooksQ)
+func (s *PostgresDB) GetBooks(page int, limit int) (*[]*Book, error) {
+	offset := (page - 1) * limit
+
+	rows, err := s.db.Query(getBooksQ, limit, offset)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	books := []*Book{}
 	for rows.Next() {
 		book := new(Book)
@@ -232,6 +236,8 @@ func (s *PostgresDB) GetLetters() (*[]*Letter, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	letters := []*Letter{}
 	for rows.Next() {
 		letter := new(Letter)
@@ -329,6 +335,8 @@ func (s *PostgresDB) GetVersions() (*[]*Version, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	versions := []*Version{}
 	for rows.Next() {
 		version := new(Version)
@@ -426,6 +434,8 @@ func (s *PostgresDB) GetCovers() (*[]*Cover, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	covers := []*Cover{}
 	for rows.Next() {
 		cover := new(Cover)
@@ -523,6 +533,8 @@ func (s *PostgresDB) GetPublishers() (*[]*Publisher, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	publishers := []*Publisher{}
 	for rows.Next() {
 		publisher := new(Publisher)
@@ -620,6 +632,8 @@ func (s *PostgresDB) GetBCategories() (*[]*BCategory, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	bCategories := []*BCategory{}
 	for rows.Next() {
 		bCategory := new(BCategory)

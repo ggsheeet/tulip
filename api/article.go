@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/ggsheet/kerigma/internal/database"
 	"github.com/labstack/echo/v4"
@@ -20,7 +21,26 @@ func (s *ArticleHandlers) handleArticle(c echo.Context) error {
 }
 
 func (s *ArticleHandlers) handleGetArticles(c echo.Context) error {
-	articles, err := s.db.GetArticles()
+	page := 1
+	limit := 10
+
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		var err error
+		page, err = strconv.Atoi(pageParam)
+		if err != nil || page <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid page number")
+		}
+	}
+
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		var err error
+		limit, err = strconv.Atoi(limitParam)
+		if err != nil || limit <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid limit number")
+		}
+	}
+
+	articles, err := s.db.GetArticles(page, limit)
 	if err != nil {
 		return err
 	}
@@ -31,7 +51,7 @@ func (s *ArticleHandlers) handleGetArticleById(c echo.Context) error {
 	id := c.Param("id")
 	article, err := s.db.GetArticleById(id)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, APIError{Error: err.Error()})
 	}
 	return c.JSON(http.StatusOK, article)
 }
@@ -55,7 +75,7 @@ func (s *ArticleHandlers) handleDeleteArticle(c echo.Context) error {
 	id := c.Param("id")
 
 	if _, err := s.db.GetArticleById(id); err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("ID not found, operation unsuccessful: %v", err))
+		return err
 	}
 
 	if err := s.db.DeleteArticle(id); err != nil {

@@ -1,20 +1,31 @@
-# use official Golang ima
-FROM golang:1.22.5
+# Multi-stage go image build
 
-# set working directory
-WORKDIR /app
+# STAGE 1: Build the executable
+FROM golang:1.22.5 AS builder
 
-# copy th source code
+# Set the working directory
+WORKDIR /build
+
+# Copy the source code
 COPY . .
 
-# download and install dependencies
-RUN go get -d -v ./...
+# Download and install dependencies
+RUN go mod download
 
-# build the app
-RUN go build -o bin/kerigma
+# Build the Go application
+RUN CGO_ENABLED=0 go build -o /build/kerigma
 
-# expose the live port
+# STAGE 2: Create the final minimal image
+FROM scratch
+
+# Copy the built executable from the builder stage
+COPY --from=builder /build/kerigma /kerigma
+
+# Copy CA certificates from the builder stage
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+# Expose the app port
 EXPOSE 8080
 
-# run executable
-CMD ["./bin/kerigma"]
+# Run the executable
+CMD ["/kerigma"]

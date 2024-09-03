@@ -31,7 +31,7 @@ func (s *AccountHandlers) handleGetAccountById(c echo.Context) error {
 	id := c.Param("id")
 	account, err := s.db.GetAccountById(id)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, APIError{Error: err.Error()})
 	}
 	return c.JSON(http.StatusOK, account)
 }
@@ -55,7 +55,7 @@ func (s *AccountHandlers) handleDeleteAccount(c echo.Context) error {
 	id := c.Param("id")
 
 	if _, err := s.db.GetAccountById(id); err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("ID not found, operation unsuccessful: %v", err))
+		return err
 	}
 
 	if err := s.db.DeleteAccount(id); err != nil {

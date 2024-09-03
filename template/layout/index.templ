@@ -1,6 +1,7 @@
 package layout
 
 import "github.com/ggsheet/kerigma/template/component"
+import "github.com/ggsheet/kerigma/internal/database"
 
 type Route struct {
     Path  string
@@ -8,9 +9,9 @@ type Route struct {
     IsActive bool
 }
 
-templ Index() {
+templ Index(articles []database.Article, resources []database.Resource, books []database.Book) {
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="es">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,10 +37,16 @@ templ Index() {
             <link rel='canonical' href='https://www.kerigmalife.com' />
             <link rel="alternate" hrefLang="es" href="https://www.kerigmalife.com" />
             <link rel='shortcut icon' href="favicon.ico" />
+            <link rel="preload" href="/public/css/reset.css" as="style"/>
+            <link rel="preload" href="/public/css/global.css" as="style"/>
+            <link rel="preload" href="/public/css/main.css" as="style"/>
+            <link rel="preload" href="/public/fonts/DMSans-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+            <link rel="preload" href="/public/fonts/DMSans-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+            <link rel="preload" href="/public/fonts/DMSans-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
             <link rel="stylesheet" href="/public/css/reset.css">
             <link rel="stylesheet" href="/public/css/global.css">
-            <link rel="stylesheet" href="/public/css/nav.css">
             <link rel="stylesheet" href="/public/css/main.css">
+
         </head>
         <body>
             <header class="header_styles">
@@ -48,7 +55,10 @@ templ Index() {
             <main class="main_styles">
                 <div class="float_tabber">
                     @component.Float()
-                    @component.Tabber()
+                    @component.Tabber(articles, resources)
+                </div>
+                <div class="carousel_container">
+                    @component.Carousel(books)
                 </div>
             </main>
         </body>

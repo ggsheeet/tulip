@@ -17,6 +17,7 @@ func NewAPIServer(db *database.PostgresDB) *APIServer {
 
 func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup := e.Group("/api")
+	apiGroup.Use(authMiddleware)
 
 	apiGroup.Any("/account", s.account.handleAccount)
 	apiGroup.GET("/account/:id", s.account.handleGetAccountById)

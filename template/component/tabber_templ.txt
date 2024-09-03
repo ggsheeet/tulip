@@ -1,0 +1,11 @@
+<div class=\"tabber_container\"><div class=\"tabber_tabs\"><input type=\"radio\" id=\"articles_tab\" name=\"tab\" class=\"tab_radio\" checked> <label for=\"articles_tab\" class=\"tab_label\">Artículos</label><div id=\"article_cards\" class=\"tabber_cards\">
+<div class=\"tabber_card\"><div class=\"card_cover\"><img src=\"
+\" alt=\"Article Cover\"></div><div class=\"card_text\"><h2>
+</h2><span>
+</span></div></div>
+</div><input type=\"radio\" id=\"resources_tab\" name=\"tab\" class=\"tab_radio\"> <label for=\"resources_tab\" class=\"tab_label\">Recursos</label><div class=\"button_overlay\"></div><div id=\"resource_cards\" class=\"tabber_cards\">
+<div class=\"tabber_card\"><div class=\"card_cover\"><img src=\"
+\" alt=\"Article Cover\"></div><div class=\"card_text\"><h2>
+</h2><span>
+</span></div></div>
+</div></div></div>

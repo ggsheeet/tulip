@@ -19,6 +19,7 @@ func (s *PostgresDB) CreateResource(resource *Resource) error {
 		&resource.Author,
 		&resource.Description,
 		&resource.CoverURL,
+		&resource.ResourceURL,
 		&resource.CategoryID,
 		&resource.CreatedAt,
 		&resource.UpdatedAt,
@@ -72,10 +73,12 @@ func (s *PostgresDB) GetResourceById(id string) (*Resource, error) {
 	var resource Resource
 
 	err := row.Scan(
+		&resource.ID,
 		&resource.Title,
 		&resource.Author,
 		&resource.Description,
 		&resource.CoverURL,
+		&resource.ResourceURL,
 		&resource.CategoryID,
 		&resource.CreatedAt,
 		&resource.UpdatedAt,
@@ -91,19 +94,25 @@ func (s *PostgresDB) GetResourceById(id string) (*Resource, error) {
 	return &resource, nil
 }
 
-func (s *PostgresDB) GetResources() (*[]*Resource, error) {
-	rows, err := s.db.Query(getResourcesQ)
+func (s *PostgresDB) GetResources(page int, limit int) (*[]*Resource, error) {
+	offset := (page - 1) * limit
+
+	rows, err := s.db.Query(getResourcesQ, limit, offset)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	resources := []*Resource{}
 	for rows.Next() {
 		resource := new(Resource)
 		err := rows.Scan(
+			&resource.ID,
 			&resource.Title,
 			&resource.Author,
 			&resource.Description,
 			&resource.CoverURL,
+			&resource.ResourceURL,
 			&resource.CategoryID,
 			&resource.CreatedAt,
 			&resource.UpdatedAt,
@@ -196,6 +205,8 @@ func (s *PostgresDB) GetRCategories() (*[]*RCategory, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	rCategories := []*RCategory{}
 	for rows.Next() {
 		rCategory := new(RCategory)

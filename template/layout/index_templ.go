@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "github.com/ggsheet/kerigma/template/component"
+import "github.com/ggsheet/kerigma/internal/database"
 
 type Route struct {
 	Path     string
@@ -16,7 +17,7 @@ type Route struct {
 	IsActive bool
 }
 
-func Index() templ.Component {
+func Index(articles []database.Article, resources []database.Resource, books []database.Book) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -34,7 +35,7 @@ func Index() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Kerigma Editorial</title><meta name=\"description\" content=\"Libreria y Editorial Cristiana Presbiteriana\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"Kerigma Editorial\"><meta property=\"og:description\" content=\"Libreria y Editorial Cristiana Presbiteriana\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Kerigma Editorial\"><meta property=\"og:url\" content=\"https://kerigmalife.com\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"\"><meta name=\"keywords\" content=\"libreria, libros, cristiana, tienda, presbiteriana, cristo, dios, leer, blog, articulos, recursos, lectura, teologia\"><link rel=\"canonical\" href=\"https://www.kerigmalife.com\"><link rel=\"alternate\" hrefLang=\"es\" href=\"https://www.kerigmalife.com\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/nav.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"></head><body><header class=\"header_styles\">")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +43,7 @@ func Index() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><div class=\"float_tabber\">")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,11 +51,19 @@ func Index() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = component.Tabber().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.Tabber(articles, resources).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></main></body></html>")
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = component.Carousel(books).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

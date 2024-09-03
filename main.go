@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/ggsheet/kerigma/api"
-	app "github.com/ggsheet/kerigma/app"
+	"github.com/ggsheet/kerigma/app"
 	"github.com/ggsheet/kerigma/internal/database"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"

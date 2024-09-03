@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -71,6 +72,7 @@ func (s *PostgresDB) GetArticleById(id string) (*Article, error) {
 	var article Article
 
 	err := row.Scan(
+		&article.ID,
 		&article.Title,
 		&article.Author,
 		&article.Description,
@@ -82,7 +84,7 @@ func (s *PostgresDB) GetArticleById(id string) (*Article, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, err
+			return nil, fmt.Errorf("Article with id '%v' does not exist", id)
 		}
 		return nil, err
 	}
@@ -90,15 +92,20 @@ func (s *PostgresDB) GetArticleById(id string) (*Article, error) {
 	return &article, nil
 }
 
-func (s *PostgresDB) GetArticles() (*[]*Article, error) {
-	rows, err := s.db.Query(getArticlesQ)
+func (s *PostgresDB) GetArticles(page int, limit int) (*[]*Article, error) {
+	offset := (page - 1) * limit
+
+	rows, err := s.db.Query(getArticlesQ, limit, offset)
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	articles := []*Article{}
 	for rows.Next() {
 		article := new(Article)
 		err := rows.Scan(
+			&article.ID,
 			&article.Title,
 			&article.Author,
 			&article.Description,
@@ -195,6 +202,8 @@ func (s *PostgresDB) GetACategories() (*[]*ACategory, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
+
 	aCategories := []*ACategory{}
 	for rows.Next() {
 		aCategory := new(ACategory)
