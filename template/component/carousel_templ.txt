@@ -1,1 +1,11 @@
-<div class=\"carousel_cards\">Hello</div>
+<div class=\"carousel_container\"><div class=\"carousel_heading\"><h2>Tienda en línea</h2><img src=\"public/icons/tag.svg\"></div><div class=\"carousel_cards\">
+<div class=\"carousel_card\"><div class=\"card_cover\"><img src=\"
+\" alt=\"Article Cover\"></div><div class=\"card_info\"><div class=\"card_title\"><h3>
+</h3>
+<h4>
+</h4>
+<h4>Pasta 
+</h4>
+</div><div class=\"card_price_qty\"><h5>$
+</h5><div class=\"card_qty\"><button><span>-</span></button><p>1</p><button><span>+</span></button></div></div><div class=\"card_add\"><h6>Agrerar al carrito</h6><button class=\"card_qty\"><img src=\"public/icons/cart_add.svg\"></button></div></div></div>
+</div></div>

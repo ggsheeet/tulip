@@ -66,7 +66,7 @@ func Tabber(articles []database.Article, resources []database.Resource) templ.Co
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(article.ArticleCategory)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 18, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 18, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -89,7 +89,7 @@ func Tabber(articles []database.Article, resources []database.Resource) templ.Co
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(resource.CoverURL)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 30, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 29, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -102,7 +102,7 @@ func Tabber(articles []database.Article, resources []database.Resource) templ.Co
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(resource.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 33, Col: 27}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 32, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -115,7 +115,7 @@ func Tabber(articles []database.Article, resources []database.Resource) templ.Co
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(resource.ResourceCategory)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 34, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/tabber.templ`, Line: 33, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {

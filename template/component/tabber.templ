@@ -5,8 +5,8 @@ import "github.com/ggsheet/kerigma/internal/database"
 templ Tabber(articles []database.Article, resources []database.Resource) {
 	<div class="tabber_container">
 		<div class="tabber_tabs">
-			<input type="radio" id="articles_tab" name="tab" class="tab_radio" checked/>
-			<label for="articles_tab" class="tab_label">Artículos</label>
+			<input type="radio" id="articles_tab" name="tab" class="tab_radio" />
+			<label for="articles_tab" class="tab_label"><h2>Artículos</h2></label>
 			<div id="article_cards" class="tabber_cards">
 				for _, article := range articles {
 					<div class="tabber_card">
@@ -14,15 +14,14 @@ templ Tabber(articles []database.Article, resources []database.Resource) {
 							<img src={ article.CoverURL } alt="Article Cover"/>
 						</div>
 						<div class="card_text">
-							<h2>{ article.Title }</h2>
-							<span>{ article.ArticleCategory }</span>
+							<h3>{ article.Title }</h3>
+							<h4>{ article.ArticleCategory }</h4>
 						</div>
 					</div>
 				}
 			</div>
-			<input type="radio" id="resources_tab" name="tab" class="tab_radio"/>
-			<label for="resources_tab" class="tab_label">Recursos</label>
-			<div class="button_overlay"></div>
+			<input type="radio" id="resources_tab" name="tab" class="tab_radio" checked/>
+			<label for="resources_tab" class="tab_label"><h2>Recursos</h2></label>
 			<div id="resource_cards" class="tabber_cards">
 				for _, resource := range resources {
 					<div class="tabber_card">
@@ -30,12 +29,13 @@ templ Tabber(articles []database.Article, resources []database.Resource) {
 							<img src={ resource.CoverURL } alt="Article Cover"/>
 						</div>
 						<div class="card_text">
-							<h2>{ resource.Title }</h2>
-							<span>{ resource.ResourceCategory }</span>
+							<h3>{ resource.Title }</h3>
+							<h4>{ resource.ResourceCategory }</h4>
 						</div>
 					</div>
 				}
 			</div>
+			<div class="button_overlay"></div>
 		</div>
 	</div>
 }

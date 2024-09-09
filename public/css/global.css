@@ -32,6 +32,7 @@
 	--clr-background: #f5f5f5;
 	--clr-nav: #e7ebf4;
 	--clr-nav-text: #292929;
+	--clr-drawer-text: #292929;
 	--clr-active-nav-text: #021138;
 	--clr-cart-bubble: #f5f5f5;
 	--clr-cart-num: #292929;
@@ -48,12 +49,13 @@
 	:root {
 		--clr-background: #292929;
 		--clr-nav: #afb6c0;
+		--clr-drawer-text: #f5f5f5;
 		--clr-cart-bubble: #7996e1;
 		--clr-float-text: #292929;
 		--clr-accent: #7996e1;
 		--clr-text: #afb6c0;
 		--clr-footer: #191815;
-		--clr-shadow: #444;
+		--clr-shadow: #555;
 	}
 }
 
@@ -68,24 +70,11 @@ html {
 	background: var(--clr-background);
 }
 
-::-webkit-scrollbar {
-	width: 0.675rem;
-}
-
-::-webkit-scrollbar-track {
-	background: transparent;
-	border: 0.125rem solid var(--clr-float);
-	border-radius: 0.25rem	;
-}
-
-::-webkit-scrollbar-thumb {
-	background: var(--clr-float);
-	border: 0.125rem solid transparent;
-	border-radius: 0.25rem;
-}
-
-::-webkit-scrollbar-thumb:hover {
-	background: var(--clr-float);
+body {
+	box-sizing: border-box;
+	line-height: 1;
+	border: 0;
+	margin: 0;
 }
 
 .header_styles {
@@ -94,14 +83,7 @@ html {
 	justify-content: center;
 	width: 100%;
 	height: auto;
-	margin-bottom: 40px;
-}
-
-body {
-	line-height: 1;
-	border: 0;
-	margin: 0;
-	padding: 2.5rem 4.375rem
+	padding: 3rem 4.375rem;
 }
 
 .main_styles {
@@ -111,13 +93,63 @@ body {
 	justify-content: center;
 	width: 100%;
 	height: auto;
-	row-gap: 5rem;
+	row-gap: 3rem;
+	padding: 0 4.375rem 3rem 4.375rem;
+
+	::-webkit-scrollbar {
+		width: 0.563rem;
+		height: 0.563rem;
+	}
+	
+	::-webkit-scrollbar-track {
+		background: transparent;
+		border: 0.125rem solid var(--clr-accent);
+		border-radius: 0.313rem;
+	}
+	
+	::-webkit-scrollbar-thumb {
+		background: var(--clr-accent);
+		border-radius: 0.313rem;
+	}
+	
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--clr-accent);
+	}
 }
 
-footer {
-	background-color: var(--clr-footer);
+.footer_styles {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: center;
+	width: 100%;
+	background-color: var(--clr-footer);
 	color: var(--clr-footer-text);
+	padding: 3rem 4.375rem;
+}
+
+@media (max-width: 80rem) {
+	.header_styles {
+		padding: 3rem 4.375rem 2.5rem 4.375rem;
+	}
+
+	.main_styles {
+		row-gap: 2.5rem;
+	}
+}
+
+
+@media (max-width: 64rem) {
+	.header_styles,
+	.footer_styles {
+		padding: 2rem 2.5rem;
+	}
+
+	.main_styles {
+		row-gap: 2rem;
+		padding: 0 2.5rem 2rem 2.5rem;
+	}
+}
+
+.no-scroll {
+    overflow: hidden;
 }

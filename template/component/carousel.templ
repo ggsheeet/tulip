@@ -1,9 +1,53 @@
 package component
 
 import "github.com/ggsheet/kerigma/internal/database"
+import "fmt"
+import "strconv"
+
+
+func formatPrice(price float32) string {
+	if price == float32(int(price)) {
+		return strconv.Itoa(int(price))
+	}
+	return fmt.Sprintf("%.2f", price)
+}
 
 templ Carousel(books []database.Book) {
-    <div class="carousel_cards">
-        Hello
+    <div class="carousel_container">
+        <div class="carousel_heading">
+            <h2>Tienda en línea</h2>
+            <img src="public/icons/tag.svg" />
+        </div>
+        <div class="carousel_cards">
+            for _, book := range books {
+                <div class="carousel_card">
+                    <div class="card_cover">
+                        <img src={ book.CoverURL } alt="Article Cover"/>
+                    </div>
+                    <div class="card_info">
+                        <div class="card_title">
+                            <h3>{ book.Title }</h3>
+                            if book.CoverType == "PDF" {
+                                <h4>{ book.CoverType }</h4>
+                            } else {
+                                <h4>Pasta { book.CoverType }</h4>
+                            }
+                        </div>
+                        <div class="card_price_qty">
+                            <h5>${ formatPrice(book.Price) }</h5>
+                            <div class="card_qty">
+                                <button><span>-</span></button><p>1</p><button><span>+</span></button>
+                            </div>
+                        </div>
+                        <div class="card_add">
+                            <h6>Agrerar al carrito</h6>
+                            <button class="card_qty">
+                                <img src="public/icons/cart_add.svg" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
 }
