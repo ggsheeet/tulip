@@ -73,10 +73,11 @@ func NewBCategory(bookCategory string) *BCategory {
 	}
 }
 
-func NewArticle(title string, author string, description string, coverUrl string, categoryId int) *Article {
+func NewArticle(title string, author string, excerpt string, description string, coverUrl string, categoryId int) *Article {
 	return &Article{
 		Title:       title,
 		Author:      author,
+		Excerpt:     excerpt,
 		Description: description,
 		CoverURL:    coverUrl,
 		CategoryID:  categoryId,
@@ -192,10 +193,11 @@ func UpdateBCategory(bookCategory string) *BCategory {
 	}
 }
 
-func UpdateArticle(title string, author string, description string, coverUrl string, categoryId int) *Article {
+func UpdateArticle(title string, author string, excerpt, description string, coverUrl string, categoryId int) *Article {
 	return &Article{
 		Title:       title,
 		Author:      author,
+		Excerpt:     excerpt,
 		Description: description,
 		CoverURL:    coverUrl,
 		CategoryID:  categoryId,

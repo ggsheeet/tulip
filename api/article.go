@@ -23,6 +23,9 @@ func (s *ArticleHandlers) handleArticle(c echo.Context) error {
 func (s *ArticleHandlers) handleGetArticles(c echo.Context) error {
 	page := 1
 	limit := 10
+	category := 0
+	order := ""
+	articleId := 0
 
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		var err error
@@ -40,9 +43,29 @@ func (s *ArticleHandlers) handleGetArticles(c echo.Context) error {
 		}
 	}
 
-	articles, err := s.db.GetArticles(page, limit)
+	if categoryParam := c.QueryParam("category"); categoryParam != "" {
+		var err error
+		category, err = strconv.Atoi(categoryParam)
+		if err != nil || category <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid cateogry id")
+		}
+	}
+
+	if orderParam := c.QueryParam("order"); orderParam != "" {
+		order = orderParam
+	}
+
+	if articleIdParam := c.QueryParam("itemId"); articleIdParam != "" {
+		var err error
+		articleId, err = strconv.Atoi(articleIdParam)
+		if err != nil || articleId <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid article id")
+		}
+	}
+
+	articles, err := s.db.GetArticles(page, limit, category, order, articleId)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, "Error fetching articles")
 	}
 	return c.JSON(http.StatusOK, articles)
 }
@@ -63,7 +86,7 @@ func (s *ArticleHandlers) handleCreateArticle(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	article := database.NewArticle(artReq.Title, artReq.Author, artReq.Description, artReq.CoverURL, artReq.CategoryID)
+	article := database.NewArticle(artReq.Title, artReq.Author, artReq.Excerpt, artReq.Description, artReq.CoverURL, artReq.CategoryID)
 
 	if err := s.db.CreateArticle(article); err != nil {
 		return err
@@ -93,7 +116,7 @@ func (s *ArticleHandlers) handleUpdateArticle(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	article := database.UpdateArticle(artReq.Title, artReq.Author, artReq.Description, artReq.CoverURL, artReq.CategoryID)
+	article := database.UpdateArticle(artReq.Title, artReq.Author, artReq.Excerpt, artReq.Description, artReq.CoverURL, artReq.CategoryID)
 
 	if err := s.db.UpdateArticle(id, article); err != nil {
 		return err

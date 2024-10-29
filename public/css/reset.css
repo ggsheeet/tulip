@@ -75,8 +75,5 @@ img {
 
 button {
     all: unset;
-}
-
-input {
-    all: unset
+    user-select: none;
 }

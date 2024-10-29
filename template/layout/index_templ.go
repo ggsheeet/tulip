@@ -35,7 +35,7 @@ func Index(articles []database.Article, resources []database.Resource, books []d
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Kerigma Editorial</title><meta name=\"description\" content=\"Libreria y Editorial Cristiana Reformada\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"Kerigma Editorial\"><meta property=\"og:description\" content=\"Libreria y Editorial Cristiana Reformada\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Kerigma Editorial\"><meta property=\"og:url\" content=\"https://kerigmalife.com\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png\"><meta name=\"keywords\" content=\"libreria, libros, cristiana, tienda, presbiteriana, reformada, cristo, dios, leer, blog, articulos, recursos, lectura, teologia\"><link rel=\"canonical\" href=\"https://kerigmalife.com\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"preload\" href=\"/public/css/reset.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/global.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/main.css\" as=\"style\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Regular.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Medium.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Bold.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"><script type=\"text/javascript\" src=\"/public/js/main.js\" defer></script><script type=\"text/javascript\" src=\"/public/js/htmx.min.js\" defer></script></head><body><header class=\"header_styles\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,7 +43,7 @@ func Index(articles []database.Article, resources []database.Resource, books []d
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><div class=\"float_tabber\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func Index(articles []database.Article, resources []database.Resource, books []d
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"carousel_container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,7 +63,7 @@ func Index(articles []database.Article, resources []database.Resource, books []d
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 4)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></main><footer class=\"footer_styles\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,7 +71,7 @@ func Index(articles []database.Article, resources []database.Resource, books []d
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 5)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

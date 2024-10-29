@@ -58,6 +58,7 @@ type BCategoryRequest struct {
 type ArticleRequest struct {
 	Title       string `json:"title"`
 	Author      string `json:"author"`
+	Excerpt     string `json:"excerpt"`
 	Description string `json:"description"`
 	CoverURL    string `json:"coverUrl"`
 	CategoryID  int    `json:"categoryId"`
@@ -112,15 +113,15 @@ type Book struct {
 	SalesCount    int       `json:"salesCount"`
 	IsActive      bool      `json:"isActive"`
 	LetterID      int       `json:"letterId"`
-	LetterType    string    `json:"letterType,omitempty"`
+	LetterType    string    `json:"letterType"`
 	VersionID     int       `json:"versionId"`
-	BibleVersion  string    `json:"biblVersion,omitempty"`
+	BibleVersion  string    `json:"biblVersion"`
 	CoverID       int       `json:"coverId"`
-	CoverType     string    `json:"coverType,omitempty"`
+	CoverType     string    `json:"coverType"`
 	PublisherID   int       `json:"publisherId"`
-	PublisherName string    `json:"publisherName,omitempty"`
+	PublisherName string    `json:"publisherName"`
 	CategoryID    int       `json:"categoryId"`
-	BookCategory  string    `json:"bCategory,omitempty"`
+	BookCategory  string    `json:"bCategory"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 }
@@ -164,10 +165,11 @@ type Article struct {
 	ID              int       `json:"id"`
 	Title           string    `json:"title"`
 	Author          string    `json:"author"`
+	Excerpt         string    `json:"excerpt"`
 	Description     string    `json:"description"`
 	CoverURL        string    `json:"coverUrl"`
 	CategoryID      int       `json:"categoryId"`
-	ArticleCategory string    `json:"articleCategory,omitempty"`
+	ArticleCategory string    `json:"articleCategory"`
 	CreatedAt       time.Time `json:"createdAt"`
 	UpdatedAt       time.Time `json:"updatedAt"`
 }
@@ -187,7 +189,7 @@ type Resource struct {
 	CoverURL         string    `json:"coverUrl"`
 	ResourceURL      string    `json:"resourceUrl"`
 	CategoryID       int       `json:"categoryId"`
-	ResourceCategory string    `json:"rCategory,omitempty"`
+	ResourceCategory string    `json:"rCategory"`
 	CreatedAt        time.Time `json:"createdAt"`
 	UpdatedAt        time.Time `json:"updatedAt"`
 }

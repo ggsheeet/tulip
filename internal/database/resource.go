@@ -80,6 +80,7 @@ func (s *PostgresDB) GetResourceById(id string) (*Resource, error) {
 		&resource.CoverURL,
 		&resource.ResourceURL,
 		&resource.CategoryID,
+		&resource.ResourceCategory,
 		&resource.CreatedAt,
 		&resource.UpdatedAt,
 	)
@@ -94,10 +95,43 @@ func (s *PostgresDB) GetResourceById(id string) (*Resource, error) {
 	return &resource, nil
 }
 
-func (s *PostgresDB) GetResources(page int, limit int) (*[]*Resource, error) {
+func (s *PostgresDB) GetResources(page int, limit int, category int, order string, resourceId int) (*[]*Resource, error) {
 	offset := (page - 1) * limit
 
-	rows, err := s.db.Query(getResourcesQ, limit, offset)
+	query := getResourcesQ
+
+	whereClause := ""
+
+	if category != 0 && resourceId != 0 {
+		whereClause = " WHERE r.category_id = $3 AND r.id != $4"
+	} else if category != 0 && resourceId == 0 {
+		whereClause += " WHERE r.category_id = $3"
+	} else if category == 0 && resourceId != 0 {
+		whereClause += " WHERE r.id != $4"
+	}
+
+	query += whereClause
+
+	switch order {
+	case "newer":
+		query += " ORDER BY r.created_at DESC"
+	case "older":
+		query += " ORDER BY r.created_at ASC"
+	default:
+		query += " ORDER BY r.created_at DESC, r.id DESC"
+	}
+
+	query += " LIMIT $1 OFFSET $2"
+
+	args := []interface{}{limit, offset}
+	if category != 0 {
+		args = append(args, category)
+	}
+	if resourceId != 0 {
+		args = append(args, resourceId)
+	}
+
+	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,6 +148,7 @@ func (s *PostgresDB) GetResources(page int, limit int) (*[]*Resource, error) {
 			&resource.CoverURL,
 			&resource.ResourceURL,
 			&resource.CategoryID,
+			&resource.ResourceCategory,
 			&resource.CreatedAt,
 			&resource.UpdatedAt,
 		)
@@ -124,6 +159,7 @@ func (s *PostgresDB) GetResources(page int, limit int) (*[]*Resource, error) {
 
 		resources = append(resources, resource)
 	}
+
 	return &resources, nil
 }
 

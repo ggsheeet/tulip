@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -99,17 +100,22 @@ func (s *PostgresDB) GetBookById(id string) (*Book, error) {
 		&book.SalesCount,
 		&book.IsActive,
 		&book.LetterID,
+		&book.LetterType,
 		&book.VersionID,
+		&book.BibleVersion,
 		&book.CoverID,
+		&book.CoverType,
 		&book.PublisherID,
+		&book.PublisherName,
 		&book.CategoryID,
+		&book.BookCategory,
 		&book.CreatedAt,
 		&book.UpdatedAt,
 	)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, err
+			return nil, fmt.Errorf("Book with id '%v' does not exist", id)
 		}
 		return nil, err
 	}
@@ -117,10 +123,45 @@ func (s *PostgresDB) GetBookById(id string) (*Book, error) {
 	return &book, nil
 }
 
-func (s *PostgresDB) GetBooks(page int, limit int) (*[]*Book, error) {
+func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, bookId int) (*[]*Book, error) {
 	offset := (page - 1) * limit
 
-	rows, err := s.db.Query(getBooksQ, limit, offset)
+	query := getBooksQ
+
+	whereClause := " WHERE b.is_active = true"
+
+	if category != 0 {
+		whereClause += " AND b.category_id = $3"
+	}
+
+	if bookId != 0 {
+		whereClause += " AND b.id != $4"
+	}
+
+	query += whereClause
+
+	switch order {
+	case "expensive":
+		query += " ORDER BY b.price DESC"
+	case "cheap":
+		query += " ORDER BY b.price ASC"
+	case "selling":
+		query += " ORDER BY b.sales_count DESC"
+	default:
+		query += " ORDER BY b.created_at DESC, b.id DESC"
+	}
+
+	query += " LIMIT $1 OFFSET $2"
+
+	args := []interface{}{limit, offset}
+	if category != 0 {
+		args = append(args, category)
+	}
+	if bookId != 0 {
+		args = append(args, bookId)
+	}
+
+	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -141,10 +182,15 @@ func (s *PostgresDB) GetBooks(page int, limit int) (*[]*Book, error) {
 			&book.SalesCount,
 			&book.IsActive,
 			&book.LetterID,
+			&book.LetterType,
 			&book.VersionID,
+			&book.BibleVersion,
 			&book.CoverID,
+			&book.CoverType,
 			&book.PublisherID,
+			&book.PublisherName,
 			&book.CategoryID,
+			&book.BookCategory,
 			&book.CreatedAt,
 			&book.UpdatedAt,
 		)
@@ -155,6 +201,7 @@ func (s *PostgresDB) GetBooks(page int, limit int) (*[]*Book, error) {
 
 		books = append(books, book)
 	}
+
 	return &books, nil
 }
 

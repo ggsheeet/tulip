@@ -12,7 +12,7 @@ type BookInterface interface {
 	DeleteBook(string) error
 	UpdateBook(string, *Book) error
 	GetBookById(string) (*Book, error)
-	GetBooks(int, int) (*[]*Book, error)
+	GetBooks(int, int, int, string, int) (*[]*Book, error)
 	CreateBook(*Book) error
 	DeleteLetter(string) error
 	UpdateLetter(string, *Letter) error
@@ -45,7 +45,7 @@ type ArticleInterface interface {
 	DeleteArticle(string) error
 	UpdateArticle(string, *Article) error
 	GetArticleById(string) (*Article, error)
-	GetArticles(int, int) (*[]*Article, error)
+	GetArticles(int, int, int, string, int) (*[]*Article, error)
 	CreateArticle(*Article) error
 	DeleteACategory(string) error
 	UpdateACategory(string, *ACategory) error
@@ -58,7 +58,7 @@ type ResourceInterface interface {
 	DeleteResource(string) error
 	UpdateResource(string, *Resource) error
 	GetResourceById(string) (*Resource, error)
-	GetResources(int, int) (*[]*Resource, error)
+	GetResources(int, int, int, string, int) (*[]*Resource, error)
 	CreateResource(*Resource) error
 	DeleteRCategory(string) error
 	UpdateRCategory(string, *RCategory) error

@@ -23,6 +23,9 @@ func (s *ResourceHandlers) handleResource(c echo.Context) error {
 func (s *ResourceHandlers) handleGetResources(c echo.Context) error {
 	page := 1
 	limit := 10
+	category := 0
+	order := ""
+	resourceId := 0
 
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		var err error
@@ -40,9 +43,29 @@ func (s *ResourceHandlers) handleGetResources(c echo.Context) error {
 		}
 	}
 
-	resources, err := s.db.GetResources(page, limit)
+	if categoryParam := c.QueryParam("category"); categoryParam != "" {
+		var err error
+		category, err = strconv.Atoi(categoryParam)
+		if err != nil || category <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid cateogry id")
+		}
+	}
+
+	if orderParam := c.QueryParam("order"); orderParam != "" {
+		order = orderParam
+	}
+
+	if resourceIdParam := c.QueryParam("itemId"); resourceIdParam != "" {
+		var err error
+		resourceId, err = strconv.Atoi(resourceIdParam)
+		if err != nil || resourceId <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid resource id")
+		}
+	}
+
+	resources, err := s.db.GetResources(page, limit, category, order, resourceId)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, "Error fetching resources")
 	}
 	return c.JSON(http.StatusOK, resources)
 }

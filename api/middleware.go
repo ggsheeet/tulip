@@ -15,7 +15,7 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	if environment == "development" || environment == "docker" {
 		allowedOrigin = os.Getenv("AUTH_ORIGIN_DEV")
 	} else if environment == "production" {
-		allowedOrigin = os.Getenv("AUTH_ORIGIN_PRDO")
+		allowedOrigin = os.Getenv("AUTH_ORIGIN_PROD")
 	}
 
 	return func(c echo.Context) error {

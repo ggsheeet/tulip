@@ -82,6 +82,7 @@ var createArticleTabQ = `
 		id SERIAL PRIMARY KEY,
 		title VARCHAR(255) NOT NULL,
 		author VARCHAR(255) NOT NULL,
+		excerpt VARCHAR(200) NOT NULL,
 		description TEXT NOT NULL,
 		cover_url VARCHAR(255) NOT NULL,
 		category_id INT REFERENCES acategory (id),
@@ -182,8 +183,8 @@ var createBCategoryQ = `
 
 var createArticleQ = (`
 	INSERT INTO article
-	(title, author, description, cover_url, category_id, created_at, updated_at)
-	VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), $5, $6, $7)
+	(title, author, excerpt, description, cover_url, category_id, created_at, updated_at)
+	VALUES ($1, $2, $3, $4, COALESCE(NULLIF($5, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), $6, $7, $8)
 `)
 
 var createACategoryQ = `
@@ -263,7 +264,19 @@ var getAccQ = `
 `
 
 var getBookQ = `
-	SELECT * FROM book WHERE id = $1 AND is_active = TRUE
+	SELECT 
+		b.id, b.title, b.author, b.description, b.cover_url, b.isbn, 
+		b.price, b.stock, b.sales_count, b.is_active, b.letter_id, 
+		l.letter_type, b.version_id, bv.bible_version, b.cover_id, 
+		c.cover_type, b.publisher_id, p.publisher_name, b.category_id, 
+		bc.book_category, b.created_at, b.updated_at
+	FROM book b
+	LEFT JOIN letter l ON b.letter_id = l.id
+	LEFT JOIN version bv ON b.version_id = bv.id
+	LEFT JOIN cover c ON b.cover_id = c.id
+	LEFT JOIN publisher p ON b.publisher_id = p.id
+	LEFT JOIN bcategory bc ON b.category_id = bc.id
+	WHERE b.id = $1
 `
 
 var getLetterQ = `
@@ -287,7 +300,12 @@ var getBCategoryQ = `
 `
 
 var getArticleQ = `
-	SELECT * FROM article WHERE id = $1
+	SELECT 
+		a.id, a.title, a.author, a.excerpt, a.description, a.cover_url, 
+		a.category_id, ac.article_category, a.created_at, a.updated_at
+	FROM article a
+	LEFT JOIN acategory ac ON a.category_id = ac.id
+	WHERE a.id = $1
 `
 
 var getACategoryQ = `
@@ -295,7 +313,12 @@ var getACategoryQ = `
 `
 
 var getResourceQ = `
-	SELECT * FROM resource WHERE id = $1
+	SELECT 
+		r.id, r.title, r.author, r.description, r.cover_url, r.resource_url,
+		r.category_id, rc.resource_category, r.created_at, r.updated_at
+	FROM resource r
+	LEFT JOIN rcategory rc ON r.category_id = rc.id
+	WHERE r.id = $1
 `
 
 var getRCategoryQ = `
@@ -306,27 +329,52 @@ var getOrderQ = `
 	SELECT * FROM "order" WHERE id = $1
 `
 
-var getAccsQ = "SELECT * FROM account ORDER BY created_at ASC;"
+var getAccsQ = `SELECT * FROM account ORDER BY created_at ASC`
 
-var getBooksQ = `SELECT * FROM book WHERE is_active = TRUE ORDER BY created_at DESC LIMIT $1 OFFSET $2`
+var getBooksQ = `
+	SELECT 
+		b.id, b.title, b.author, b.description, b.cover_url, b.isbn, 
+		b.price, b.stock, b.sales_count, b.is_active, b.letter_id, 
+		l.letter_type, b.version_id, bv.bible_version, b.cover_id, 
+		c.cover_type, b.publisher_id, p.publisher_name, b.category_id, 
+		bc.book_category, b.created_at, b.updated_at
+	FROM book b
+	LEFT JOIN letter l ON b.letter_id = l.id
+	LEFT JOIN version bv ON b.version_id = bv.id
+	LEFT JOIN cover c ON b.cover_id = c.id
+	LEFT JOIN publisher p ON b.publisher_id = p.id
+	LEFT JOIN bcategory bc ON b.category_id = bc.id
+`
 
-var getLettersQ = "SELECT * FROM letter ORDER BY id ASC"
+var getLettersQ = `SELECT * FROM letter ORDER BY id ASC`
 
-var getVersionsQ = "SELECT * FROM version ORDER BY id ASC"
+var getVersionsQ = `SELECT * FROM version ORDER BY id ASC`
 
-var getCoversQ = "SELECT * FROM cover ORDER BY id ASC"
+var getCoversQ = `SELECT * FROM cover ORDER BY id ASC`
 
-var getPublishersQ = "SELECT * FROM publisher ORDER BY id ASC"
+var getPublishersQ = `SELECT * FROM publisher ORDER BY id ASC`
 
-var getBCategoriesQ = "SELECT * FROM bcategory ORDER BY id ASC"
+var getBCategoriesQ = `SELECT * FROM bcategory ORDER BY id ASC`
 
-var getArticlesQ = "SELECT * FROM article ORDER BY created_at DESC LIMIT $1 OFFSET $2"
+var getArticlesQ = `
+	SELECT 
+		a.id, a.title, a.author, a.excerpt, a.description, a.cover_url, 
+		a.category_id, ac.article_category, a.created_at, a.updated_at
+	FROM article a
+	LEFT JOIN acategory ac ON a.category_id = ac.id
+`
 
-var getACategoriesQ = "SELECT * FROM acategory ORDER BY id ASC"
+var getACategoriesQ = `SELECT * FROM acategory ORDER BY id ASC`
 
-var getResourcesQ = "SELECT * FROM resource ORDER BY created_at DESC LIMIT $1 OFFSET $2"
+var getResourcesQ = `
+	SELECT 
+		r.id, r.title, r.author, r.description, r.cover_url, r.resource_url,
+		r.category_id, rc.resource_category, r.created_at, r.updated_at
+	FROM resource r
+	LEFT JOIN rcategory rc ON r.category_id = rc.id
+`
 
-var getRCategoriesQ = "SELECT * FROM rcategory ORDER BY id ASC"
+var getRCategoriesQ = `SELECT * FROM rcategory ORDER BY id ASC`
 
 var getOrdersQ = `SELECT * FROM "order" ORDER BY id ASC`
 
@@ -376,7 +424,7 @@ var updateBCategoryQ = `
 
 var updateArticleQ = `
     UPDATE article
-    SET title = $2, author = $3, description = $4, cover_url = COALESCE(NULLIF($5, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), category_id = $6, updated_at = $7
+    SET title = $2, author = $3, excerpt = $4, description = $5, cover_url = COALESCE(NULLIF($6, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), category_id = $7, updated_at = $8
     WHERE id = $1
 `
 

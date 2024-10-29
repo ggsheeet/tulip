@@ -18,6 +18,7 @@ func (s *PostgresDB) CreateArticle(article *Article) error {
 		createArticleQ,
 		&article.Title,
 		&article.Author,
+		&article.Excerpt,
 		&article.Description,
 		&article.CoverURL,
 		&article.CategoryID,
@@ -53,6 +54,7 @@ func (s *PostgresDB) UpdateArticle(id string, article *Article) error {
 		artId,
 		&article.Title,
 		&article.Author,
+		&article.Excerpt,
 		&article.Description,
 		&article.CoverURL,
 		&article.CategoryID,
@@ -75,9 +77,11 @@ func (s *PostgresDB) GetArticleById(id string) (*Article, error) {
 		&article.ID,
 		&article.Title,
 		&article.Author,
+		&article.Excerpt,
 		&article.Description,
 		&article.CoverURL,
 		&article.CategoryID,
+		&article.ArticleCategory,
 		&article.CreatedAt,
 		&article.UpdatedAt,
 	)
@@ -92,10 +96,43 @@ func (s *PostgresDB) GetArticleById(id string) (*Article, error) {
 	return &article, nil
 }
 
-func (s *PostgresDB) GetArticles(page int, limit int) (*[]*Article, error) {
+func (s *PostgresDB) GetArticles(page int, limit int, category int, order string, articleId int) (*[]*Article, error) {
 	offset := (page - 1) * limit
 
-	rows, err := s.db.Query(getArticlesQ, limit, offset)
+	query := getArticlesQ
+
+	whereClause := ""
+
+	if category != 0 && articleId != 0 {
+		whereClause = " WHERE a.category_id = $3 AND a.id != $4"
+	} else if category != 0 && articleId == 0 {
+		whereClause = " WHERE a.category_id = $3"
+	} else if category == 0 && articleId != 0 {
+		whereClause = " WHERE a.id != $4"
+	}
+
+	query += whereClause
+
+	switch order {
+	case "newer":
+		query += " ORDER BY a.created_at DESC"
+	case "older":
+		query += " ORDER BY a.created_at ASC"
+	default:
+		query += " ORDER BY a.created_at DESC, a.id DESC"
+	}
+
+	query += " LIMIT $1 OFFSET $2"
+
+	args := []interface{}{limit, offset}
+	if category != 0 {
+		args = append(args, category)
+	}
+	if articleId != 0 {
+		args = append(args, articleId)
+	}
+
+	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,9 +145,11 @@ func (s *PostgresDB) GetArticles(page int, limit int) (*[]*Article, error) {
 			&article.ID,
 			&article.Title,
 			&article.Author,
+			&article.Excerpt,
 			&article.Description,
 			&article.CoverURL,
 			&article.CategoryID,
+			&article.ArticleCategory,
 			&article.CreatedAt,
 			&article.UpdatedAt,
 		)
@@ -121,6 +160,7 @@ func (s *PostgresDB) GetArticles(page int, limit int) (*[]*Article, error) {
 
 		articles = append(articles, article)
 	}
+
 	return &articles, nil
 }
 

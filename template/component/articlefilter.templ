@@ -1,0 +1,78 @@
+package component
+
+import "github.com/ggsheet/kerigma/internal/database"
+
+templ ArticleFilter(acategories []database.ACategory) {
+    <aside class="filters_container">
+        <div class="filters_content">
+            <div class="filter_head">
+                <p>Filtros</p>
+                <div class="filter_icon"></div>
+            </div>
+            <form
+                hx-boost="true" 
+                hx-get="/articles"
+                hx-trigger="change"
+                hx-target="#articles"
+                hx-swap="outerHTML"
+            >
+                <div class="filter_group">
+                    <fieldset>
+                        <legend class="group_name">Categoría</legend>
+                        <div class="group_options">
+                            for _, acategory := range acategories {
+                                <div class="option">
+                                    <input
+                                        type="radio"
+                                        id={ formatID(acategory.ID) }
+                                        class="checkable"
+                                        name="category"
+                                        value={ formatID(acategory.ID) }
+                                    />
+                                    <label for={ formatID(acategory.ID) }>{ acategory.ArticleCategory }</label>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="filter_group">
+                    <fieldset>
+                        <legend class="group_name">Orden</legend>
+                        <div class="group_options">
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    id="newer"
+                                    class="checkable"
+                                    name="order"
+                                    value="newer"
+                                />
+                                <label for="newer">Más Nuevo</label>
+                            </div>
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    id="older"
+                                    class="checkable"
+                                    name="order"
+                                    value="older"
+                                />
+                                <label for="older">Más Viejo</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+            <button
+                id="clearCheckBtn"
+                hx-get="/articles?clear=true"
+                hx-trigger="click"
+                hx-target="#articles"
+                hx-swap="outerHTML"
+                class="disabled"
+            >
+                Limpiar
+            </button>
+        </div>
+    </aside>
+}

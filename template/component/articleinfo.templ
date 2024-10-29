@@ -1,0 +1,58 @@
+package component
+
+import "github.com/ggsheet/kerigma/internal/database"
+import "time"
+import "fmt"
+import "strings"
+
+var monthsInSpanish = []string{
+		"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+		"Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+	}
+
+func formatDate(isoDate time.Time) string {
+    day := isoDate.Day()
+	month := monthsInSpanish[isoDate.Month()-1]
+	year := isoDate.Year()
+
+	formattedDate := fmt.Sprintf("%d %s %d", day, month, year)
+
+	return formattedDate
+}
+
+func formatDescription(description string) string {
+    formattedDescription := strings.ReplaceAll(description, "\n\n", "</p><br><p>")
+    formattedDescription = strings.ReplaceAll(formattedDescription, "\n", "<br>")
+
+    formattedDescription = fmt.Sprintf("<p>" + formattedDescription + "</p>")
+
+    return formattedDescription
+}
+
+templ ArticleInfo(article database.Article) {
+    <div class="item_container">
+        <div class="item_card">
+            <div class="card_section">
+                <div class="card_cover">
+                    <img src={ article.CoverURL } alt="Article Cover"/>
+                </div>
+                <div class="card_info">
+                    <div class="card_title">
+                        <h3>{ article.Title }</h3>
+                        <h4>{ article.ArticleCategory }</h4>
+                    </div>
+                    <div class="card_details">
+                        <p>Autor: <span>{ article.Author }</span></p>
+                        <p>Fecha: <span>{ formatDate(article.CreatedAt) }</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="card_section section_long">
+                <div class="card_description">
+                    <h6 class="description_head">Descripción</h6>
+                    <div class="description_body">@templ.Raw(formatDescription(article.Description))</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

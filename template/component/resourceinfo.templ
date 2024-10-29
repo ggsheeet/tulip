@@ -1,0 +1,31 @@
+package component
+
+import "github.com/ggsheet/kerigma/internal/database"
+
+templ ResourceInfo(resource database.Resource) {
+    <div class="item_container">
+        <div class="item_card">
+            <div class="card_section">
+                <div class="card_cover">
+                    <img src={ resource.CoverURL } alt="resource Cover"/>
+                </div>
+                <div class="card_info">
+                    <div class="card_title">
+                        <h3>{ resource.Title }</h3>
+                        <h4>{ resource.ResourceCategory }</h4>
+                    </div>
+                    <div class="card_details">
+                        <p>Autor: <span>{ resource.Author }</span></p>
+                        <p>Fecha: <span>{ formatDate(resource.CreatedAt) }</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="card_section section_long">
+                <div class="card_description">
+                    <h6 class="description_head">Descripción</h6>
+                    <div class="description_body">@templ.Raw(formatDescription(resource.Description))</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

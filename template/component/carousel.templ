@@ -4,7 +4,6 @@ import "github.com/ggsheet/kerigma/internal/database"
 import "fmt"
 import "strconv"
 
-
 func formatPrice(price float32) string {
 	if price == float32(int(price)) {
 		return strconv.Itoa(int(price))
@@ -13,41 +12,85 @@ func formatPrice(price float32) string {
 }
 
 templ Carousel(books []database.Book) {
-    <div class="carousel_container">
-        <div class="carousel_heading">
-            <h2>Tienda en línea</h2>
-            <img src="public/icons/tag.svg" />
-        </div>
-        <div class="carousel_cards">
-            for _, book := range books {
-                <div class="carousel_card">
-                    <div class="card_cover">
-                        <img src={ book.CoverURL } alt="Article Cover"/>
+    <div class="carousel_heading">
+        <h2>Tienda en línea</h2>
+        <svg width="256px" height="256px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <style>
+                .stroke_tag {
+                    stroke: #122c6f;
+                }
+
+                @media (prefers-color-scheme: dark) {
+                    .stroke_tag {
+                        stroke: #7996e1;
+                    }
+                }
+            </style>
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+                <path d="M7.0498 7.0498H7.0598M10.5118 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V10.5118C3 11.2455 3 11.6124 3.08289 11.9577C3.15638 12.2638 3.27759 12.5564 3.44208 12.8249C3.6276 13.1276 3.88703 13.387 4.40589 13.9059L9.10589 18.6059C10.2939 19.7939 10.888 20.388 11.5729 20.6105C12.1755 20.8063 12.8245 20.8063 13.4271 20.6105C14.112 20.388 14.7061 19.7939 15.8941 18.6059L18.6059 15.8941C19.7939 14.7061 20.388 14.112 20.6105 13.4271C20.8063 12.8245 20.8063 12.1755 20.6105 11.5729C20.388 10.888 19.7939 10.2939 18.6059 9.10589L13.9059 4.40589C13.387 3.88703 13.1276 3.6276 12.8249 3.44208C12.5564 3.27759 12.2638 3.15638 11.9577 3.08289C11.6124 3 11.2455 3 10.5118 3ZM7.5498 7.0498C7.5498 7.32595 7.32595 7.5498 7.0498 7.5498C6.77366 7.5498 6.5498 7.32595 6.5498 7.0498C6.5498 6.77366 6.77366 6.5498 7.0498 6.5498C7.32595 6.5498 7.5498 6.77366 7.5498 7.0498Z" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="stroke_tag"></path>
+            </g>
+        </svg>
+    </div>
+    <div class="carousel_cards">
+        for _, book := range books {
+            <div class="carousel_card">
+                <div class="card_cover">
+                    <img src={ book.CoverURL } alt="Book Cover"/>
+                </div>
+                <div class="card_info">
+                    <div class="card_title">
+                        <h3>{ book.Title }</h3>
+                        if book.CoverType == "PDF" {
+                            <h4>{ book.CoverType }</h4>
+                        } else {
+                            <h4>Pasta { book.CoverType }</h4>
+                        }
                     </div>
-                    <div class="card_info">
-                        <div class="card_title">
-                            <h3>{ book.Title }</h3>
-                            if book.CoverType == "PDF" {
-                                <h4>{ book.CoverType }</h4>
-                            } else {
-                                <h4>Pasta { book.CoverType }</h4>
-                            }
+                    <div class="card_price_qty">
+                        <h5>${ formatPrice(book.Price) }</h5>
+                        <div class="card_qty">
+                            <button class="decrement" data-id={ formatID(book.ID) }><span>-</span></button>
+                            <p id={ "qty-" + formatID(book.ID) }>1</p>
+                            <button class="increment" data-id={ formatID(book.ID) }><span>+</span></button>
                         </div>
-                        <div class="card_price_qty">
-                            <h5>${ formatPrice(book.Price) }</h5>
-                            <div class="card_qty">
-                                <button><span>-</span></button><p>1</p><button><span>+</span></button>
-                            </div>
-                        </div>
-                        <div class="card_add">
-                            <h6>Agrerar al carrito</h6>
-                            <button class="card_qty">
-                                <img src="public/icons/cart_add.svg" />
-                            </button>
-                        </div>
+                    </div>
+                    <div class="card_view_add">
+                        <a href={templ.URL(fmt.Sprintf("/book?id=%d&category=%d", book.ID, book.CategoryID))}>Ver más información</a>
+                        <button>
+                            <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <style>
+                                    .fill_cart {
+                                        fill: #f5f5f5;
+                                    }
+
+                                    .stroke_cart {
+                                        stroke: #f5f5f5;
+                                    }
+
+                                    @media (prefers-color-scheme: dark) {
+                                        .fill_cart {
+                                            fill: #292929;
+                                        }
+
+                                        .stroke_cart {
+                                            stroke: #292929;
+                                        }
+                                    }
+                                </style>
+                                <path d="M53.3333 74.6666H138.667H200.427C213.048 74.6666 222.91 85.5641 221.654 98.1227L215.254 162.123C214.164 173.028 204.987 181.333 194.027 181.333H92.1558C81.9866 181.333 73.2311 174.156 71.2367 164.183L53.3333 74.6666Z" stroke-width="25.6" stroke-linejoin="round" class="stroke_cart"/>
+                                <path d="M53.3333 74.6667L44.6865 40.0796C43.4993 35.3312 39.2329 32 34.3383 32H21.3333" stroke="#292929" stroke-width="25.6" stroke-linecap="round" stroke-linejoin="round" class="stroke_cart"/>
+                                <path d="M85.3333 224H106.667" stroke="#292929" stroke-width="25.6" stroke-linecap="round" stroke-linejoin="round" class="stroke_cart"/>
+                                <path d="M170.667 224H192" stroke="#292929" stroke-width="25.6" stroke-linecap="round" stroke-linejoin="round" class="stroke_cart"/>
+                                <rect x="133.25" y="93" width="16.8269" height="70" rx="8.41346" class="fill_cart"/>
+                                <rect x="107" y="136.077" width="16.8269" height="70" rx="8.41346" transform="rotate(-90 107 136.077)" class="fill_cart"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
+    <p class="carousel_helper">Desliza para ver más productos <span>→</span></p>
 }

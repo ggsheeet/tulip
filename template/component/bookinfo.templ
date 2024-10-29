@@ -1,0 +1,78 @@
+package component
+
+import "github.com/ggsheet/kerigma/internal/database"
+
+templ BookInfo(book database.Book) {
+    <div class="book_container">
+        <div class="book_card">
+            <div class="card_section">
+                <div class="card_cover">
+                    <img src={ book.CoverURL } alt="Book Cover"/>
+                </div>
+                <div class="card_info">
+                    <div class="card_title">
+                        <h3>{ book.Title }</h3>
+                        if book.CoverType == "PDF" {
+                            <h4>{ book.CoverType }</h4>
+                        } else {
+                            <h4>Pasta { book.CoverType }</h4>
+                        }
+                    </div>
+                    <div class="card_details">
+                        <p>Autor: <span>{ book.Author }</span></p>
+                        <p>ISBN: <span>{ book.ISBN }</span></p>
+                        <p>Editorial: <span>{ book.PublisherName }</span></p>
+                        <p>Letra: <span>{ book.LetterType }</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="card_section section_long">
+                <div class="card_qty_add">
+                <div class="card_price_qty">
+                    <h5 class="card_price">${ formatPrice(book.Price) } <span>MXN</span></h5>
+                    <div class="card_qty">
+                        <button class="decrement" data-id={ formatID(book.ID) }><span>-</span></button>
+                        <p id={ "qty-" + formatID(book.ID) }>1</p>
+                        <button class="increment" data-id={ formatID(book.ID) }><span>+</span></button>
+                    </div>
+                    </div>
+                    <button class="card_add">
+                        <p>Agregar al carrito</p>
+                        <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <style>
+                                .fill_class {
+                                    fill: #f5f5f5;
+                                }
+
+                                .stroke_class {
+                                    stroke: #f5f5f5;
+                                }
+
+                                @media (prefers-color-scheme: dark) {
+                                    .fill_class {
+                                        fill: #292929;
+                                    }
+
+                                    .stroke_class {
+                                        stroke: #292929;
+                                    }
+                                }
+                            </style>
+                            <path d="M53.3333 74.6666H138.667H200.427C213.048 74.6666 222.91 85.5641 221.654 98.1227L215.254 162.123C214.164 173.028 204.987 181.333 194.027 181.333H92.1558C81.9866 181.333 73.2311 174.156 71.2367 164.183L53.3333 74.6666Z" stroke-width="25.6" stroke-linejoin="round" class="stroke_class"/>
+                            <path d="M53.3333 74.6667L44.6865 40.0796C43.4993 35.3312 39.2329 32 34.3383 32H21.3333" stroke="#292929" stroke-width="25.6" stroke-linecap="round" stroke-linejoin="round" class="stroke_class"/>
+                            <path d="M85.3333 224H106.667" stroke="#292929" stroke-width="25.6" stroke-linecap="round" stroke-linejoin="round" class="stroke_class"/>
+                            <path d="M170.667 224H192" stroke="#292929" stroke-width="25.6" stroke-linecap="round" stroke-linejoin="round" class="stroke_class"/>
+                            <rect x="133.25" y="93" width="16.8269" height="70" rx="8.41346" class="fill_class"/>
+                            <rect x="107" y="136.077" width="16.8269" height="70" rx="8.41346" transform="rotate(-90 107 136.077)" class="fill_class"/>
+                        </svg>
+                    </button>
+                
+                </div>
+                <div class="card_description">
+                <h6>Descripción</h6>
+                <p>{ book.Description }</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,88 @@
+package component
+
+import "github.com/ggsheet/kerigma/internal/database"
+
+templ BookFilter(bcategories []database.BCategory) {
+    <aside class="filters_container">
+        <div class="filters_content">
+            <div class="filter_head">
+                <p>Filtros</p>
+                <div class="filter_icon"></div>
+            </div>
+            <form
+                hx-boost="true" 
+                hx-get="/store"
+                hx-trigger="change"
+                hx-target="#books"
+                hx-swap="outerHTML"
+            >
+                <div class="filter_group">
+                    <fieldset>
+                        <legend class="group_name">Categoría</legend>
+                        <div class="group_options">
+                            for _, bcategory := range bcategories {
+                                <div class="option">
+                                    <input
+                                        type="radio"
+                                        id={ formatID(bcategory.ID) }
+                                        class="checkable"
+                                        name="category"
+                                        value={ formatID(bcategory.ID) }
+                                    />
+                                    <label for={ formatID(bcategory.ID) }>{ bcategory.BookCategory }</label>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="filter_group">
+                    <fieldset>
+                        <legend class="group_name">Orden</legend>
+                        <div class="group_options">
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    id="expensive"
+                                    class="checkable"
+                                    name="order"
+                                    value="expensive"
+                                />
+                                <label for="expensive">Mayor Precio</label>
+                            </div>
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    id="cheap"
+                                    class="checkable"
+                                    name="order"
+                                    value="cheap"
+                                />
+                                <label for="cheap">Menor Precio</label>
+                            </div>
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    id="selling"
+                                    class="checkable"
+                                    name="order"
+                                    value="selling"
+                                />
+                                <label for="selling">Más Vendido</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+            <button
+                id="clearCheckBtn"
+                hx-get="/store?clear=true"
+                hx-trigger="click"
+                hx-target="#books"
+                hx-swap="outerHTML"
+                class="disabled"
+            >
+                Limpiar
+            </button>
+        </div>
+    </aside>
+}

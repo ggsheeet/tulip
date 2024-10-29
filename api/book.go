@@ -23,6 +23,9 @@ func (s *BookHandlers) handleBook(c echo.Context) error {
 func (s *BookHandlers) handleGetBooks(c echo.Context) error {
 	page := 1
 	limit := 10
+	category := 0
+	order := ""
+	bookId := 0
 
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		var err error
@@ -40,9 +43,29 @@ func (s *BookHandlers) handleGetBooks(c echo.Context) error {
 		}
 	}
 
-	books, err := s.db.GetBooks(page, limit)
+	if categoryParam := c.QueryParam("category"); categoryParam != "" {
+		var err error
+		category, err = strconv.Atoi(categoryParam)
+		if err != nil || category <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid cateogry id")
+		}
+	}
+
+	if orderParam := c.QueryParam("order"); orderParam != "" {
+		order = orderParam
+	}
+
+	if bookIdParam := c.QueryParam("itemId"); bookIdParam != "" {
+		var err error
+		bookId, err = strconv.Atoi(bookIdParam)
+		if err != nil || bookId <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid book id")
+		}
+	}
+
+	books, err := s.db.GetBooks(page, limit, category, order, bookId)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, "Error fetching books")
 	}
 	return c.JSON(http.StatusOK, books)
 }
