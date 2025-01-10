@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/labstack/echo/v4"
@@ -20,10 +22,20 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 		origin := c.Request().Header.Get("Origin")
+		referer := c.Request().Header.Get("Referer")
 
-		// Check if the origin is allowed
-		if origin != allowedOrigin {
-			return echo.NewHTTPError(http.StatusForbidden, "Forbidden: Invalid Origin")
+		if referer != "" {
+			if referer == allowedOrigin+"/cart" {
+				return next(c)
+			}
+			refererURL, err := url.Parse(referer)
+			if err == nil && refererURL.Host != "" {
+				referer = fmt.Sprintf("%s://%s", refererURL.Scheme, refererURL.Host)
+			}
+		}
+
+		if origin != allowedOrigin && referer != allowedOrigin {
+			return echo.NewHTTPError(http.StatusForbidden, "Forbidden: Invalid Origin or Referer")
 		}
 
 		// CORS headers

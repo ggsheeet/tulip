@@ -12,10 +12,11 @@ templ BookFilter(bcategories []database.BCategory) {
             <form
                 hx-boost="true" 
                 hx-get="/store"
-                hx-trigger="change"
+                hx-trigger="update"
                 hx-target="#books"
                 hx-swap="outerHTML"
             >
+                <input type="hidden" id="pageInput" name="page" value="1"/>
                 <div class="filter_group">
                     <fieldset>
                         <legend class="group_name">Categoría</legend>
@@ -24,12 +25,12 @@ templ BookFilter(bcategories []database.BCategory) {
                                 <div class="option">
                                     <input
                                         type="radio"
-                                        id={ formatID(bcategory.ID) }
+                                        id={ formatInts(bcategory.ID) }
                                         class="checkable"
                                         name="category"
-                                        value={ formatID(bcategory.ID) }
+                                        value={ formatInts(bcategory.ID) }
                                     />
-                                    <label for={ formatID(bcategory.ID) }>{ bcategory.BookCategory }</label>
+                                    <label for={ formatInts(bcategory.ID) }>{ bcategory.BookCategory }</label>
                                 </div>
                             }
                         </div>

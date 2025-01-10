@@ -1,6 +1,8 @@
 package component
 
 import "github.com/ggsheet/kerigma/internal/database"
+import "fmt"
+import "net/url"
 
 templ ResourceInfo(resource database.Resource) {
     <div class="item_container">
@@ -11,16 +13,20 @@ templ ResourceInfo(resource database.Resource) {
                 </div>
                 <div class="card_info">
                     <div class="card_title">
-                        <h3>{ resource.Title }</h3>
+                        <h2>{ resource.Title }</h2>
                         <h4>{ resource.ResourceCategory }</h4>
                     </div>
                     <div class="card_details">
-                        <p>Autor: <span>{ resource.Author }</span></p>
+                        <h3>Autor: <span>{ resource.Author }</span></h3>
                         <p>Fecha: <span>{ formatDate(resource.CreatedAt) }</span></p>
                     </div>
                 </div>
             </div>
-            <div class="card_section section_long">
+            <div class="card_section section_long res">
+                <div class="card_view_downl">
+                    <a href={ templ.URL(resource.ResourceURL) } target="_blank" data-id={ formatInts(resource.ID) }>Ver PDF</a>
+                    <a href={templ.URL(fmt.Sprintf("/download?rUrl=%s", url.QueryEscape(resource.ResourceURL)))} rel="noopener noreferrer" download={ resource.Title } data-id={ formatInts(resource.ID) }>Descargar</a>
+                </div>
                 <div class="card_description">
                     <h6 class="description_head">Descripción</h6>
                     <div class="description_body">@templ.Raw(formatDescription(resource.Description))</div>

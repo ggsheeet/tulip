@@ -1,0 +1,33 @@
+package component
+
+templ Pagination(currentPage int, totalPages int) {
+    <nav class="controls">
+        <button
+            id="prev"
+            type="button"
+            data-direction="prev"
+            data-page={ formatInts(currentPage) }
+            data-pages={ formatInts(totalPages) }
+            class="pagination_btn disabled"
+            disabled
+        >
+            Anterior
+        </button>
+        <p>
+            Pag. 
+            <span id="currentPage">{ formatInts(currentPage) }</span> 
+            de { formatInts(totalPages) }
+        </p>
+        <button
+            id="next"
+            type="button"
+            data-direction="next"
+            data-page={ formatInts(currentPage) }
+            data-pages={ formatInts(totalPages) }
+            class="pagination_btn disabled"
+            disable
+        >
+            Siguiente
+        </button>
+    </nav>
+}

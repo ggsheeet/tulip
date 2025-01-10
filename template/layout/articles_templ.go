@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "github.com/ggsheet/kerigma/internal/database"
 import "github.com/ggsheet/kerigma/template/component"
 
-func Articles(articles []database.Article, acategories []database.ACategory) templ.Component {
+func Articles(articles []database.Article, acategories []database.ACategory, currentPage int, totalPages int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -29,7 +29,7 @@ func Articles(articles []database.Article, acategories []database.ACategory) tem
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Artículos Kerigma</title><meta name=\"description\" content=\"Artículos de Kerigma, Editorial Cristiana Reformada\"><meta name=\"robots\" content=\"all\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"Artículos Kerigma\"><meta property=\"og:description\" content=\"Artículos Kerigma, Editorial Cristiana Reformada\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Kerigma Editorial\"><meta property=\"og:url\" content=\"https://www.kerigmalife.com/articles\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png\"><meta name=\"keywords\" content=\"libreria, artículos, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia\"><link rel=\"canonical\" href=\"https://www.kerigmalife.com/articles\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"preload\" href=\"/public/css/reset.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/global.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/main.css\" as=\"style\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Regular.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Medium.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Bold.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"><script type=\"text/javascript\" src=\"/public/js/main.js\" defer></script><script type=\"text/javascript\" src=\"/public/js/htmx.min.js\" defer></script></head><body><header class=\"header_styles\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Artículos Kerigma</title><meta name=\"description\" content=\"Artículos Kerigma, Ministerio Cristiano Reformado\"><meta name=\"robots\" content=\"all\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"Artículos Kerigma\"><meta property=\"og:description\" content=\"Artículos Kerigma, Ministerio Cristiano Reformado\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Publicaciones Tulip\"><meta property=\"og:url\" content=\"https://www.kerigmalife.com/articles\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png\"><meta name=\"keywords\" content=\"libreria, artículos, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia\"><link rel=\"canonical\" href=\"https://www.kerigmalife.com/articles\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"preload\" href=\"/public/css/reset.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/global.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/main.css\" as=\"style\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Regular.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Medium.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Bold.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"><script type=\"text/javascript\" src=\"/public/js/main.js\" defer></script><script type=\"text/javascript\" src=\"/public/js/htmx.min.js\" defer></script></head><body><header class=\"header_styles\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -37,7 +37,7 @@ func Articles(articles []database.Article, acategories []database.ACategory) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><div class=\"filters_items\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><h1 class=\"hidden\">Artículos</h1><div class=\"filters_items\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -45,7 +45,7 @@ func Articles(articles []database.Article, acategories []database.ACategory) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = component.ArticleGrid(articles).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = component.ArticleGrid(articles, currentPage, totalPages).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

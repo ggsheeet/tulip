@@ -16,24 +16,23 @@ templ Index(articles []database.Article, resources []database.Resource, books []
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>Kerigma Editorial</title>
-            <meta name="description" content="Libreria y Editorial Cristiana Reformada" />
+            <title>Publicaciones Tulip</title>
+            <meta name="description" content="Publicaciones Tulip, Editorial Cristiana Reformada" />
             <meta name="robots" content="all">
             <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
             <meta
                 property="og:title"
-                content="Kerigma Editorial"
+                content="Publicaciones Tulip"
             />
             <meta
                 property="og:description"
-                content="Libreria y Editorial Cristiana Reformada"
+                content="Publicaciones Tulip, Editorial Cristiana Reformada"
             />
             <meta property="og:locale" content="es"/>
-            <meta property="og:site_name" content="Kerigma Editorial"/>
+            <meta property="og:site_name" content="Publicaciones Tulip"/>
             <meta property="og:url" content="https://www.kerigmalife.com"/>
             <meta property="og:type" content="website"/>
-            <meta property="og:image" content="https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png"
-            />
+            <meta property="og:image" content="https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png"/>
             <meta name="keywords" content="libreria, libros, cristiana, tienda, presbiteriana, reformada, cristo, dios, leer, blog, articulos, recursos, lectura, teologia" />
             <link rel="canonical" href="https://www.kerigmalife.com" />
             <link rel='shortcut icon' href="favicon.ico" />
@@ -50,6 +49,10 @@ templ Index(articles []database.Article, resources []database.Resource, books []
             <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
         </head>
         <body>
+            <div id="snackBar" class="snack_bar">
+                <div class="snack_text">
+                </div>
+            </div>
             <header class="header_styles">
                 @component.Nav()
             </header>

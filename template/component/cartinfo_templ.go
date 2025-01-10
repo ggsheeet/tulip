@@ -8,7 +8,7 @@ package component
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func Footer() templ.Component {
+func CartInfo() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -26,7 +26,7 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"footer_container\"><div class=\"footer_logo_tnc\"><div><a classhref=\"/\"><img src=\"https://kerigmalife.s3.us-east-2.amazonaws.com/logos/logo-white-reg.webp\"></a></div><ul><li><a href=\"/\" class=\"nav_link\">Aviso de Privacidad</a></li><li><a href=\"/\" class=\"nav_link\">Copyright 2024</a></li><li><a href=\"/\" class=\"nav_link\">All Rights Reserved</a></li></ul></div><hr><div class=\"footer_routes_social\"><ul><li><a href=\"/\" class=\"nav_link\">Inicio</a></li><li><a href=\"/resources\" class=\"nav_link\">Recursos</a></li><li><a href=\"/store\" class=\"nav_link\">Tienda</a></li><li><a href=\"/articles\" class=\"nav_link\">Artículos</a></li><li><a href=\"/cart\" class=\"nav_link\">Carrito</a></li></ul><div class=\"footer_social\"><a href=\"/\" class=\"social_img\"><img src=\"public/icons/facebook.svg\"></a> <a href=\"/\" class=\"social_img\"><img src=\"public/icons/insta.svg\"></a></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"cartInfo\" class=\"cart_container\" style=\"display: none;\"><div class=\"cart_payment\"><div class=\"cart_head\"><h2>Detalles del pedido</h2></div><div id=\"cartPayment\" class=\"payment_breakdown\"><div class=\"payment_amount\"><h5>Subtotal</h5><h6 id=\"cartSub\" class=\"payment_price\"></h6></div><div class=\"payment_amount\"><h5>Envío</h5><h6 id=\"cartShip\" class=\"payment_price\"></h6></div><hr><div class=\"payment_amount\"><h5>Total</h5><h6 id=\"cartTotal\" class=\"payment_price\"></h6></div></div><div class=\"payment_button\"><button>Ir a Pagar</button></div></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -49,11 +49,11 @@ templ Carousel(books []database.Book) {
                         }
                     </div>
                     <div class="card_price_qty">
-                        <h5>${ formatPrice(book.Price) }</h5>
+                        <h5 data-price={ formatPrice(book.Price) }>${ formatPrice(book.Price) }</h5>
                         <div class="card_qty">
-                            <button class="decrement" data-id={ formatID(book.ID) }><span>-</span></button>
-                            <p id={ "qty-" + formatID(book.ID) }>1</p>
-                            <button class="increment" data-id={ formatID(book.ID) }><span>+</span></button>
+                            <button class="decrement" data-id={ formatInts(book.ID) } data-stock={ formatInts(book.Stock) }><span>-</span></button>
+                            <p id={ "qty-" + formatInts(book.ID) }>0</p>
+                            <button class="increment" data-id={ formatInts(book.ID) } data-stock={ formatInts(book.Stock) }><span>+</span></button>
                         </div>
                     </div>
                     <div class="card_view_add">

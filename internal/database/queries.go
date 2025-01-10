@@ -337,7 +337,8 @@ var getBooksQ = `
 		b.price, b.stock, b.sales_count, b.is_active, b.letter_id, 
 		l.letter_type, b.version_id, bv.bible_version, b.cover_id, 
 		c.cover_type, b.publisher_id, p.publisher_name, b.category_id, 
-		bc.book_category, b.created_at, b.updated_at
+		bc.book_category, b.created_at, b.updated_at,
+		COUNT(*) OVER() AS "record_count"
 	FROM book b
 	LEFT JOIN letter l ON b.letter_id = l.id
 	LEFT JOIN version bv ON b.version_id = bv.id
@@ -359,7 +360,8 @@ var getBCategoriesQ = `SELECT * FROM bcategory ORDER BY id ASC`
 var getArticlesQ = `
 	SELECT 
 		a.id, a.title, a.author, a.excerpt, a.description, a.cover_url, 
-		a.category_id, ac.article_category, a.created_at, a.updated_at
+		a.category_id, ac.article_category, a.created_at, a.updated_at,
+		COUNT(*) OVER() AS "record_count"
 	FROM article a
 	LEFT JOIN acategory ac ON a.category_id = ac.id
 `
@@ -369,7 +371,8 @@ var getACategoriesQ = `SELECT * FROM acategory ORDER BY id ASC`
 var getResourcesQ = `
 	SELECT 
 		r.id, r.title, r.author, r.description, r.cover_url, r.resource_url,
-		r.category_id, rc.resource_category, r.created_at, r.updated_at
+		r.category_id, rc.resource_category, r.created_at, r.updated_at,
+		COUNT(*) OVER() AS "record_count"
 	FROM resource r
 	LEFT JOIN rcategory rc ON r.category_id = rc.id
 `

@@ -152,6 +152,7 @@ func (s *PostgresDB) GetArticles(page int, limit int, category int, order string
 			&article.ArticleCategory,
 			&article.CreatedAt,
 			&article.UpdatedAt,
+			&article.RecordCount,
 		)
 
 		if err != nil {

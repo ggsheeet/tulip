@@ -29,7 +29,7 @@ func Article(article database.Article, articles []database.Article) templ.Compon
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Artículo Kerigma</title><meta name=\"description\" content=\"Artículo de Kerigma, Editorial Cristiana Reformada\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Artículo Kerigma</title><meta name=\"description\" content=\"Artículo Kerigma, Ministerio Cristiano Reformado\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +42,7 @@ func Article(article database.Article, articles []database.Article) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta property=\"og:description\" content=\"Artículo Kerigma, Editorial Cristiana Reformada\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Kerigma Editorial\"><meta property=\"og:url\" content=\"https://www.kerigmalife.com/article\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta property=\"og:description\" content=\"Artículo Kerigma, Ministerio Cristiano Reformado\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Publicaciones Tulip\"><meta property=\"og:url\" content=\"https://www.kerigmalife.com/article\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,7 +63,7 @@ func Article(article database.Article, articles []database.Article) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><div class=\"item_related\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><h1 class=\"hidden\">Página de Artículo</h1><div class=\"item_related\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

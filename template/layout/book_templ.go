@@ -29,7 +29,7 @@ func Book(book database.Book, books []database.Book) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Tienda Kerigma</title><meta name=\"description\" content=\"Tienda Kerigma, Editorial Cristiana Reformada\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><title>Tienda Kerigma</title><meta name=\"description\" content=\"Tienda Tulip, Editorial Cristiana Reformada\"><link rel=\"icon\" href=\"/public/favicon.ico\" type=\"image/x-icon\"><meta property=\"og:title\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +42,7 @@ func Book(book database.Book, books []database.Book) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta property=\"og:description\" content=\"Tienda Kerigma, Editorial Cristiana Reformada\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Kerigma Editorial\"><meta property=\"og:url\" content=\"https://www.kerigmalife.com/book\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta property=\"og:description\" content=\"Tienda Tulip, Editorial Cristiana Reformada\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Publicaciones Tulip\"><meta property=\"og:url\" content=\"https://www.kerigmalife.com/book\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func Book(book database.Book, books []database.Book) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta name=\"keywords\" content=\"libreria, libros, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia\"><meta name=\"format-detection\" content=\"telephone=no\"><link rel=\"canonical\" href=\"https://www.kerigmalife.com/book\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"preload\" href=\"/public/css/reset.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/global.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/main.css\" as=\"style\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Regular.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Medium.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Bold.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"><script type=\"text/javascript\" src=\"/public/js/main.js\" defer></script><script type=\"text/javascript\" src=\"/public/js/htmx.min.js\" defer></script></head><body><header class=\"header_styles\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta name=\"keywords\" content=\"libreria, libros, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia\"><meta name=\"format-detection\" content=\"telephone=no\"><link rel=\"canonical\" href=\"https://www.kerigmalife.com/book\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"preload\" href=\"/public/css/reset.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/global.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/main.css\" as=\"style\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Regular.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Medium.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Bold.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"><script type=\"text/javascript\" src=\"/public/js/main.js\" defer></script><script type=\"text/javascript\" src=\"/public/js/htmx.min.js\" defer></script></head><body><div id=\"snackBar\" class=\"snack_bar\"><div class=\"snack_text\"></div></div><header class=\"header_styles\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,7 +63,7 @@ func Book(book database.Book, books []database.Book) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><div class=\"book_related\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main class=\"main_styles\"><h1 class=\"hidden\">Página de Libro</h1><div class=\"book_related\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

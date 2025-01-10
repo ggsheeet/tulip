@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -123,7 +124,7 @@ func (s *PostgresDB) GetBookById(id string) (*Book, error) {
 	return &book, nil
 }
 
-func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, bookId int) (*[]*Book, error) {
+func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, bookId int, bookIds string) (*[]*Book, error) {
 	offset := (page - 1) * limit
 
 	query := getBooksQ
@@ -136,6 +137,11 @@ func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, b
 
 	if bookId != 0 {
 		whereClause += " AND b.id != $4"
+	}
+
+	if bookIds != "" {
+		ids := strings.Split(bookIds, ",")
+		whereClause += fmt.Sprintf(" AND b.id IN (%s)", strings.Join(ids, ", "))
 	}
 
 	query += whereClause
@@ -193,6 +199,7 @@ func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, b
 			&book.BookCategory,
 			&book.CreatedAt,
 			&book.UpdatedAt,
+			&book.RecordCount,
 		)
 
 		if err != nil {

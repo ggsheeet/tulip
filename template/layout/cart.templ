@@ -1,34 +1,33 @@
 package layout
 
-import "github.com/ggsheet/kerigma/internal/database"
 import "github.com/ggsheet/kerigma/template/component"
 
-templ Articles(articles []database.Article, acategories []database.ACategory, currentPage int, totalPages int) {
+templ Cart() {
     <!DOCTYPE html>
     <html lang="es">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>Artículos Kerigma</title>
-            <meta name="description" content="Artículos Kerigma, Ministerio Cristiano Reformado" />
-            <meta name="robots" content="all">
+            <title>Tienda Kerigma</title>
+            <meta name="description" content="Tienda Tulip, Editorial Cristiana Reformada" />
             <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
             <meta
                 property="og:title"
-                content="Artículos Kerigma"
+                content="Tienda Tulip"
             />
             <meta
                 property="og:description"
-                content="Artículos Kerigma, Ministerio Cristiano Reformado"
+                content="Tienda Tulip, Editorial Cristiana Reformada"
             />
             <meta property="og:locale" content="es"/>
             <meta property="og:site_name" content="Publicaciones Tulip"/>
-            <meta property="og:url" content="https://www.kerigmalife.com/articles"/>
+            <meta property="og:url" content="https://www.kerigmalife.com/cart"/>
             <meta property="og:type" content="website"/>
             <meta property="og:image" content="https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png"/>
-            <meta name="keywords" content="libreria, artículos, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
-            <link rel="canonical" href="https://www.kerigmalife.com/articles" />
+            <meta name="keywords" content="carrito, libreria, libros, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
+            <meta name="format-detection" content="telephone=no">
+            <link rel="canonical" href="https://www.kerigmalife.com/cart" />
             <link rel="shortcut icon" href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>
@@ -43,14 +42,18 @@ templ Articles(articles []database.Article, acategories []database.ACategory, cu
             <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
         </head>
         <body>
+            <div id="snackBar" class="snack_bar">
+                <div class="snack_text">
+                </div>
+            </div>
             <header class="header_styles">
                 @component.Nav()
             </header>
             <main class="main_styles">
-                <h1 class="hidden">Artículos</h1>
-                <div class="filters_items">
-                    @component.ArticleFilter(acategories)
-                    @component.ArticleGrid(articles, currentPage, totalPages)
+                <h1 class="hidden">Carrito</h1>
+                <div class="items_cart">
+                    @component.CartGrid()
+                    @component.CartInfo()
                 </div>
             </main>
             <footer class="footer_styles">

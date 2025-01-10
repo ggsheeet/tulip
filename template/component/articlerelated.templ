@@ -8,7 +8,6 @@ templ ArticleRelated(articles []database.Article) {
         <div class="related_content">
             <div class="related_head">
                 <p>Artículos relacionados</p>
-                <div class="related_icon"></div>
             </div>
             <div id="resource_cards" class="related_cards">
                 if len(articles) == 0 {
@@ -54,7 +53,7 @@ templ ArticleRelated(articles []database.Article) {
                                 <img src={ article.CoverURL } alt="Resource Cover"/>
                             </div>
                             <div class="card_text">
-                                <h3>{ article.Title }</h3>
+                                <h2>{ article.Title }</h2>
                                 <h4>{ article.ArticleCategory }</h4>
                             </div>
                         </a>

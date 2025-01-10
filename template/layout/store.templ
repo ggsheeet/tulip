@@ -3,31 +3,30 @@ package layout
 import "github.com/ggsheet/kerigma/internal/database"
 import "github.com/ggsheet/kerigma/template/component"
 
-templ Store(books []database.Book, bcategories []database.BCategory) {
+templ Store(books []database.Book, bcategories []database.BCategory, currentPage int, totalPages int) {
     <!DOCTYPE html>
     <html lang="es">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>Tienda Kerigma Editorial</title>
-            <meta name="description" content="Libreria y Editorial Cristiana Reformada" />
+            <title>Tienda Tulip</title>
+            <meta name="description" content="Tienda Tulip, Editorial Cristiana Reformada" />
             <meta name="robots" content="all">
             <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
             <meta
                 property="og:title"
-                content="Kerigma Editorial"
+                content="Tienda Tulip"
             />
             <meta
                 property="og:description"
-                content="Kerigma tienda en línea, Editorial Cristiana Reformada"
+                content="Tienda Tulip, Editorial Cristiana Reformada"
             />
             <meta property="og:locale" content="es"/>
-            <meta property="og:site_name" content="Kerigma Editorial"/>
+            <meta property="og:site_name" content="Publicaciones Tulip"/>
             <meta property="og:url" content="https://www.kerigmalife.com/store"/>
             <meta property="og:type" content="website"/>
-            <meta property="og:image" content="https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png"
-            />
+            <meta property="og:image" content="https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png"/>
             <meta name="keywords" content="libreria, libros, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, articulos, recursos, lectura, teologia" />
             <link rel="canonical" href="https://www.kerigmalife.com/store" />
             <link rel="shortcut icon" href="favicon.ico" />
@@ -44,13 +43,18 @@ templ Store(books []database.Book, bcategories []database.BCategory) {
             <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
         </head>
         <body>
+            <div id="snackBar" class="snack_bar">
+                <div class="snack_text">
+                </div>
+            </div>
             <header class="header_styles">
                 @component.Nav()
             </header>
             <main class="main_styles">
+                <h1 class="hidden">Tienda en Línea</h1>
                 <div class="filters_items">
                     @component.BookFilter(bcategories)
-                    @component.BookGrid(books)
+                    @component.BookGrid(books, currentPage, totalPages)
                 </div>
             </main>
             <footer class="footer_styles">

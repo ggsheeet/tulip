@@ -12,7 +12,7 @@ type BookInterface interface {
 	DeleteBook(string) error
 	UpdateBook(string, *Book) error
 	GetBookById(string) (*Book, error)
-	GetBooks(int, int, int, string, int) (*[]*Book, error)
+	GetBooks(int, int, int, string, int, string) (*[]*Book, error)
 	CreateBook(*Book) error
 	DeleteLetter(string) error
 	UpdateLetter(string, *Letter) error

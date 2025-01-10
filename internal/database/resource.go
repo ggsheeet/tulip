@@ -151,6 +151,7 @@ func (s *PostgresDB) GetResources(page int, limit int, category int, order strin
 			&resource.ResourceCategory,
 			&resource.CreatedAt,
 			&resource.UpdatedAt,
+			&resource.RecordCount,
 		)
 
 		if err != nil {

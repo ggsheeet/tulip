@@ -11,7 +11,7 @@ templ Resource(resource database.Resource, resources []database.Resource) {
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
             <title>Recurso Kerigma</title>
-            <meta name="description" content="Recurso Kerigma, Editorial Cristiana Reformada" />
+            <meta name="description" content="Recurso Kerigma, Ministerio Cristiano Reformado" />
             <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
             <meta
                 property="og:title"
@@ -19,14 +19,13 @@ templ Resource(resource database.Resource, resources []database.Resource) {
             />
             <meta
                 property="og:description"
-                content="Recurso Kerigma, Editorial Cristiana Reformada"
+                content="Recurso Kerigma, Ministerio Cristiano Reformado"
             />
             <meta property="og:locale" content="es"/>
-            <meta property="og:site_name" content="Kerigma Editorial"/>
+            <meta property="og:site_name" content="Publicaciones Tulip"/>
             <meta property="og:url" content="https://www.kerigmalife.com/resource"/>
             <meta property="og:type" content="website"/>
-            <meta property="og:image" content={resource.CoverURL}
-            />
+            <meta property="og:image" content={resource.CoverURL}/>
             <meta name="keywords" content="libreria, recursos, pdf, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
             <link rel="canonical" href="https://www.kerigmalife.com/resource" />
             <link rel="shortcut icon" href="favicon.ico" />
@@ -47,6 +46,7 @@ templ Resource(resource database.Resource, resources []database.Resource) {
                 @component.Nav()
             </header>
             <main class="main_styles">
+                <h1 class="hidden">Página de Recurso</h1>
                 <div class="item_related">
                     @component.ResourceInfo(resource)
                     @component.ResourceRelated(resources)

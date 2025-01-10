@@ -28,7 +28,7 @@ func BookFilter(bcategories []database.BCategory) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"filters_container\"><div class=\"filters_content\"><div class=\"filter_head\"><p>Filtros</p><div class=\"filter_icon\"></div></div><form hx-boost=\"true\" hx-get=\"/store\" hx-trigger=\"change\" hx-target=\"#books\" hx-swap=\"outerHTML\"><div class=\"filter_group\"><fieldset><legend class=\"group_name\">Categoría</legend><div class=\"group_options\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"filters_container\"><div class=\"filters_content\"><div class=\"filter_head\"><p>Filtros</p><div class=\"filter_icon\"></div></div><form hx-boost=\"true\" hx-get=\"/store\" hx-trigger=\"update\" hx-target=\"#books\" hx-swap=\"outerHTML\"><input type=\"hidden\" id=\"pageInput\" name=\"page\" value=\"1\"><div class=\"filter_group\"><fieldset><legend class=\"group_name\">Categoría</legend><div class=\"group_options\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -38,9 +38,9 @@ func BookFilter(bcategories []database.BCategory) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(formatID(bcategory.ID))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(formatInts(bcategory.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 27, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 28, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -51,9 +51,9 @@ func BookFilter(bcategories []database.BCategory) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(formatID(bcategory.ID))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(formatInts(bcategory.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 30, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 31, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -64,9 +64,9 @@ func BookFilter(bcategories []database.BCategory) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(formatID(bcategory.ID))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(formatInts(bcategory.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 32, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 33, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -79,7 +79,7 @@ func BookFilter(bcategories []database.BCategory) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(bcategory.BookCategory)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 32, Col: 98}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/bookfilter.templ`, Line: 33, Col: 100}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

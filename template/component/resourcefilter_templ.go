@@ -28,7 +28,7 @@ func ResourceFilter(rcategories []database.RCategory) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"filters_container\"><div class=\"filters_content\"><div class=\"filter_head\"><p>Filtros</p><div class=\"filter_icon\"></div></div><form hx-boost=\"true\" hx-get=\"/resources\" hx-trigger=\"change\" hx-target=\"#resources\" hx-swap=\"outerHTML\"><div class=\"filter_group\"><fieldset><legend class=\"group_name\">Categoría</legend><div class=\"group_options\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"filters_container\"><div class=\"filters_content\"><div class=\"filter_head\"><p>Filtros</p><div class=\"filter_icon\"></div></div><form hx-boost=\"true\" hx-get=\"/resources\" hx-trigger=\"update\" hx-target=\"#resources\" hx-swap=\"outerHTML\"><input type=\"hidden\" id=\"pageInput\" name=\"page\" value=\"1\"><div class=\"filter_group\"><fieldset><legend class=\"group_name\">Categoría</legend><div class=\"group_options\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -38,9 +38,9 @@ func ResourceFilter(rcategories []database.RCategory) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(formatID(rcategory.ID))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(formatInts(rcategory.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 28, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 29, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -51,9 +51,9 @@ func ResourceFilter(rcategories []database.RCategory) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(formatID(rcategory.ID))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(formatInts(rcategory.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 31, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 32, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -64,9 +64,9 @@ func ResourceFilter(rcategories []database.RCategory) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(formatID(rcategory.ID))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(formatInts(rcategory.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 33, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 34, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -79,7 +79,7 @@ func ResourceFilter(rcategories []database.RCategory) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(rcategory.ResourceCategory)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 33, Col: 102}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `template/component/resourcefilter.templ`, Line: 34, Col: 104}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

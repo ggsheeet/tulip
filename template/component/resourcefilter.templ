@@ -13,10 +13,11 @@ templ ResourceFilter(rcategories []database.RCategory) {
             <form
                 hx-boost="true" 
                 hx-get="/resources"
-                hx-trigger="change"
+                hx-trigger="update"
                 hx-target="#resources"
                 hx-swap="outerHTML"
             >
+                <input type="hidden" id="pageInput" name="page" value="1"/>
                 <div class="filter_group">
                     <fieldset>
                         <legend class="group_name">Categoría</legend>
@@ -25,12 +26,12 @@ templ ResourceFilter(rcategories []database.RCategory) {
                                 <div class="option">
                                     <input
                                         type="radio"
-                                        id={ formatID(rcategory.ID) }
+                                        id={ formatInts(rcategory.ID) }
                                         class="checkable"
                                         name="category"
-                                        value={ formatID(rcategory.ID) }
+                                        value={ formatInts(rcategory.ID) }
                                     />
-                                    <label for={ formatID(rcategory.ID) }>{ rcategory.ResourceCategory }</label>
+                                    <label for={ formatInts(rcategory.ID) }>{ rcategory.ResourceCategory }</label>
                                 </div>
                             }
                         </div>

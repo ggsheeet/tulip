@@ -8,7 +8,6 @@ templ ResourceRelated(resources []database.Resource) {
         <div class="related_content">
             <div class="related_head">
                 <p>Recursos relacionados</p>
-                <div class="related_icon"></div>
             </div>
             <div id="resource_cards" class="related_cards">
                 if len(resources) == 0 {
@@ -54,7 +53,7 @@ templ ResourceRelated(resources []database.Resource) {
                                 <img src={ resource.CoverURL } alt="Resource Cover"/>
                             </div>
                             <div class="card_text">
-                                <h3>{ resource.Title }</h3>
+                                <h2>{ resource.Title }</h2>
                                 <h4>{ resource.ResourceCategory }</h4>
                             </div>
                         </a>

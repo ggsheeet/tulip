@@ -23,26 +23,25 @@ func formatDate(isoDate time.Time) string {
 func formatDescription(description string) string {
     formattedDescription := strings.ReplaceAll(description, "\n\n", "</p><br><p>")
     formattedDescription = strings.ReplaceAll(formattedDescription, "\n", "<br>")
-
-    formattedDescription = fmt.Sprintf("<p>" + formattedDescription + "</p>")
+    formattedDescription = "<p>" + formattedDescription + "</p>"
 
     return formattedDescription
 }
 
 templ ArticleInfo(article database.Article) {
     <div class="item_container">
-        <div class="item_card">
+        <article class="item_card">
             <div class="card_section">
                 <div class="card_cover">
                     <img src={ article.CoverURL } alt="Article Cover"/>
                 </div>
                 <div class="card_info">
                     <div class="card_title">
-                        <h3>{ article.Title }</h3>
+                        <h2>{ article.Title }</h2>
                         <h4>{ article.ArticleCategory }</h4>
                     </div>
                     <div class="card_details">
-                        <p>Autor: <span>{ article.Author }</span></p>
+                        <h3>Autor: <span>{ article.Author }</span></h3>
                         <p>Fecha: <span>{ formatDate(article.CreatedAt) }</span></p>
                     </div>
                 </div>
@@ -53,6 +52,6 @@ templ ArticleInfo(article database.Article) {
                     <div class="description_body">@templ.Raw(formatDescription(article.Description))</div>
                 </div>
             </div>
-        </div>
+        </article>
     </div>
 }

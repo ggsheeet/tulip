@@ -11,7 +11,7 @@ templ BookInfo(book database.Book) {
                 </div>
                 <div class="card_info">
                     <div class="card_title">
-                        <h3>{ book.Title }</h3>
+                        <h2>{ book.Title }</h2>
                         if book.CoverType == "PDF" {
                             <h4>{ book.CoverType }</h4>
                         } else {
@@ -19,7 +19,7 @@ templ BookInfo(book database.Book) {
                         }
                     </div>
                     <div class="card_details">
-                        <p>Autor: <span>{ book.Author }</span></p>
+                        <h3>Autor: <span>{ book.Author }</span></h3>
                         <p>ISBN: <span>{ book.ISBN }</span></p>
                         <p>Editorial: <span>{ book.PublisherName }</span></p>
                         <p>Letra: <span>{ book.LetterType }</span></p>
@@ -28,13 +28,13 @@ templ BookInfo(book database.Book) {
             </div>
             <div class="card_section section_long">
                 <div class="card_qty_add">
-                <div class="card_price_qty">
-                    <h5 class="card_price">${ formatPrice(book.Price) } <span>MXN</span></h5>
-                    <div class="card_qty">
-                        <button class="decrement" data-id={ formatID(book.ID) }><span>-</span></button>
-                        <p id={ "qty-" + formatID(book.ID) }>1</p>
-                        <button class="increment" data-id={ formatID(book.ID) }><span>+</span></button>
-                    </div>
+                    <div class="card_price_qty">
+                        <h5 data-price={ formatPrice(book.Price) } class="card_price">${ formatPrice(book.Price) } <span>MXN</span></h5>
+                        <div class="card_qty">
+                            <button class="decrement" data-id={ formatInts(book.ID) }  data-stock={ formatInts(book.Stock) }><span>-</span></button>
+                            <p id={ "qty-" + formatInts(book.ID) }>0</p>
+                            <button class="increment" data-id={ formatInts(book.ID) }  data-stock={ formatInts(book.Stock) }><span>+</span></button>
+                        </div>
                     </div>
                     <button class="card_add">
                         <p>Agregar al carrito</p>
@@ -66,11 +66,10 @@ templ BookInfo(book database.Book) {
                             <rect x="107" y="136.077" width="16.8269" height="70" rx="8.41346" transform="rotate(-90 107 136.077)" class="fill_class"/>
                         </svg>
                     </button>
-                
                 </div>
                 <div class="card_description">
-                <h6>Descripción</h6>
-                <p>{ book.Description }</p>
+                    <h6>Descripción</h6>
+                    <p>{ book.Description }</p>
                 </div>
             </div>
         </div>

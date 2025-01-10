@@ -12,4 +12,6 @@ func APPRouter(e *echo.Echo) {
 	e.GET("/article", handleArticlePage)
 	e.GET("/resource", handleResourcePage)
 	e.GET("/resources", handleResourcesPage)
+	e.GET("/cart", handleCartPage)
+	e.GET("/download", handleResourceDownload)
 }

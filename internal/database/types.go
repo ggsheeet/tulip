@@ -124,6 +124,7 @@ type Book struct {
 	BookCategory  string    `json:"bCategory"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
+	RecordCount   int       `json:"recordCount,omitempty"`
 }
 
 type Letter struct {
@@ -172,6 +173,7 @@ type Article struct {
 	ArticleCategory string    `json:"articleCategory"`
 	CreatedAt       time.Time `json:"createdAt"`
 	UpdatedAt       time.Time `json:"updatedAt"`
+	RecordCount     int       `json:"recordCount,omitempty"`
 }
 
 type ACategory struct {
@@ -192,6 +194,7 @@ type Resource struct {
 	ResourceCategory string    `json:"rCategory"`
 	CreatedAt        time.Time `json:"createdAt"`
 	UpdatedAt        time.Time `json:"updatedAt"`
+	RecordCount      int       `json:"recordCount,omitempty"`
 }
 
 type RCategory struct {

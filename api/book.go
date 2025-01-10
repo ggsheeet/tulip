@@ -26,6 +26,7 @@ func (s *BookHandlers) handleGetBooks(c echo.Context) error {
 	category := 0
 	order := ""
 	bookId := 0
+	bookIds := ""
 
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		var err error
@@ -63,7 +64,12 @@ func (s *BookHandlers) handleGetBooks(c echo.Context) error {
 		}
 	}
 
-	books, err := s.db.GetBooks(page, limit, category, order, bookId)
+	if bookIdsParam := c.QueryParam("itemIds"); bookIdsParam != "" {
+		limit = 999
+		bookIds = bookIdsParam
+	}
+
+	books, err := s.db.GetBooks(page, limit, category, order, bookId, bookIds)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, "Error fetching books")
 	}

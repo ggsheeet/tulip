@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -31,6 +32,8 @@ func fetchData(url string, origin string, token string, page int, limit int, cat
 				}
 			} else if order != "" {
 				url = fmt.Sprintf("%s?page=%d&limit=%d&order=%s", url, page, limit, order)
+			} else {
+				url = fmt.Sprintf("%s?page=%d&limit=%d", url, page, limit)
 			}
 		} else {
 			url = fmt.Sprintf("%s?page=%d&limit=%d", url, page, limit)
@@ -156,12 +159,15 @@ func handleStorePage(c echo.Context) error {
 
 	page := 1
 	limit := 10
+	filter := false
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		var err error
 		page, err = strconv.Atoi(pageParam)
 		if err != nil {
 			log.Printf("Error parsing page parameter: %v", err)
 			page = 1
+		} else {
+			filter = true
 		}
 	}
 	if limitParam := c.QueryParam("limit"); limitParam != "" {
@@ -172,7 +178,6 @@ func handleStorePage(c echo.Context) error {
 			limit = 10
 		}
 	}
-	filter := false
 	category := 0
 	order := ""
 	if categoryParam := c.QueryParam("category"); categoryParam != "" {
@@ -200,7 +205,7 @@ func handleStorePage(c echo.Context) error {
 	go fetchData(origin+"/api/book", origin, token, page, limit, category, order, 0, &books, &wg, errChan, true, filter)
 
 	wg.Add(1)
-	go fetchData(origin+"/api/book/bcategory", origin, token, page, limit, 0, "", 0, &bcategories, &wg, errChan, true, false)
+	go fetchData(origin+"/api/book/bcategory", origin, token, page, limit, 0, "", 0, &bcategories, &wg, errChan, false, false)
 
 	wg.Wait()
 	close(errChan)
@@ -217,11 +222,18 @@ func handleStorePage(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to fetch data: %s", fmt.Sprintf("%v", errMessages)))
 	}
 
-	if clearParam := c.QueryParam("clear"); clearParam == "true" || filter == true {
-		return Render(c, component.BookGrid(books))
+	var totalPages int
+	if len(books) > 0 {
+		totalPages = int(math.Ceil(float64(books[0].RecordCount) / float64(limit)))
+	} else {
+		totalPages = 1
 	}
 
-	return Render(c, layout.Store(books, bcategories))
+	if clearParam := c.QueryParam("clear"); clearParam == "true" || filter {
+		return Render(c, component.BookGrid(books, page, totalPages))
+	}
+
+	return Render(c, layout.Store(books, bcategories, page, totalPages))
 }
 
 func handleArticlesPage(c echo.Context) error {
@@ -238,12 +250,15 @@ func handleArticlesPage(c echo.Context) error {
 
 	page := 1
 	limit := 10
+	filter := false
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		var err error
 		page, err = strconv.Atoi(pageParam)
 		if err != nil {
 			log.Printf("Error parsing page parameter: %v", err)
 			page = 1
+		} else {
+			filter = true
 		}
 	}
 	if limitParam := c.QueryParam("limit"); limitParam != "" {
@@ -254,7 +269,6 @@ func handleArticlesPage(c echo.Context) error {
 			limit = 10
 		}
 	}
-	filter := false
 	category := 0
 	order := ""
 	if categoryParam := c.QueryParam("category"); categoryParam != "" {
@@ -282,7 +296,7 @@ func handleArticlesPage(c echo.Context) error {
 	go fetchData(origin+"/api/article", origin, token, page, limit, category, order, 0, &articles, &wg, errChan, true, filter)
 
 	wg.Add(1)
-	go fetchData(origin+"/api/article/acategory", origin, token, page, limit, 0, "", 0, &acategories, &wg, errChan, true, false)
+	go fetchData(origin+"/api/article/acategory", origin, token, page, limit, 0, "", 0, &acategories, &wg, errChan, false, false)
 
 	wg.Wait()
 	close(errChan)
@@ -299,10 +313,18 @@ func handleArticlesPage(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to fetch data: %s", fmt.Sprintf("%v", errMessages)))
 	}
 
-	if clearParam := c.QueryParam("clear"); clearParam == "true" || filter == true {
-		return Render(c, component.ArticleGrid(articles))
+	var totalPages int
+	if len(articles) > 0 {
+		totalPages = int(math.Ceil(float64(articles[0].RecordCount) / float64(limit)))
+	} else {
+		totalPages = 1
 	}
-	return Render(c, layout.Articles(articles, acategories))
+
+	if clearParam := c.QueryParam("clear"); clearParam == "true" || filter {
+		return Render(c, component.ArticleGrid(articles, page, totalPages))
+	}
+
+	return Render(c, layout.Articles(articles, acategories, page, totalPages))
 }
 
 func handleResourcesPage(c echo.Context) error {
@@ -319,12 +341,15 @@ func handleResourcesPage(c echo.Context) error {
 
 	page := 1
 	limit := 10
+	filter := false
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		var err error
 		page, err = strconv.Atoi(pageParam)
 		if err != nil {
 			log.Printf("Error parsing page parameter: %v", err)
 			page = 1
+		} else {
+			filter = true
 		}
 	}
 	if limitParam := c.QueryParam("limit"); limitParam != "" {
@@ -335,7 +360,6 @@ func handleResourcesPage(c echo.Context) error {
 			limit = 10
 		}
 	}
-	filter := false
 	category := 0
 	order := ""
 	if categoryParam := c.QueryParam("category"); categoryParam != "" {
@@ -363,7 +387,7 @@ func handleResourcesPage(c echo.Context) error {
 	go fetchData(origin+"/api/resource", origin, token, page, limit, category, order, 0, &resources, &wg, errChan, true, filter)
 
 	wg.Add(1)
-	go fetchData(origin+"/api/resource/rcategory", origin, token, page, limit, 0, "", 0, &rcategories, &wg, errChan, true, false)
+	go fetchData(origin+"/api/resource/rcategory", origin, token, page, limit, 0, "", 0, &rcategories, &wg, errChan, false, false)
 
 	wg.Wait()
 	close(errChan)
@@ -380,11 +404,18 @@ func handleResourcesPage(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to fetch data: %s", fmt.Sprintf("%v", errMessages)))
 	}
 
-	if clearParam := c.QueryParam("clear"); clearParam == "true" || filter == true {
-		return Render(c, component.ResourceGrid(resources))
+	var totalPages int
+	if len(resources) > 0 {
+		totalPages = int(math.Ceil(float64(resources[0].RecordCount) / float64(limit)))
+	} else {
+		totalPages = 1
 	}
 
-	return Render(c, layout.Resources(resources, rcategories))
+	if clearParam := c.QueryParam("clear"); clearParam == "true" || filter {
+		return Render(c, component.ResourceGrid(resources, page, totalPages))
+	}
+
+	return Render(c, layout.Resources(resources, rcategories, page, totalPages))
 }
 
 func handleBookPage(c echo.Context) error {
@@ -628,4 +659,39 @@ func handleResourcePage(c echo.Context) error {
 	}
 
 	return Render(c, layout.Resource(resource, resources))
+}
+
+func handleResourceDownload(c echo.Context) error {
+	resourceUrl := c.QueryParam("rUrl")
+	if resourceUrl == "" {
+		return c.String(http.StatusBadRequest, "Missing resource URL")
+	}
+
+	req, err := http.NewRequest("GET", resourceUrl, nil)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to create request: %v", err))
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to fetch resource: %v", err))
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return c.String(resp.StatusCode, fmt.Sprintf("Failed to fetch resource: %s", resp.Status))
+	}
+
+	c.Response().Header().Set("Content-Type", "application/pdf")
+
+	if _, err := io.Copy(c.Response().Writer, resp.Body); err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to stream file: %v", err))
+	}
+
+	return nil
+}
+
+func handleCartPage(c echo.Context) error {
+	return Render(c, layout.Cart())
 }

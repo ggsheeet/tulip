@@ -12,10 +12,11 @@ templ ArticleFilter(acategories []database.ACategory) {
             <form
                 hx-boost="true" 
                 hx-get="/articles"
-                hx-trigger="change"
+                hx-trigger="update"
                 hx-target="#articles"
                 hx-swap="outerHTML"
             >
+                <input type="hidden" id="pageInput" name="page" value="1"/>
                 <div class="filter_group">
                     <fieldset>
                         <legend class="group_name">Categoría</legend>
@@ -24,12 +25,12 @@ templ ArticleFilter(acategories []database.ACategory) {
                                 <div class="option">
                                     <input
                                         type="radio"
-                                        id={ formatID(acategory.ID) }
+                                        id={ formatInts(acategory.ID) }
                                         class="checkable"
                                         name="category"
-                                        value={ formatID(acategory.ID) }
+                                        value={ formatInts(acategory.ID) }
                                     />
-                                    <label for={ formatID(acategory.ID) }>{ acategory.ArticleCategory }</label>
+                                    <label for={ formatInts(acategory.ID) }>{ acategory.ArticleCategory }</label>
                                 </div>
                             }
                         </div>
