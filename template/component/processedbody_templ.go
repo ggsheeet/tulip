@@ -31,7 +31,7 @@ func ProcessedBody(paymentId string, status string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if status == "Exitosa" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h2>Felicidades por tu compra!</h2><p>Agradecemos tu confianza en <span>Tulip</span>.</p><p>Tu número de pedido es: <span id=\"paymentId\">#")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h2>Felicidades por tu compra!</h2><p>Agradecemos tu confianza en <span>Publicaciones Tulip</span>.</p><p>Tu número de pedido es: <span id=\"paymentId\">#")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

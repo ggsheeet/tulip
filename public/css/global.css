@@ -99,8 +99,7 @@ body:has(dialog[open]) {
 	overflow: auto !important;
 }
 
-h2,
-h3 {
+.title_clamp {
 	display: -webkit-box;
 	line-clamp: 2;
 	-webkit-line-clamp: 2;

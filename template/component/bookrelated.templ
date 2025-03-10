@@ -53,7 +53,7 @@ templ BookRelated(books []database.Book) {
                                 <img src={ book.CoverURL } alt="Resource Cover"/>
                             </div>
                             <div class="card_text">
-                                <h2>{ book.Title }</h2>
+                                <h2 class="title_clamp">{ book.Title }</h2>
                                 if book.CoverType == "PDF" {
                                     <h4>{ book.CoverType }</h4>
                                 } else {
