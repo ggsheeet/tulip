@@ -1,35 +1,35 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	environment := os.Getenv("ENVIRONMENT")
-	var allowedOrigin string
+	allowedOrigin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-
-	if environment == "development" || environment == "docker" {
-		allowedOrigin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if environment == "production" {
-		allowedOrigin = os.Getenv("AUTH_ORIGIN_PROD")
-	}
 
 	return func(c echo.Context) error {
 		origin := c.Request().Header.Get("Origin")
 		referer := c.Request().Header.Get("Referer")
 
 		if referer != "" {
-			if referer == allowedOrigin+"/cart" {
-				return next(c)
-			}
 			refererURL, err := url.Parse(referer)
 			if err == nil && refererURL.Host != "" {
+				pathSegments := strings.Split(strings.Trim(refererURL.Path, "/"), "/")
+				lastSegment := pathSegments[len(pathSegments)-1]
+
+				if lastSegment == "cart" || lastSegment == "processed" {
+					return next(c)
+				}
+
 				referer = fmt.Sprintf("%s://%s", refererURL.Scheme, refererURL.Host)
 			}
 		}
@@ -55,5 +55,25 @@ func authMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		return next(c)
+	}
+}
+
+func timeoutMiddleware(timeout time.Duration) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			ctx, cancel := context.WithTimeout(c.Request().Context(), timeout)
+			defer cancel()
+
+			req := c.Request().Clone(ctx)
+			c.SetRequest(req)
+
+			err := next(c)
+
+			if ctx.Err() == context.DeadlineExceeded {
+				return echo.NewHTTPError(http.StatusGatewayTimeout, "Request timed out")
+			}
+
+			return err
+		}
 	}
 }

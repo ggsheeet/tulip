@@ -12,25 +12,24 @@ func (s *PostgresDB) createOrderTable() error {
 	return err
 }
 
-func (s *PostgresDB) CreateOrder(order *Order) error {
-	_, err := s.db.Query(
+func (s *PostgresDB) CreateOrder(order *Order) (int, error) {
+	err := s.db.QueryRow(
 		createOrderQ,
-		&order.FirstName,
-		&order.LastName,
 		&order.Address,
-		&order.Quantity,
 		&order.Total,
-		&order.BookID,
+		&order.PaymentID,
+		&order.IsFulfilled,
+		&order.Status,
 		&order.AccountID,
 		&order.CreatedAt,
 		&order.UpdatedAt,
-	)
+	).Scan(&order.ID)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return order.ID, nil
 }
 
 func (s *PostgresDB) DeleteOrder(id string) error {
@@ -52,12 +51,11 @@ func (s *PostgresDB) UpdateOrder(id string, order *Order) error {
 	_, err := s.db.Query(
 		updateOrderQ,
 		orderId,
-		&order.FirstName,
-		&order.LastName,
 		&order.Address,
-		&order.Quantity,
 		&order.Total,
-		&order.BookID,
+		&order.PaymentID,
+		&order.IsFulfilled,
+		&order.Status,
 		&order.AccountID,
 		time.Now().In(loc),
 	)
@@ -76,12 +74,11 @@ func (s *PostgresDB) GetOrderById(id string) (*Order, error) {
 
 	err := row.Scan(
 		&order.ID,
-		&order.FirstName,
-		&order.LastName,
 		&order.Address,
-		&order.Quantity,
 		&order.Total,
-		&order.BookID,
+		&order.PaymentID,
+		&order.IsFulfilled,
+		&order.Status,
 		&order.AccountID,
 		&order.CreatedAt,
 		&order.UpdatedAt,
@@ -97,8 +94,24 @@ func (s *PostgresDB) GetOrderById(id string) (*Order, error) {
 	return &order, nil
 }
 
-func (s *PostgresDB) GetOrders() (*[]*Order, error) {
-	rows, err := s.db.Query(getOrdersQ)
+func (s *PostgresDB) GetOrderByPaymentId(paymentId int) (int, error) {
+	row := s.db.QueryRow(getOrderByPaymentIdQ, paymentId)
+
+	var orderID int
+	err := row.Scan(&orderID)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
+		return 0, err
+	}
+
+	return orderID, nil
+}
+
+func (s *PostgresDB) GetUnfulfilledOrders() (*[]*Order, error) {
+	rows, err := s.db.Query(getUnfulfilledOrdersQ)
 	if err != nil {
 		return nil, err
 	}
@@ -109,12 +122,12 @@ func (s *PostgresDB) GetOrders() (*[]*Order, error) {
 		order := new(Order)
 		err := rows.Scan(
 			&order.ID,
-			&order.FirstName,
-			&order.LastName,
 			&order.Address,
-			&order.Quantity,
 			&order.Total,
-			&order.BookID,
+			&order.PaymentID,
+			&order.IsFulfilled,
+			&order.Status,
+			&order.AccountID,
 			&order.AccountID,
 			&order.CreatedAt,
 			&order.UpdatedAt,
@@ -127,4 +140,61 @@ func (s *PostgresDB) GetOrders() (*[]*Order, error) {
 		orders = append(orders, order)
 	}
 	return &orders, nil
+}
+
+func (s *PostgresDB) GetFulfilledOrders() (*[]*Order, error) {
+	rows, err := s.db.Query(getFulfilledOrdersQ)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	orders := []*Order{}
+	for rows.Next() {
+		order := new(Order)
+		err := rows.Scan(
+			&order.ID,
+			&order.Address,
+			&order.Total,
+			&order.PaymentID,
+			&order.IsFulfilled,
+			&order.Status,
+			&order.AccountID,
+			&order.AccountID,
+			&order.CreatedAt,
+			&order.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		orders = append(orders, order)
+	}
+	return &orders, nil
+}
+
+func (s *PostgresDB) createBookOrderTable() error {
+	_, err := s.db.Exec(createBookOrdersTabQ)
+
+	return err
+}
+
+func (s *PostgresDB) CreateBookOrder(orderBook *OrderBook, orderId int) error {
+	bookOrder := NewBookOrder(orderBook.Quantity, orderBook.BookID, orderId)
+
+	_, err := s.db.Exec(
+		createBookOrderQ,
+		&bookOrder.Quantity,
+		&bookOrder.BookID,
+		&bookOrder.OrderID,
+		&bookOrder.CreatedAt,
+		&bookOrder.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

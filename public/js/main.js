@@ -335,27 +335,71 @@ document.addEventListener('DOMContentLoaded', function () {
 			return
 		}
 		const books = await response.json()
+		let cartUpdated = false
 
-		const cartBooksWithDetails = books.map((book) => ({
-			...book,
-			quantity: cart[book.id].quantity,
-			totalPrice: cart[book.id].price * cart[book.id].quantity
-		}))
+		const cartBooksWithDetails = books.map((book) => {
+			const cartItem = cart[book.id];
+			
+			if (book.stock === 0) {
+				delete cart[book.id]
+				showSnackbar(`Lo sentimos, "${book.title}" ya no está disponible, lo hemos quitado de tu carrito.`)
+				cartUpdated = true
+				return null
+			} else if (cartItem.quantity > book.stock) {
+				cartItem.quantity = book.stock
+				showSnackbar(`Cantidad para "${book.title}" se actualizó a ${book.stock}.`)
+				cartUpdated = true
+			}
 
+			return {
+				...book,
+				quantity: cartItem.quantity,
+				totalPrice: cartItem.price * cartItem.quantity
+			}
+		}).filter(Boolean)
+
+		if (cartUpdated) {
+			localStorage.setItem('shoppingCart', JSON.stringify(cart));
+		}
+
+		initModals();
 		renderCartBooks(cartBooksWithDetails)
+}
+
+	function initModals() {
+		const modalTypes = ['email', 'payment']
+		modalTypes.forEach(modalType => {
+			const openDialogBtn = document.getElementById(`${modalType}DialogOpen`)
+			const closeDialog = document.getElementById(`${modalType}DialogClose`);
+			const dialog = document.getElementById(`${modalType}Dialog`)
+			if (openDialogBtn) {
+				openDialogBtn.addEventListener('click', () => {
+						dialog.showModal();
+				});
+			}
+			if (dialog) {
+				dialog.addEventListener('click', e => {
+						const dialogDimensions = dialog.getBoundingClientRect();
+						if (
+								e.clientX < dialogDimensions.left ||
+								e.clientX > dialogDimensions.right ||
+								e.clientY < dialogDimensions.top ||
+								e.clientY > dialogDimensions.bottom
+						) {
+								dialog.close();
+						}
+				});
+			}
+		
+			if (closeDialog) {
+				closeDialog.addEventListener("click", () => {
+					dialog.close();
+				});
+			}
+		})
 	}
 
-	function showSnackbar(message) {
-		const snackbar = document.getElementById('snackBar');
-		snackbar.classList.add('show')
-		const snackText = snackbar.querySelector('.snack_text')
-		snackText.textContent = message
-		setTimeout(() => {
-			snackbar.classList.remove('show')
-		}, 3000);
-	}
-
-	const renderCartBooks = (books) => {
+	function renderCartBooks(books) {
 		const cartDetails = document.getElementById('cartInfo')
 		cartDetails.style.display = 'flex'
 		const cartContainer = document.getElementById('cartItems')
@@ -395,6 +439,244 @@ document.addEventListener('DOMContentLoaded', function () {
 			cartContainer.appendChild(bookElement)
 		})
 		initShop()
+		initCartPage(books)
+	}
+
+	function initCartPage(books) {
+		const emailForm = document.getElementById("emailForm");
+		const accountEmail = document.getElementById("accountEmail");
+		const paymentForm = document.getElementById("paymentForm");
+		const paymentEmail = document.getElementById("paymentEmail");
+	
+		const personalInfo = {
+			firstName: document.getElementById("firstName"),
+			lastName: document.getElementById("lastName"),
+			email: document.getElementById("paymentEmail"),
+			phone: document.getElementById("phone"),
+		};
+	
+		paymentEmail.addEventListener("change", (e) => {
+			accountCheck(e, "payment");
+			accountEmail.value = paymentEmail.value;
+		});
+	
+		emailForm.addEventListener("submit", (e) => accountCheck(e, "account"));
+		paymentForm.addEventListener("submit", (e) => {
+			e.preventDefault();
+			if (!validateForm(personalInfo)) return;
+	
+			const reducedBooks = books.map(({ id, title, description, bCategory, coverUrl }) => ({
+				id,
+				title,
+				description,
+				bCategory,
+				coverUrl,
+				quantity: parseInt(document.getElementById(`qty-${id}`).innerText, 10),
+				price: parseFloat(
+					document.querySelector(`[data-id="${id}"]`)
+						.closest(".card_price_qty")
+						.querySelector("h5")
+						.getAttribute("data-price")
+				),
+			}));
+	
+			const formData = {
+				...Object.fromEntries(Object.entries(personalInfo).map(([key, el]) => [key, el.value.trim()])),
+				street: sanitizeInput(document.getElementById("street").value),
+				neighborhood: sanitizeInput(document.getElementById("neighborhood").value),
+				city: sanitizeInput(document.getElementById("city").value),
+				zipcode: sanitizeZip(document.getElementById("zipcode").value),
+				state: sanitizeInput(document.getElementById("state").value),
+				country: sanitizeInput(document.getElementById("country").value),
+				cart: reducedBooks,
+			};
+	
+			sessionStorage.setItem("formData", JSON.stringify(formData));
+			goToCheckout(formData);
+		});
+	
+		function accountCheck(e, inputType) {
+			e.preventDefault();
+			const target = e.target.id;
+			const email = document.getElementById(`${inputType}Email`).value.trim();
+			const emailError = document.getElementById(`${target}ErrorE`);
+	
+			if (!validateEmail(email)) {
+				emailError.textContent = "Ingresa un correo válido";
+				return;
+			}
+	
+			fetch("/api/account/find", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email }),
+			})
+				.then((response) => (response.status === 204 ? null : response.json()))
+				.then((data) => {
+					if (data) {
+						Object.keys(personalInfo).forEach((key) => {
+							personalInfo[key].value = data[key] || "";
+						});
+					} else {
+						personalInfo.email.value = email;
+						console.log("204 No account associated");
+					}
+					if (inputType === "account") {
+						document.getElementById("emailDialogClose").click();
+						document.getElementById("paymentDialogOpen").click();
+					}
+				})
+				.catch((error) => console.error("Error submitting form:", error));
+		}
+	
+		function validateForm(personalInfo) {
+			const errors = [];
+			clearErrorMessages();
+	
+			if (!validateName(personalInfo.firstName.value)) {
+				errors.push("Nombre inválido.");
+				document.getElementById("paymentFormErrorFN").textContent = "Requerido, solo letras";
+			}
+			if (!validateName(personalInfo.lastName.value)) {
+				errors.push("Apellido inválido.");
+				document.getElementById("paymentFormErrorLN").textContent = "Requerido, solo letras";
+			}
+			if (!validateEmail(personalInfo.email.value)) {
+				errors.push("Correo electrónico inválido.");
+				document.getElementById("paymentEmailErrorE").textContent = "Ingresa un correo válido";
+			}
+			if (!validatePhone(personalInfo.phone.value)) {
+				errors.push("Teléfono inválido.");
+				document.getElementById("paymentFormErrorPh").textContent = "Ingresa un teléfono váido";
+			}
+	
+			const addressFields = [
+				{ id: "street", label: "Calle & número" },
+				{ id: "neighborhood", label: "Colonia" },
+				{ id: "city", label: "Ciudad" },
+				{ id: "zipcode", label: "Código postal" },
+				{ id: "state", label: "Estado" },
+				{ id: "country", label: "País" },
+			];
+	
+			addressFields.forEach(({ id, label }) => {
+				const field = document.getElementById(id);
+				const errorMessage = field.nextElementSibling;
+				if (field.value.trim() === "") {
+					errors.push(`${label} es requerido.`);
+					errorMessage.textContent = `${label} requerido.`;
+				}
+			});
+	
+			if (errors.length > 0) {
+				return false;
+			}
+	
+			return true;
+		}
+	
+		function clearErrorMessages() {
+			document.getElementById("paymentFormErrorFN").textContent = "";
+			document.getElementById("paymentFormErrorLN").textContent = "";
+			document.getElementById("paymentEmailErrorE").textContent = "";
+			document.getElementById("paymentFormErrorPh").textContent = "";
+			document.getElementById("paymentFormErrorStr").textContent = "";
+			document.getElementById("paymentFormErrorNh").textContent = "";
+			document.getElementById("paymentFormErrorCi").textContent = "";
+			document.getElementById("paymentFormErrorZ").textContent = "";
+			document.getElementById("paymentFormErrorSta").textContent = "";
+			document.getElementById("paymentFormErrorCo").textContent = "";
+		}
+	
+		function validateEmail(email) {
+			const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+			return emailRegex.test(email);
+		}
+		
+		function validatePhone(phone) {
+			const phoneRegex = /^\d{7,15}$/;
+			return phoneRegex.test(phone.trim());
+		}
+	
+		function validateName(name) {
+			return /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(name.trim());
+		}
+	
+		function sanitizeInput(input) {
+			return input.replace(/[<>\/"'`;]/g, "").trim();
+		}
+	
+		function sanitizeZip(zip) {
+			return zip.replace(/\D/g, "").substring(0, 10);
+		}
+	
+		function addRemoveErrorListeners() {
+			const fields = document.querySelectorAll("input, select");
+			fields.forEach((field) => {
+				field.addEventListener("change", () => {
+					const errorMessage = field.nextElementSibling;
+					if (field.value.trim() !== "") {
+						errorMessage.textContent = "";
+					}
+				});
+			});
+		}
+	
+		addRemoveErrorListeners();
+	}
+
+	function goToCheckout(formData) {
+		fetch("/api/payment/checkout", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(formData),
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Response from server:", data);
+				if (data.redirect_url) window.location.href = data.redirect_url;
+			})
+			.catch((error) => console.error("Error submitting form:", error));
+	}
+
+	function processPayment() {
+    const formData = sessionStorage.getItem("formData");
+    if (!formData) {
+        console.error("No order data found in session storage.");
+        return;
+    }
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const paymentId = queryParams.get("payment_id");
+    const status = queryParams.get("status");
+
+    if (!paymentId || status !== "approved") {
+        console.error("Invalid payment ID or payment was not approved.");
+        return;
+    }
+
+    fetch(`/api/payment/confirmed?payment_id=${paymentId}`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: formData,
+    })
+		.then((response) => response.json())
+		.then((data) => {
+			console.log("Response from server:", data);
+		})
+		.catch((error) => console.error("Error hitting endpoint:", error));
+	}
+
+	function initProcessedPage() {
+		const orderStatus = document.getElementById("orderStatus")
+		if (orderStatus && orderStatus.innerText === "Transacción Exitosa") {
+			localStorage.removeItem("shoppingCart")
+			const formData = JSON.parse(sessionStorage.getItem('formData')) || {}
+			const emailEl = document.getElementById("registeredEmail")
+			if (emailEl) emailEl.innerText = formData.email
+			initShop()
+			processPayment()
+		}
 	}
 
 	function initShop() {
@@ -402,13 +684,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		initCardCounter()
 		initCartBtns()
 	}
-
 	initShop()
 	if (pageInput) initPagination()
-	if (currentRoute === 'cart') {
-		getCartBooks()
-	}
-
+	if (currentRoute === 'cart') getCartBooks()
+	if (currentRoute === 'processed') initProcessedPage()
+	
 	const itemsCard = document.querySelectorAll('.items_card')
 	itemsCard.forEach((card) => (card.style.display = 'flex'))
 
@@ -419,6 +699,39 @@ document.addEventListener('DOMContentLoaded', function () {
 		filtersHead.addEventListener('click', () => {
 			filtersContent.classList.toggle('filter_open')
 		})
+	}
+
+	let snackbarTimeout = null;
+
+	function showSnackbar(message) {
+		const snackbar = document.getElementById('snackBar');
+		const snackText = snackbar.querySelector('.snack_text');
+		
+		if (snackbarTimeout) {
+			clearTimeout(snackbarTimeout);
+			
+			if (snackbar.classList.contains('show')) {
+				snackbar.classList.remove('show');
+					
+				setTimeout(() => {
+					showNewSnackbar();
+				}, 50);
+			} else {
+				showNewSnackbar();
+			}
+		} else {
+			showNewSnackbar();
+		}
+		
+		function showNewSnackbar() {
+			snackText.textContent = message;
+			snackbar.classList.add('show');
+			
+			snackbarTimeout = setTimeout(() => {
+				snackbar.classList.remove('show');
+				snackbarTimeout = null;
+			}, 4000);
+		}
 	}
 
 	document.addEventListener('htmx:afterSettle', function () {

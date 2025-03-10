@@ -8,7 +8,7 @@ package component
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/ggsheet/kerigma/internal/database"
+import "github.com/ggsheet/tulip/internal/database"
 import "fmt"
 
 func ResourceGrid(resources []database.Resource, currentPage int, totalPages int) templ.Component {

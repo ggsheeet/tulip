@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ggsheet/kerigma/internal/database"
+	"github.com/ggsheet/tulip/internal/database"
 	"github.com/labstack/echo/v4"
 )
 
@@ -159,7 +159,7 @@ func (s *ArticleHandlers) handleCreateACategory(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	aCategory := database.NewACategory(aCategoryReq.ArticleCategory)
+	aCategory := database.NewACategory(aCategoryReq.ArticleCategory, aCategoryReq.IsActive)
 
 	if err := s.db.CreateACategory(aCategory); err != nil {
 		return err
@@ -189,7 +189,7 @@ func (s *ArticleHandlers) handleUpdateACategory(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	aCategory := database.UpdateACategory(aCategoryReq.ArticleCategory)
+	aCategory := database.UpdateACategory(aCategoryReq.ArticleCategory, aCategoryReq.IsActive)
 
 	if err := s.db.UpdateACategory(id, aCategory); err != nil {
 		return err

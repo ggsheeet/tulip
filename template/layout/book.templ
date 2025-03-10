@@ -1,7 +1,7 @@
 package layout
 
-import "github.com/ggsheet/kerigma/template/component"
-import "github.com/ggsheet/kerigma/internal/database"
+import "github.com/ggsheet/tulip/template/component"
+import "github.com/ggsheet/tulip/internal/database"
 
 templ Book(book database.Book, books []database.Book) {
     <!DOCTYPE html>
@@ -10,7 +10,7 @@ templ Book(book database.Book, books []database.Book) {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>Tienda Kerigma</title>
+            <title>Tienda Tulip</title>
             <meta name="description" content="Tienda Tulip, Editorial Cristiana Reformada" />
             <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
             <meta
@@ -23,12 +23,12 @@ templ Book(book database.Book, books []database.Book) {
             />
             <meta property="og:locale" content="es"/>
             <meta property="og:site_name" content="Publicaciones Tulip"/>
-            <meta property="og:url" content="https://www.kerigmalife.com/book"/>
+            <meta property="og:url" content="https://www.publicacionestulip.org/book"/>
             <meta property="og:type" content="website"/>
             <meta property="og:image" content={book.CoverURL}/>
             <meta name="keywords" content="libreria, libros, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
             <meta name="format-detection" content="telephone=no">
-            <link rel="canonical" href="https://www.kerigmalife.com/book" />
+            <link rel="canonical" href="https://www.publicacionestulip.org/book" />
             <link rel="shortcut icon" href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>

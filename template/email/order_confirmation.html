@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Confirmación de Compra</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f4f4f4;
+				color: #333;
+				margin: 0;
+				padding: 0;
+			}
+			.container {
+				width: 100%;
+				max-width: 600px;
+				margin: 0 auto;
+				background-color: #fff;
+				padding: 20px;
+				border-radius: 8px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+			.header {
+				background-color: #7996e1;
+				color: #f5f5f5;
+				padding: 20px;
+				text-align: center;
+				border-radius: 8px 8px 0 0;
+			}
+			.header img {
+				height: 50px;
+				overflow: hidden;
+				margin-bottom: 16px;
+			}
+			.header h1 {
+				margin: 0;
+			}
+			.order-details {
+				margin-top: 20px;
+			}
+			.order-details th {
+				text-align: left;
+				padding: 8px;
+				background-color: #f2f2f2;
+			}
+			.order-details td {
+				text-align: end;
+				padding: 8px;
+			}
+			.order-details .left {
+				text-align: start;
+			}
+			.footer {
+				text-align: center;
+				margin-top: 30px;
+				font-size: 14px;
+				color: #777;
+			}
+			.footer a {
+				color: #007bff;
+				line-height: 1.8;
+				text-decoration: none;
+			}
+		</style>
+	</head>
+	<body>
+		<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+			<tr>
+				<td align="center">
+					<div class="container">
+						<div class="header">
+							<img src="https://storage.googleapis.com/tulip-storage/logos/logoreg-light-hor.png"/>
+							<h1>¡Gracias por tu compra!</h1>
+							<p>¡Hola {{first_name}}! Estamos encantados de que hayas elegido nuestra editorial para tu compra.</p>
+						</div>
+	
+						<div class="order-details">
+							<h2>Detalles de tu compra</h2>
+							<table style="width: 100%; border-collapse: collapse;">
+								<tr>
+									<th>Número de pedido</th>
+									<td>#{{order_number}}</td>
+								</tr>
+								<tr>
+									<th>Subtotal</th>
+									<td>${{sub_total}}</td>
+								</tr>
+								<tr>
+									<th>Envío</th>
+									<td>${{shipping_cost}}</td>
+								</tr>
+								<tr>
+									<th>Total</th>
+									<td>${{total}}</td>
+								</tr>
+							</table>
+						</div>
+	
+						<div class="order-details">
+							<h2>Resumen de tu orden</h2>
+							<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+								<tr>
+									<th>Portada</th>
+									<th>Título</th>
+									<th>Cantidad</th>
+									<th>Precio</th>
+								</tr>
+								{{order_summary}}
+							</table>
+						</div>
+	
+						<div class="footer">
+							<p>Gracias por apoyar a Publicaciones Tulip, donde nos dedicamos a proveer literatura cristiana reformada para la obra de nuestro Señor Jesucristo.</p>
+							<p>Si tienes alguna pregunta, no dudes en <a href="mailto:contacto@tulip.com">contactarnos</a>.</p>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

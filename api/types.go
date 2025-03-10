@@ -1,7 +1,9 @@
 package api
 
 import (
-	"github.com/ggsheet/kerigma/internal/database"
+	"github.com/ggsheet/tulip/internal/database"
+	"github.com/mercadopago/sdk-go/pkg/config"
+	"github.com/resend/resend-go/v2"
 )
 
 type APIError struct {
@@ -14,6 +16,20 @@ type APIServer struct {
 	article  *ArticleHandlers
 	resource *ResourceHandlers
 	order    *OrderHandlers
+	payment  *MPServer
+	mailing  *ResendServer
+}
+
+type MPServer struct {
+	cfg *config.Config
+	a   database.AccountInterface
+	b   database.BookInterface
+	o   database.OrderInterface
+	m   *ResendServer
+}
+
+type ResendServer struct {
+	msg *resend.Client
 }
 
 type AccountHandlers struct {

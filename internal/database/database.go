@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 
-	"github.com/ggsheet/kerigma/internal/config"
+	"github.com/ggsheet/tulip/internal/config"
 	_ "github.com/lib/pq"
 )
 
@@ -36,6 +36,7 @@ func (db *PostgresDB) Init() error {
 		db.createResourceTable(),
 		db.createRCategoryTable(),
 		db.createOrderTable(),
+		db.createBookOrderTable(),
 	}
 
 	for _, err := range errs {

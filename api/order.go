@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ggsheet/kerigma/internal/database"
+	"github.com/ggsheet/tulip/internal/database"
 	"github.com/labstack/echo/v4"
 )
 
 func (s *OrderHandlers) handleOrder(c echo.Context) error {
 	switch c.Request().Method {
 	case http.MethodGet:
-		return s.handleGetOrders(c)
+		return s.handleGetUnfulfilledOrders(c)
 	case http.MethodPost:
 		return s.handleCreateOrder(c)
 	default:
@@ -19,8 +19,16 @@ func (s *OrderHandlers) handleOrder(c echo.Context) error {
 	}
 }
 
-func (s *OrderHandlers) handleGetOrders(c echo.Context) error {
-	orders, err := s.db.GetOrders()
+func (s *OrderHandlers) handleGetUnfulfilledOrders(c echo.Context) error {
+	orders, err := s.db.GetUnfulfilledOrders()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, orders)
+}
+
+func (s *OrderHandlers) handleGetFulfilledOrders(c echo.Context) error {
+	orders, err := s.db.GetFulfilledOrders()
 	if err != nil {
 		return err
 	}
@@ -43,11 +51,12 @@ func (s *OrderHandlers) handleCreateOrder(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	order := database.NewOrder(orderReq.FirstName, orderReq.LastName, orderReq.Address, orderReq.Quantity, orderReq.Total, orderReq.BookID, orderReq.AccountID)
+	order := database.NewOrder(orderReq.Address, orderReq.Total, orderReq.PaymentID, orderReq.IsFulfilled, orderReq.Status, orderReq.AccountID)
 
-	if err := s.db.CreateOrder(order); err != nil {
+	if _, err := s.db.CreateOrder(order); err != nil {
 		return err
 	}
+
 	return c.JSON(http.StatusOK, order)
 }
 
@@ -73,7 +82,7 @@ func (s *OrderHandlers) handleUpdateOrder(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	order := database.UpdateOrder(orderReq.FirstName, orderReq.LastName, orderReq.Address, orderReq.Quantity, orderReq.Total, orderReq.BookID, orderReq.AccountID)
+	order := database.UpdateOrder(orderReq.Address, orderReq.Total, orderReq.PaymentID, orderReq.IsFulfilled, orderReq.Status, orderReq.AccountID)
 
 	if err := s.db.UpdateOrder(id, order); err != nil {
 		return err

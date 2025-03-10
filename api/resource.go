@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ggsheet/kerigma/internal/database"
+	"github.com/ggsheet/tulip/internal/database"
 	"github.com/labstack/echo/v4"
 )
 
@@ -159,7 +159,7 @@ func (s *ResourceHandlers) handleCreateRCategory(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	rCategory := database.NewRCategory(rCategoryReq.ResourceCategory)
+	rCategory := database.NewRCategory(rCategoryReq.ResourceCategory, rCategoryReq.IsActive)
 
 	if err := s.db.CreateRCategory(rCategory); err != nil {
 		return err
@@ -189,7 +189,7 @@ func (s *ResourceHandlers) handleUpdateRCategory(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	rCategory := database.UpdateRCategory(rCategoryReq.ResourceCategory)
+	rCategory := database.UpdateRCategory(rCategoryReq.ResourceCategory, rCategoryReq.IsActive)
 
 	if err := s.db.UpdateRCategory(id, rCategory); err != nil {
 		return err

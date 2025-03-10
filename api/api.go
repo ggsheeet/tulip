@@ -1,26 +1,53 @@
 package api
 
 import (
-	"github.com/ggsheet/kerigma/internal/database"
+	"time"
+
+	"github.com/ggsheet/tulip/internal/database"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/mercadopago/sdk-go/pkg/config"
+	"github.com/resend/resend-go/v2"
+	"golang.org/x/time/rate"
 )
 
-func NewAPIServer(db *database.PostgresDB) *APIServer {
+func NewAPIServer(db *database.PostgresDB, cfg *config.Config, msg *resend.Client) *APIServer {
+	mailing := ResendConnection(msg)
+
 	return &APIServer{
 		account:  &AccountHandlers{db},
 		book:     &BookHandlers{db},
 		article:  &ArticleHandlers{db},
 		resource: &ResourceHandlers{db},
 		order:    &OrderHandlers{db},
+		payment:  MPConnection(cfg, db, db, db, mailing),
+		mailing:  mailing,
 	}
+}
+
+func MPConnection(cfg *config.Config, a database.AccountInterface, b database.BookInterface, o database.OrderInterface, m *ResendServer) *MPServer {
+	return &MPServer{cfg, a, b, o, m}
+}
+
+func ResendConnection(msg *resend.Client) *ResendServer {
+	return &ResendServer{msg}
 }
 
 func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup := e.Group("/api")
 	apiGroup.Use(authMiddleware)
+	apiGroup.Use(timeoutMiddleware(5 * time.Second))
+	apiGroup.Use(middleware.BodyLimit("2M"))
+	apiGroup.Use(middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
+		Store: middleware.NewRateLimiterMemoryStore(rate.Limit(10)),
+		IdentifierExtractor: func(c echo.Context) (string, error) {
+			return c.RealIP(), nil
+		},
+	}))
 
 	apiGroup.Any("/account", s.account.handleAccount)
 	apiGroup.GET("/account/:id", s.account.handleGetAccountById)
+	apiGroup.POST("/account/find", s.account.handleGetAccountByEmail)
 	apiGroup.PUT("/account/:id", s.account.handleUpdateAccount)
 	apiGroup.DELETE("/account/:id", s.account.handleDeleteAccount)
 
@@ -75,7 +102,11 @@ func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup.DELETE("/resource/rcategory/:id", s.resource.handleDeleteRCategory)
 
 	apiGroup.Any("/order", s.order.handleOrder)
+	apiGroup.GET("/order/fulffiled", s.order.handleGetFulfilledOrders)
 	apiGroup.GET("/order/:id", s.order.handleGetOrderById)
 	apiGroup.PUT("/order/:id", s.order.handleUpdateOrder)
 	apiGroup.DELETE("/order/:id", s.order.handleDeleteOrder)
+
+	apiGroup.POST("/payment/checkout", s.payment.handleGeneratePreference)
+	apiGroup.POST("/payment/confirmed", s.payment.handleConfirmedTransaction)
 }

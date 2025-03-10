@@ -6,7 +6,7 @@ var createAccTabQ = `
 		first_name VARCHAR(100) NOT NULL,
 		last_name VARCHAR(100) NOT NULL,
 		email VARCHAR(100) UNIQUE NOT NULL,
-		password TEXT NOT NULL,
+		phone VARCHAR(15) NOT NULL,
 		created_at TIMESTAMP DEFAULT NOW(),
 		updated_at TIMESTAMP DEFAULT NOW()
 	)
@@ -33,6 +33,7 @@ var createBookTabQ = `
 		updated_at TIMESTAMP DEFAULT NOW()
 	)
 `
+
 var createLetterTabQ = `
 	CREATE TABLE IF NOT EXISTS letter (
 		id SERIAL NOT NULL PRIMARY KEY,
@@ -72,6 +73,7 @@ var createBCategoryTabQ = `
 	CREATE TABLE IF NOT EXISTS bcategory (
 		id SERIAL NOT NULL PRIMARY KEY,
 		book_category VARCHAR(100) NOT NULL,
+		is_active BOOLEAN NOT NULL DEFAULT TRUE,
 		created_at TIMESTAMP DEFAULT NOW(),
 		updated_at TIMESTAMP DEFAULT NOW()
 	)
@@ -95,6 +97,7 @@ var createACategoryTabQ = `
 	CREATE TABLE IF NOT EXISTS acategory (
 		id SERIAL NOT NULL PRIMARY KEY,
 		article_category VARCHAR(100) NOT NULL,
+		is_active BOOLEAN NOT NULL DEFAULT TRUE,
 		created_at TIMESTAMP DEFAULT NOW(),
 		updated_at TIMESTAMP DEFAULT NOW()
 	)
@@ -118,22 +121,39 @@ var createRCategoryTabQ = `
 	CREATE TABLE IF NOT EXISTS rcategory (
 		id SERIAL NOT NULL PRIMARY KEY,
 		resource_category VARCHAR(100) NOT NULL,
+		is_active BOOLEAN NOT NULL DEFAULT TRUE,
 		created_at TIMESTAMP DEFAULT NOW(),
 		updated_at TIMESTAMP DEFAULT NOW()
 		)
 `
 
 var createOrderTabQ = `
+	DO $$
+	BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'status_enum') THEN
+			CREATE TYPE status_enum AS ENUM ('delivered', 'processing', 'returned');
+    END IF;
+	END $$;
+
 	CREATE TABLE IF NOT EXISTS "order" (
+    id SERIAL PRIMARY KEY,
+    address VARCHAR(255) NOT NULL,
+    total NUMERIC(10, 2) NOT NULL,
+    payment_id BIGINT UNIQUE NOT NULL,
+    is_fulfilled BOOLEAN NOT NULL DEFAULT FALSE,
+    status status_enum NOT NULL DEFAULT 'processing',
+    account_id UUID REFERENCES account (id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+	);
+`
+
+var createBookOrdersTabQ = `
+	CREATE TABLE IF NOT EXISTS bookorder (
 		id SERIAL PRIMARY KEY,
-		first_name VARCHAR(100) NOT NULL,
-		last_name VARCHAR(100) NOT NULL,
-		address VARCHAR(255) NOT NULL,
 		quantity INT NOT NULL,
-		total NUMERIC(10, 2) NOT NULL,
 		book_id INT REFERENCES book (id),
-		account_id UUID REFERENCES account (id),
-		is_fulfilled BOOLEAN NOT NULL DEFAULT FALSE,
+		order_id INT REFERENCES "order" (id),
 		created_at TIMESTAMP DEFAULT NOW(),
 		updated_at TIMESTAMP DEFAULT NOW()
 	)
@@ -141,14 +161,14 @@ var createOrderTabQ = `
 
 var createAccQ = (`
 	INSERT INTO account
-	(id, first_name, last_name, email, password, created_at, updated_at)
-	VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)
+	(id, first_name, last_name, email, phone, created_at, updated_at)
+	VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6) RETURNING id
 `)
 
 var createBookQ = (`
 	INSERT INTO book
 	(title, author, description, cover_url, isbn, price, stock, sales_count, is_active, letter_id, version_id, cover_id, publisher_id, category_id, created_at, updated_at)
-	VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), $5, $6, $7, $8, COALESCE($9::BOOLEAN, TRUE), $10, $11, $12, $13, $14, $15, $16)
+	VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), 'https://storage.googleapis.com/tulip-storage/noimgfound.png'), $5, $6, $7, $8, COALESCE($9::BOOLEAN, TRUE), $10, $11, $12, $13, $14, $15, $16)
 `)
 
 var createLetterQ = `
@@ -184,7 +204,7 @@ var createBCategoryQ = `
 var createArticleQ = (`
 	INSERT INTO article
 	(title, author, excerpt, description, cover_url, category_id, created_at, updated_at)
-	VALUES ($1, $2, $3, $4, COALESCE(NULLIF($5, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), $6, $7, $8)
+	VALUES ($1, $2, $3, $4, COALESCE(NULLIF($5, ''), 'https://storage.googleapis.com/tulip-storage/noimgfound.png'), $6, $7, $8)
 `)
 
 var createACategoryQ = `
@@ -196,7 +216,7 @@ var createACategoryQ = `
 var createResourceQ = (`
 	INSERT INTO resource
 	(title, author, description, cover_url, resource_url, category_id, created_at, updated_at)
-	VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), $5, $6, $7, $8)
+	VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), 'https://storage.googleapis.com/tulip-storage/noimgfound.png'), $5, $6, $7, $8)
 `)
 
 var createRCategoryQ = `
@@ -207,8 +227,14 @@ var createRCategoryQ = `
 
 var createOrderQ = `
 	INSERT INTO "order"
-	(first_name, last_name, address, quantity, total, book_id, account_id, is_fulfilled, created_at, updated_at)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, COALESCE($9::BOOLEAN, FALSE), $10)
+	(address, total, payment_id, is_fulfilled, status, account_id, created_at, updated_at)
+	VALUES ($1, $2, $3, COALESCE($4::BOOLEAN, FALSE), $5, $6, $7, $8) RETURNING id
+`
+
+var createBookOrderQ = `
+	INSERT INTO "bookorder"
+	(quantity, book_id, order_id, created_at, updated_at)
+	VALUES ($1, $2, $3, $4, $5)
 `
 
 var deleteAccQ = `
@@ -259,8 +285,16 @@ var deleteOrderQ = `
 	DELETE FROM "order" WHERE id = $1
 `
 
+var deleteBookOrderQ = `
+	DELETE FROM bookorder WHERE id = $1
+`
+
 var getAccQ = `
 	SELECT * FROM account WHERE id = $1
+`
+
+var getAccByEmailQ = `
+	SELECT * FROM account WHERE email = $1
 `
 
 var getBookQ = `
@@ -296,7 +330,7 @@ var getPublisherQ = `
 `
 
 var getBCategoryQ = `
-	SELECT * FROM bcategory WHERE id = $1
+	SELECT * FROM bcategory WHERE id = $1 AND is_active = true
 `
 
 var getArticleQ = `
@@ -309,7 +343,7 @@ var getArticleQ = `
 `
 
 var getACategoryQ = `
-	SELECT * FROM acategory WHERE id = $1
+	SELECT * FROM acategory WHERE id = $1 AND is_active = true
 `
 
 var getResourceQ = `
@@ -322,11 +356,27 @@ var getResourceQ = `
 `
 
 var getRCategoryQ = `
-	SELECT * FROM rcategory WHERE id = $1
+	SELECT * FROM rcategory WHERE id = $1 AND is_active = true
 `
 
 var getOrderQ = `
-	SELECT * FROM "order" WHERE id = $1
+	SELECT
+		o.id, o.address, o.total, o.is_fulfilled, o.account_id,
+		a.first_name, a.last_name, a.email, a.phone,
+		bo.quantity, bo.book_id, bo.order_id, b.title,
+		COUNT(*) OVER() AS "record_count"
+	FROM "order" o
+	LEFT JOIN account a ON o.account_id = a.id
+	LEFT JOIN bookorder bo ON bo.order_id = o.id
+	LEFT JOIN book b ON bo.book_id = b.id
+	WHERE o.is_fulfilled != TRUE 
+	AND o.status == 'processing'
+	WHERE id = $1
+`
+
+var getOrderByPaymentIdQ = `
+	SELECT id FROM "order"
+	WHERE payment_id = $1
 `
 
 var getAccsQ = `SELECT * FROM account ORDER BY created_at ASC`
@@ -355,7 +405,7 @@ var getCoversQ = `SELECT * FROM cover ORDER BY id ASC`
 
 var getPublishersQ = `SELECT * FROM publisher ORDER BY id ASC`
 
-var getBCategoriesQ = `SELECT * FROM bcategory ORDER BY id ASC`
+var getBCategoriesQ = `SELECT * FROM bcategory WHERE is_active = true ORDER BY id ASC`
 
 var getArticlesQ = `
 	SELECT 
@@ -366,10 +416,10 @@ var getArticlesQ = `
 	LEFT JOIN acategory ac ON a.category_id = ac.id
 `
 
-var getACategoriesQ = `SELECT * FROM acategory ORDER BY id ASC`
+var getACategoriesQ = `SELECT * FROM acategory WHERE is_active = true ORDER BY id ASC`
 
 var getResourcesQ = `
-	SELECT 
+	SELECT
 		r.id, r.title, r.author, r.description, r.cover_url, r.resource_url,
 		r.category_id, rc.resource_category, r.created_at, r.updated_at,
 		COUNT(*) OVER() AS "record_count"
@@ -377,22 +427,57 @@ var getResourcesQ = `
 	LEFT JOIN rcategory rc ON r.category_id = rc.id
 `
 
-var getRCategoriesQ = `SELECT * FROM rcategory ORDER BY id ASC`
+var getRCategoriesQ = `SELECT * FROM rcategory WHERE is_active = true ORDER BY id ASC`
 
-var getOrdersQ = `SELECT * FROM "order" ORDER BY id ASC`
+var getUnfulfilledOrdersQ = `
+	SELECT
+		o.id, o.address, o.total, o.is_fulfilled, o.account_id,
+		a.first_name, a.last_name, a.email, a.phone,
+		bo.quantity, bo.book_id, bo.order_id, b.title,
+		COUNT(*) OVER() AS "record_count"
+	FROM "order" o
+	LEFT JOIN account a ON o.account_id = a.id
+	LEFT JOIN bookorder bo ON bo.order_id = o.id
+	LEFT JOIN book b ON bo.book_id = b.id
+	WHERE o.is_fulfilled != TRUE 
+	AND o.status == 'processing';
+`
 
-var getFulfilledQ = `SELECT * FROM "order" WHERE is_fulfilld = TRUE`
+var getFulfilledOrdersQ = `
+	SELECT
+		o.id, o.address, o.total, o.is_fulfilled, o.account_id,
+		a.first_name, a.last_name, a.email, a.phone,
+		bo.quantity, bo.book_id, bo.order_id, b.title,
+		COUNT(*) OVER() AS "record_count"
+	FROM "order" o
+	LEFT JOIN account a ON o.account_id = a.id
+	LEFT JOIN bookorder bo ON bo.order_id = o.id
+	LEFT JOIN book b ON bo.book_id = b.id
+	WHERE o.is_fulfilled = TRUE 
+	AND o.status == 'delivered';
+`
 
 var updateAccQ = `
     UPDATE account
-    SET first_name = $2, last_name = $3, email = $4, updated_at = $5
+    SET first_name = $2, last_name = $3, email = $4, phone = $5, updated_at = $6
     WHERE id = $1
 `
 
 var updateBookQ = `
     UPDATE book
-    SET title = $2, author = $3, description = $4, cover_url = COALESCE(NULLIF($5, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), isbn = $6, price = $7, stock = $8, sales_count = $9, is_active = COALESCE($10::BOOLEAN, TRUE), letter_id = $11, version_id = $12, cover_id = $13, publisher_id = $14, category_id = $15, updated_at = $16
+    SET title = $2, author = $3, description = $4, cover_url = COALESCE(NULLIF($5, ''), 'https://storage.googleapis.com/tulip-storage/noimgfound.png'), isbn = $6, price = $7, stock = $8, sales_count = $9, is_active = COALESCE($10::BOOLEAN, TRUE), letter_id = $11, version_id = $12, cover_id = $13, publisher_id = $14, category_id = $15, updated_at = $16
     WHERE id = $1
+`
+
+var updateBookStock = `
+    UPDATE book
+    SET 
+        stock = GREATEST(stock - $2, 0),
+				sales_count = $2,
+        is_active = CASE WHEN stock - $2 <= 0 THEN FALSE ELSE is_active END, 
+        updated_at = $3
+    WHERE id = $1
+    RETURNING stock
 `
 
 var updateLetterQ = `
@@ -427,7 +512,7 @@ var updateBCategoryQ = `
 
 var updateArticleQ = `
     UPDATE article
-    SET title = $2, author = $3, excerpt = $4, description = $5, cover_url = COALESCE(NULLIF($6, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), category_id = $7, updated_at = $8
+    SET title = $2, author = $3, excerpt = $4, description = $5, cover_url = COALESCE(NULLIF($6, ''), 'https://storage.googleapis.com/tulip-storage/noimgfound.png'), category_id = $7, updated_at = $8
     WHERE id = $1
 `
 
@@ -439,7 +524,7 @@ var updateACategoryQ = `
 
 var updateResourceQ = `
     UPDATE resource
-    SET title = $2, author = $3, description = $4, cover_url = COALESCE(NULLIF($5, ''), 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png'), resource_url = $6, category_id = $7, updated_at = $8
+    SET title = $2, author = $3, description = $4, cover_url = COALESCE(NULLIF($5, ''), 'https://storage.googleapis.com/tulip-storage/noimgfound.png'), resource_url = $6, category_id = $7, updated_at = $8
     WHERE id = $1
 `
 
@@ -451,7 +536,13 @@ var updateRCategoryQ = `
 
 var updateOrderQ = `
     UPDATE "order"
-    SET first_name = $2, last_name = $3, address = $4, quantity = $5, total = $6, book_id = $7, account_id = $8, is_fulfilled = COALESCE($9::BOOLEAN, FALSE), updated_at = $10
+    SET address = $2, total = $3, payment_id = $4 is_fulfilled = COALESCE($5::BOOLEAN, FALSE), status = $6, account_id = $7, updated_at = $8
+    WHERE id = $1
+`
+
+var updatePaymentIdQ = `
+    UPDATE "order"
+    SET payment_id = $2
     WHERE id = $1
 `
 
@@ -461,59 +552,8 @@ var fulfillOrderQ = `
     WHERE id = $1
 `
 
-// INSERT INTO letter
-// 	(letter_type)
-// VALUES
-// 	('NA'),
-// 	('Extra Chica'),
-// 	('Chica'),
-// 	('Mediana'),
-// 	('Grande'),
-// 	('Gigante');
-
-// INSERT INTO version
-// 	(bible_version)
-// VALUES
-// 	('NA'),
-// 	('RVR1960'),
-// 	('RVC'),
-// 	('NVI'),
-// 	('NTV'),
-// 	('LBLA'),
-// 	('DHH');
-
-// INSERT INTO cover
-// 	(cover_type)
-// VALUES
-// 	('NA'),
-// 	('Suave'),
-// 	('Dura'),
-// 	('PDF');
-
-// INSERT INTO publisher
-// 	(publisher_name)
-// VALUES
-// 	('NA'),
-// 	('Kerigma'),
-// 	('SBU'),
-// 	('B&H Español');
-
-// INSERT INTO book
-// 	(title, author, description, cover_url, isbn, price, stock, sales_count, is_active, letter_id, version_id, cover_id, publisher_id, category_id, created_at, updated_at)
-// VALUES ('Auténtica Espiritualidad', 'Amilcar López López', 'Cuando nos preguntan que es la espiritualidad o la vida espiritual, comúnmente respondemos que la vida espiritual tiene que ver con una vida dedicada a la oración, la lectura de la palabra del Señor y el asistir constantemente a las actividades de la iglesia. ¿Realmente eso es la vida espiritual?', 'https://kerigmalife.s3.us-east-2.amazonaws.com/noimgfound.png', '979-8322049418', '296.00', '20', '0', '1', '1', '1', '2', '1', '1', 'NOW()', 'NOW()')
-
-// INSERT INTO bcategory
-// 	(book_category)
-// VALUES
-// 	('Biblias'),
-// 	('Doctrina'),
-// 	('Cristología'),
-// 	('Estudios Bíblicos'),
-// 	('Cosmovision'),
-// 	('Infantil');
-
-// INSERT INTO acategory
-// 	(article_category)
-// VALUES
-// 	('Vida Cristiana'),
-// 	('Teología');
+var updateBookOrder = `
+    UPDATE bookorder
+    SET quantity = $2, book_id = $3, order_id = $4, updated_at = $5
+    WHERE id = $1
+`

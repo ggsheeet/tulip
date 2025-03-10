@@ -8,8 +8,8 @@ package layout
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/ggsheet/kerigma/internal/database"
-import "github.com/ggsheet/kerigma/template/component"
+import "github.com/ggsheet/tulip/internal/database"
+import "github.com/ggsheet/tulip/template/component"
 
 func Article(article database.Article, articles []database.Article) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -42,7 +42,7 @@ func Article(article database.Article, articles []database.Article) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta property=\"og:description\" content=\"Artículo Kerigma, Ministerio Cristiano Reformado\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Publicaciones Tulip\"><meta property=\"og:url\" content=\"https://www.kerigmalife.com/article\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta property=\"og:description\" content=\"Artículo Kerigma, Ministerio Cristiano Reformado\"><meta property=\"og:locale\" content=\"es\"><meta property=\"og:site_name\" content=\"Publicaciones Tulip\"><meta property=\"og:url\" content=\"https://www.publicacionestulip.org/article\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:image\" content=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func Article(article database.Article, articles []database.Article) templ.Compon
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta name=\"keywords\" content=\"libreria, artículos, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia\"><link rel=\"canonical\" href=\"https://www.kerigmalife.com/article\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"preload\" href=\"/public/css/reset.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/global.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/main.css\" as=\"style\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Regular.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Medium.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Bold.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"><script type=\"text/javascript\" src=\"/public/js/main.js\" defer></script><script type=\"text/javascript\" src=\"/public/js/htmx.min.js\" defer></script></head><body><header class=\"header_styles\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta name=\"keywords\" content=\"libreria, artículos, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia\"><link rel=\"canonical\" href=\"https://www.publicacionestulip.org/article\"><link rel=\"shortcut icon\" href=\"favicon.ico\"><link rel=\"preload\" href=\"/public/css/reset.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/global.css\" as=\"style\"><link rel=\"preload\" href=\"/public/css/main.css\" as=\"style\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Regular.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Medium.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"preload\" href=\"/public/fonts/DMSans-Bold.woff2\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"/public/css/reset.css\"><link rel=\"stylesheet\" href=\"/public/css/global.css\"><link rel=\"stylesheet\" href=\"/public/css/main.css\"><script type=\"text/javascript\" src=\"/public/js/main.js\" defer></script><script type=\"text/javascript\" src=\"/public/js/htmx.min.js\" defer></script></head><body><header class=\"header_styles\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

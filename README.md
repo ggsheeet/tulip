@@ -1,6 +1,6 @@
 This is a [Go](https://go.dev/) e-commerce project!
 
-## Official Website for Kerigma Editorial
+## Official Website for TULIP Editorial
 
 The tools integrated within this project include:
 

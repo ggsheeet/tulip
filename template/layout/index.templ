@@ -1,7 +1,7 @@
 package layout
 
-import "github.com/ggsheet/kerigma/template/component"
-import "github.com/ggsheet/kerigma/internal/database"
+import "github.com/ggsheet/tulip/template/component"
+import "github.com/ggsheet/tulip/internal/database"
 
 type Route struct {
     Path  string
@@ -30,11 +30,11 @@ templ Index(articles []database.Article, resources []database.Resource, books []
             />
             <meta property="og:locale" content="es"/>
             <meta property="og:site_name" content="Publicaciones Tulip"/>
-            <meta property="og:url" content="https://www.kerigmalife.com"/>
+            <meta property="og:url" content="https://www.publicacionestulip.org"/>
             <meta property="og:type" content="website"/>
-            <meta property="og:image" content="https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png"/>
+            <meta property="og:image" content="https://storage.googleapis.com/tulip-storage/og-default.png"/>
             <meta name="keywords" content="libreria, libros, cristiana, tienda, presbiteriana, reformada, cristo, dios, leer, blog, articulos, recursos, lectura, teologia" />
-            <link rel="canonical" href="https://www.kerigmalife.com" />
+            <link rel="canonical" href="https://www.publicacionestulip.org" />
             <link rel='shortcut icon' href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>

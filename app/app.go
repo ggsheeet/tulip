@@ -10,10 +10,11 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"time"
 
-	"github.com/ggsheet/kerigma/internal/database"
-	"github.com/ggsheet/kerigma/template/component"
-	"github.com/ggsheet/kerigma/template/layout"
+	"github.com/ggsheet/tulip/internal/database"
+	"github.com/ggsheet/tulip/template/component"
+	"github.com/ggsheet/tulip/template/layout"
 	"github.com/labstack/echo/v4"
 )
 
@@ -77,16 +78,8 @@ func fetchData(url string, origin string, token string, page int, limit int, cat
 }
 
 func handleIndexPage(c echo.Context) error {
-	env := os.Getenv("ENVIRONMENT")
+	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-	var origin string
-	if env == "development" || env == "docker" {
-		origin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if env == "production" {
-		origin = os.Getenv("AUTH_ORIGIN_PROD")
-	} else {
-		return c.String(http.StatusInternalServerError, "Invalid environment configuration")
-	}
 
 	log.Printf("origin: %v", origin)
 	page := 1
@@ -146,16 +139,8 @@ func handleIndexPage(c echo.Context) error {
 }
 
 func handleStorePage(c echo.Context) error {
-	env := os.Getenv("ENVIRONMENT")
+	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-	var origin string
-	if env == "development" || env == "docker" {
-		origin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if env == "production" {
-		origin = os.Getenv("AUTH_ORIGIN_PROD")
-	} else {
-		return c.String(http.StatusInternalServerError, "Invalid environment configuration")
-	}
 
 	page := 1
 	limit := 10
@@ -237,16 +222,8 @@ func handleStorePage(c echo.Context) error {
 }
 
 func handleArticlesPage(c echo.Context) error {
-	env := os.Getenv("ENVIRONMENT")
+	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-	var origin string
-	if env == "development" || env == "docker" {
-		origin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if env == "production" {
-		origin = os.Getenv("AUTH_ORIGIN_PROD")
-	} else {
-		return c.String(http.StatusInternalServerError, "Invalid environment configuration")
-	}
 
 	page := 1
 	limit := 10
@@ -328,16 +305,8 @@ func handleArticlesPage(c echo.Context) error {
 }
 
 func handleResourcesPage(c echo.Context) error {
-	env := os.Getenv("ENVIRONMENT")
+	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-	var origin string
-	if env == "development" || env == "docker" {
-		origin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if env == "production" {
-		origin = os.Getenv("AUTH_ORIGIN_PROD")
-	} else {
-		return c.String(http.StatusInternalServerError, "Invalid environment configuration")
-	}
 
 	page := 1
 	limit := 10
@@ -419,16 +388,8 @@ func handleResourcesPage(c echo.Context) error {
 }
 
 func handleBookPage(c echo.Context) error {
-	env := os.Getenv("ENVIRONMENT")
+	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-	var origin string
-	if env == "development" || env == "docker" {
-		origin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if env == "production" {
-		origin = os.Getenv("AUTH_ORIGIN_PROD")
-	} else {
-		return c.String(http.StatusInternalServerError, "Invalid environment configuration")
-	}
 
 	id := ""
 	bookId := 0
@@ -500,16 +461,8 @@ func handleBookPage(c echo.Context) error {
 }
 
 func handleArticlePage(c echo.Context) error {
-	env := os.Getenv("ENVIRONMENT")
+	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-	var origin string
-	if env == "development" || env == "docker" {
-		origin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if env == "production" {
-		origin = os.Getenv("AUTH_ORIGIN_PROD")
-	} else {
-		return c.String(http.StatusInternalServerError, "Invalid environment configuration")
-	}
 
 	id := ""
 	articleId := 0
@@ -581,16 +534,8 @@ func handleArticlePage(c echo.Context) error {
 }
 
 func handleResourcePage(c echo.Context) error {
-	env := os.Getenv("ENVIRONMENT")
+	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
-	var origin string
-	if env == "development" || env == "docker" {
-		origin = os.Getenv("AUTH_ORIGIN_DEV")
-	} else if env == "production" {
-		origin = os.Getenv("AUTH_ORIGIN_PROD")
-	} else {
-		return c.String(http.StatusInternalServerError, "Invalid environment configuration")
-	}
 
 	id := ""
 	resourceId := 0
@@ -694,4 +639,71 @@ func handleResourceDownload(c echo.Context) error {
 
 func handleCartPage(c echo.Context) error {
 	return Render(c, layout.Cart())
+}
+
+func handleProcesedTransaction(c echo.Context) error {
+	paymentId := ""
+	status := ""
+	if paymentIdParam := c.QueryParam("payment_id"); paymentIdParam != "null" {
+		paymentId = paymentIdParam
+	}
+	if statusParam := c.QueryParam("status"); statusParam != "" {
+		if statusParam == "approved" {
+			status = "Exitosa"
+		} else {
+			status = "Fallda"
+		}
+	}
+
+	return Render(c, layout.Processed(paymentId, status))
+}
+
+func handleLoginPage(c echo.Context) error {
+	html := `
+		<form hx-post="/login" hx-target="#error" hx-swap="innerHTML">
+			<input type="email" name="email" placeholder="Email" required>
+			<input type="password" name="password" placeholder="Password" required>
+			<button type="submit">Login</button>
+		</form>
+		<div id="error"></div>
+	`
+	return c.HTML(http.StatusOK, html)
+}
+
+func handleLoginAuth(c echo.Context) error {
+	adminEmail := os.Getenv("ADMIN_EMAIL_DEV")
+	adminPassword := os.Getenv("ADMIN_PASSWORD_DEV")
+
+	inputEmail := c.FormValue("adminEmail")
+	inputPassword := c.FormValue("adminPassword")
+
+	if inputEmail == adminEmail && inputPassword == adminPassword {
+		cookie := new(http.Cookie)
+		cookie.Name = "authSession"
+		cookie.Value = "TulipAdminAuthenticated"
+		cookie.Path = "/"
+		cookie.Expires = time.Now().Add(24 * time.Hour)
+		c.SetCookie(cookie)
+		return c.Redirect(http.StatusSeeOther, "/admin")
+	}
+	return c.HTML(http.StatusUnauthorized, "<p style='color:red;'>Invalid credentials</p>")
+}
+
+func handleLogoutAuth(c echo.Context) error {
+	cookie := new(http.Cookie)
+	cookie.Name = "authSession"
+	cookie.Value = ""
+	cookie.Path = "/"
+	cookie.MaxAge = -1
+	c.SetCookie(cookie)
+	return c.Redirect(http.StatusSeeOther, "/login")
+}
+
+func handleAdminPage(c echo.Context) error {
+	cookie, err := c.Cookie("authSession")
+	if err != nil || cookie.Value != "TulipAdminAuthenticated" {
+		return c.Redirect(http.StatusSeeOther, "/login")
+	}
+
+	return c.HTML(http.StatusOK, "<h1>Welcome to Admin Dashboard</h1><a href='/logout'>Logout</a>")
 }

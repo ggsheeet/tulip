@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ggsheet/kerigma/internal/database"
+	"github.com/ggsheet/tulip/internal/database"
 	"github.com/labstack/echo/v4"
 )
 
@@ -457,7 +457,7 @@ func (s *BookHandlers) handleCreateBCategory(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	bCategory := database.NewBCategory(bCategoryReq.BookCategory)
+	bCategory := database.NewBCategory(bCategoryReq.BookCategory, bCategoryReq.IsActive)
 
 	if err := s.db.CreateBCategory(bCategory); err != nil {
 		return err
@@ -487,7 +487,7 @@ func (s *BookHandlers) handleUpdateBCategory(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	bCategory := database.UpdateBCategory(bCategoryReq.BookCategory)
+	bCategory := database.UpdateBCategory(bCategoryReq.BookCategory, bCategoryReq.IsActive)
 
 	if err := s.db.UpdateBCategory(id, bCategory); err != nil {
 		return err

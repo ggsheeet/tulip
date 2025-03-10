@@ -1,7 +1,7 @@
 services:
-  kerigma_app_dev:
-    container_name: kerigma_app_dev
-    image: ggsheet/kerigma_app_dev:1.0.0
+  tulip_app_dev:
+    container_name: tulip_app_dev
+    image: ggsheet/tulip_app_dev:1.0.0
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,10 +13,10 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      - kerigma_db_dev
+      - tulip_db_dev
 
-  kerigma_db_dev:
-    container_name: kerigma_db_dev
+  tulip_db_dev:
+    container_name: tulip_db_dev
     image: postgres:16
     env_file:
       - .env.docker.dev

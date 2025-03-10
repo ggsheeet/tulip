@@ -84,6 +84,23 @@ func (s *PostgresDB) UpdateBook(id string, book *Book) error {
 	return nil
 }
 
+func (s *PostgresDB) UpdateBookStock(id int, purchasedAmount int) error {
+
+	var remainingStock int
+	err := s.db.QueryRow(
+		updateBookStock,
+		id,
+		purchasedAmount,
+		time.Now(),
+	).Scan(&remainingStock)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *PostgresDB) GetBookById(id string) (*Book, error) {
 	row := s.db.QueryRow(getBookQ, id)
 
@@ -126,25 +143,35 @@ func (s *PostgresDB) GetBookById(id string) (*Book, error) {
 
 func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, bookId int, bookIds string) (*[]*Book, error) {
 	offset := (page - 1) * limit
-
 	query := getBooksQ
-
-	whereClause := " WHERE b.is_active = true"
-
-	if category != 0 {
-		whereClause += " AND b.category_id = $3"
-	}
-
-	if bookId != 0 {
-		whereClause += " AND b.id != $4"
-	}
+	args := []interface{}{}
 
 	if bookIds != "" {
 		ids := strings.Split(bookIds, ",")
-		whereClause += fmt.Sprintf(" AND b.id IN (%s)", strings.Join(ids, ", "))
-	}
+		placeholders := make([]string, len(ids))
 
-	query += whereClause
+		for i, id := range ids {
+			placeholders[i] = fmt.Sprintf("$%d", i+1)
+			args = append(args, id)
+		}
+
+		query += fmt.Sprintf(" WHERE b.id IN (%s)", strings.Join(placeholders, ", "))
+	} else {
+		whereClause := " WHERE b.is_active = true"
+		args = append(args, limit, offset)
+
+		if category != 0 {
+			whereClause += " AND b.category_id = $3"
+			args = append(args, category)
+		}
+
+		if bookId != 0 {
+			whereClause += " AND b.id != $4"
+			args = append(args, bookId)
+		}
+
+		query += whereClause
+	}
 
 	switch order {
 	case "expensive":
@@ -157,14 +184,8 @@ func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, b
 		query += " ORDER BY b.created_at DESC, b.id DESC"
 	}
 
-	query += " LIMIT $1 OFFSET $2"
-
-	args := []interface{}{limit, offset}
-	if category != 0 {
-		args = append(args, category)
-	}
-	if bookId != 0 {
-		args = append(args, bookId)
+	if bookIds == "" {
+		query += " LIMIT $1 OFFSET $2"
 	}
 
 	rows, err := s.db.Query(query, args...)
@@ -618,6 +639,7 @@ func (s *PostgresDB) CreateBCategory(bCategory *BCategory) error {
 	_, err := s.db.Query(
 		createBCategoryQ,
 		&bCategory.BookCategory,
+		&bCategory.IsActive,
 		&bCategory.CreatedAt,
 		&bCategory.UpdatedAt,
 	)
@@ -649,6 +671,7 @@ func (s *PostgresDB) UpdateBCategory(id string, bCategory *BCategory) error {
 		updateBCategoryQ,
 		bCategoryId,
 		&bCategory.BookCategory,
+		&bCategory.IsActive,
 		time.Now().In(loc),
 	)
 
@@ -667,6 +690,7 @@ func (s *PostgresDB) GetBCategoryById(id string) (*BCategory, error) {
 	err := row.Scan(
 		&bCategory.ID,
 		&bCategory.BookCategory,
+		&bCategory.IsActive,
 		&bCategory.CreatedAt,
 		&bCategory.UpdatedAt,
 	)
@@ -694,6 +718,7 @@ func (s *PostgresDB) GetBCategories() (*[]*BCategory, error) {
 		err := rows.Scan(
 			&bCategory.ID,
 			&bCategory.BookCategory,
+			&bCategory.IsActive,
 			&bCategory.CreatedAt,
 			&bCategory.UpdatedAt,
 		)

@@ -1,34 +1,32 @@
 package layout
 
-import "github.com/ggsheet/tulip/internal/database"
 import "github.com/ggsheet/tulip/template/component"
 
-templ Articles(articles []database.Article, acategories []database.ACategory, currentPage int, totalPages int) {
+templ Processed(paymentId string, status string) {
     <!DOCTYPE html>
     <html lang="es">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>Artículos Kerigma</title>
-            <meta name="description" content="Artículos Kerigma, Ministerio Cristiano Reformado" />
-            <meta name="robots" content="all">
+            <title>Transacción { status }</title>
+            <meta name="description" content="Tienda Tulip, Editorial Cristiana Reformada" />
             <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
             <meta
                 property="og:title"
-                content="Artículos Kerigma"
+                content={"Transacción" + status}
             />
             <meta
                 property="og:description"
-                content="Artículos Kerigma, Ministerio Cristiano Reformado"
+                content="Tienda Tulip, Editorial Cristiana Reformada"
             />
             <meta property="og:locale" content="es"/>
             <meta property="og:site_name" content="Publicaciones Tulip"/>
-            <meta property="og:url" content="https://www.publicacionestulip.org/articles"/>
+            <meta property="og:url" content="https://www.publicacionestulip.org/processed"/>
             <meta property="og:type" content="website"/>
             <meta property="og:image" content="https://storage.googleapis.com/tulip-storage/og-default.png"/>
-            <meta name="keywords" content="libreria, artículos, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
-            <link rel="canonical" href="https://www.publicacionestulip.org/articles" />
+            <meta name="keywords" content="libreria, compra, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
+            <link rel="canonical" href="https://www.publicacionestulip.org/processed" />
             <link rel="shortcut icon" href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>
@@ -47,11 +45,8 @@ templ Articles(articles []database.Article, acategories []database.ACategory, cu
                 @component.Nav()
             </header>
             <main class="main_styles">
-                <h1 class="hidden">Artículos</h1>
-                <div class="filters_items">
-                    @component.ArticleFilter(acategories)
-                    @component.ArticleGrid(articles, currentPage, totalPages)
-                </div>
+                <h1 id="orderStatus" class="hidden">Transacción { status }</h1>
+                @component.ProcessedBody(paymentId, status)
             </main>
             <footer class="footer_styles">
                 @component.Footer()

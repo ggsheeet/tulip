@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var loc, _ = time.LoadLocation("America/Monterrey")
@@ -15,7 +17,7 @@ type AccountRequest struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
-	Password  string `json:"password"`
+	Phone     string `json:"phone"`
 }
 
 type BookRequest struct {
@@ -24,7 +26,7 @@ type BookRequest struct {
 	Description string  `json:"description"`
 	ISBN        string  `json:"isbn"`
 	CoverURL    string  `json:"coverUrl"`
-	Price       float32 `json:"price"`
+	Price       float64 `json:"price"`
 	Stock       int     `json:"stock"`
 	SalesCount  int     `json:"salesCount"`
 	IsActive    bool    `json:"isActive"`
@@ -53,6 +55,7 @@ type PublisherRequest struct {
 
 type BCategoryRequest struct {
 	BookCategory string `json:"bookCategory"`
+	IsActive     bool   `json:"isActive"`
 }
 
 type ArticleRequest struct {
@@ -66,6 +69,7 @@ type ArticleRequest struct {
 
 type ACategoryRequest struct {
 	ArticleCategory string `json:"articleCategory"`
+	IsActive        bool   `json:"isActive"`
 }
 
 type ResourceRequest struct {
@@ -79,24 +83,31 @@ type ResourceRequest struct {
 
 type RCategoryRequest struct {
 	ResourceCategory string `json:"ResourceCategory"`
+	IsActive         bool   `json:"isActive"`
 }
 
 type OrderRequest struct {
-	FirstName string  `json:"firstName"`
-	LastName  string  `json:"lastName"`
-	Address   string  `json:"address"`
-	Quantity  int     `json:"quantity"`
-	Total     float32 `json:"total"`
-	BookID    int     `json:"bookId"`
-	AccountID string  `json:"accountId"`
+	Address     string    `json:"address"`
+	Total       float64   `json:"total"`
+	PaymentID   int       `json:"paymentId"`
+	IsFulfilled bool      `json:"isFulfilled"`
+	Status      string    `json:"status"`
+	AccountID   uuid.UUID `json:"accountId"`
+	OrderBooks  []OrderBook
+}
+
+type BookOrderRequest struct {
+	Quantity int `json:"quantity"`
+	BookID   int `json:"bookId"`
+	OrderID  int `json:"orderId"`
 }
 
 type Account struct {
-	ID        string    `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	Email     string    `json:"email"`
-	Password  string    `json:"password"`
+	Phone     string    `json:"phone"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -108,7 +119,7 @@ type Book struct {
 	Description   string    `json:"description"`
 	CoverURL      string    `json:"coverUrl"`
 	ISBN          string    `json:"isbn"`
-	Price         float32   `json:"price"`
+	Price         float64   `json:"price"`
 	Stock         int       `json:"stock"`
 	SalesCount    int       `json:"salesCount"`
 	IsActive      bool      `json:"isActive"`
@@ -158,6 +169,7 @@ type Publisher struct {
 type BCategory struct {
 	ID           int       `json:"id"`
 	BookCategory string    `json:"bookCategory"`
+	IsActive     bool      `json:"isActive"`
 	CreatedAt    time.Time `json:"createdAt"`
 	UpdatedAt    time.Time `json:"updatedAt"`
 }
@@ -179,6 +191,7 @@ type Article struct {
 type ACategory struct {
 	ID              int       `json:"id"`
 	ArticleCategory string    `json:"aCategory"`
+	IsActive        bool      `json:"isActive"`
 	CreatedAt       time.Time `json:"createdAt"`
 	UpdatedAt       time.Time `json:"updatedAt"`
 }
@@ -200,19 +213,40 @@ type Resource struct {
 type RCategory struct {
 	ID               int       `json:"id"`
 	ResourceCategory string    `json:"resourceCategory"`
+	IsActive         bool      `json:"isActive"`
 	CreatedAt        time.Time `json:"createdAt"`
 	UpdatedAt        time.Time `json:"updatedAt"`
 }
 
 type Order struct {
+	ID          int       `json:"id"`
+	Address     string    `json:"address"`
+	Total       float64   `json:"total"`
+	PaymentID   int       `json:"paymentId"`
+	IsFulfilled bool      `json:"isFulfilled"`
+	Status      string    `json:"status"`
+	AccountID   uuid.UUID `json:"accountId"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	OrderBooks  []OrderBook
+	RecordCount int `json:"recordCount,omitempty"`
+}
+
+type OrderBook struct {
+	BookID      int     `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	CoverURL    string  `json:"coverUrl"`
+	Price       float64 `json:"price"`
+	Quantity    int     `json:"quantity"`
+	BCategory   string  `json:"bCategory"`
+}
+
+type BookOrder struct {
 	ID        int       `json:"id"`
-	FirstName string    `json:"firstName"`
-	LastName  string    `json:"lastName"`
-	Address   string    `json:"address"`
 	Quantity  int       `json:"quantity"`
-	Total     float32   `json:"total"`
 	BookID    int       `json:"bookId"`
-	AccountID string    `json:"accountId"`
+	OrderID   int       `json:"orderId"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }

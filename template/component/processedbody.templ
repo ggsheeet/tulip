@@ -1,0 +1,17 @@
+package component
+
+templ ProcessedBody(paymentId string, status string) {
+    <div class="processed_wrapper">
+    if status == "Exitosa" {
+        <h2>Felicidades por tu compra!</h2>
+        <p>Agradecemos tu confianza en <span>Tulip</span>.</p>
+        <p>Tu número de pedido es: <span id="paymentId">#{ paymentId }</span></p>
+        <p>El seguimiento de tu pedido será a través del correo electrónico que nos proporacionaste, donde recibirás una confirmación de tu compra en pocos minutos.</p>
+        <p>Correo registrado: <span id="registeredEmail"></span></p>
+        <p>Para dudas o aclaraciones, contáctanos directamente al correo: <span>publicacionestulip@gmail.com</span></p>
+    } else {
+        <h2>¡Oh no! Tuvimos un problema al registrar tu compra</h2>
+        <p>Por favor regresa al carrito he intenta de nuevo</p>
+    }
+    </div>
+} 

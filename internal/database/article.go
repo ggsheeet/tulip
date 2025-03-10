@@ -175,6 +175,7 @@ func (s *PostgresDB) CreateACategory(aCategory *ACategory) error {
 	_, err := s.db.Query(
 		createACategoryQ,
 		&aCategory.ArticleCategory,
+		&aCategory.IsActive,
 		&aCategory.CreatedAt,
 		&aCategory.UpdatedAt,
 	)
@@ -206,6 +207,7 @@ func (s *PostgresDB) UpdateACategory(id string, aCategory *ACategory) error {
 		updateACategoryQ,
 		aCategoryId,
 		&aCategory.ArticleCategory,
+		&aCategory.IsActive,
 		time.Now().In(loc),
 	)
 
@@ -224,6 +226,7 @@ func (s *PostgresDB) GetACategoryById(id string) (*ACategory, error) {
 	err := row.Scan(
 		&aCategory.ID,
 		&aCategory.ArticleCategory,
+		&aCategory.IsActive,
 		&aCategory.CreatedAt,
 		&aCategory.UpdatedAt,
 	)
@@ -251,6 +254,7 @@ func (s *PostgresDB) GetACategories() (*[]*ACategory, error) {
 		err := rows.Scan(
 			&aCategory.ID,
 			&aCategory.ArticleCategory,
+			&aCategory.IsActive,
 			&aCategory.CreatedAt,
 			&aCategory.UpdatedAt,
 		)

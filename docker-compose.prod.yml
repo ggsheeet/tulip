@@ -1,7 +1,7 @@
 services:
-  kerigma_app:
-    container_name: kerigma_app
-    image: ggsheet/kerigma_app:1.0.0
+  tulip_app:
+    container_name: tulip_app
+    image: ggsheet/tulip_app:1.0.0
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,12 +10,11 @@ services:
       - .env.docker
     ports: 
       - "8080:8080"
-      
     depends_on:
-      - kerigma_db
+      - tulip_db
 
-  kerigma_db:
-    container_name: kerigma_db
+  tulip_db:
+    container_name: tulip_db
     image: postgres:16
     env_file:
       - .env.docker

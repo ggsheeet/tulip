@@ -1,6 +1,6 @@
 package layout
 
-import "github.com/ggsheet/kerigma/template/component"
+import "github.com/ggsheet/tulip/template/component"
 
 templ Cart() {
     <!DOCTYPE html>
@@ -9,7 +9,7 @@ templ Cart() {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>Tienda Kerigma</title>
+            <title>Tienda Tulip</title>
             <meta name="description" content="Tienda Tulip, Editorial Cristiana Reformada" />
             <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
             <meta
@@ -22,12 +22,12 @@ templ Cart() {
             />
             <meta property="og:locale" content="es"/>
             <meta property="og:site_name" content="Publicaciones Tulip"/>
-            <meta property="og:url" content="https://www.kerigmalife.com/cart"/>
+            <meta property="og:url" content="https://www.publicacionestulip.org/cart"/>
             <meta property="og:type" content="website"/>
-            <meta property="og:image" content="https://kerigmalife.s3.us-east-2.amazonaws.com/og-default.png"/>
+            <meta property="og:image" content="https://storage.googleapis.com/tulip-storage/og-default.png"/>
             <meta name="keywords" content="carrito, libreria, libros, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
             <meta name="format-detection" content="telephone=no">
-            <link rel="canonical" href="https://www.kerigmalife.com/cart" />
+            <link rel="canonical" href="https://www.publicacionestulip.org/cart" />
             <link rel="shortcut icon" href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>
@@ -40,6 +40,7 @@ templ Cart() {
             <link rel="stylesheet" href="/public/css/main.css">
             <script type="text/javascript" src="/public/js/main.js" defer></script>
             <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
+            <script src="https://sdk.mercadopago.com/js/v2"></script>
         </head>
         <body>
             <div id="snackBar" class="snack_bar">
@@ -55,6 +56,134 @@ templ Cart() {
                     @component.CartGrid()
                     @component.CartInfo()
                 </div>
+                <dialog id="emailDialog" class="dialog_container small_dialog" style="margin: auto;">
+                    <i id="emailDialogClose" class="close_btn"></i>
+                    <form id="emailForm" class="dialog_form" novalidate>
+                        <p class="section_title">Ingresa tu correo</p>
+                        <fieldset class="field_section">
+                            <div class="field_wrapper email_check">
+                                <label for="accountEmail">Correo Electrónico</label>
+                                <input type="email" id="accountEmail" name="email" autocomplete="email" onkeydown="return event.key != 'Enter';" class="email_input">
+                                <p id="emailFormErrorE" class="helper_text error_message normal_size"></p>
+                            </div>
+                        </fieldset>
+                        <div class="form_btns">
+                            <input type="submit" value="Continuar" class="form_btn"/>
+                        </div>
+                    </form>
+                </dialog>
+                <button id="paymentDialogOpen" class="hidden"></button>
+                <dialog id="paymentDialog" class="dialog_container" style="margin: auto;">
+                    <i id="paymentDialogClose" class="close_btn"></i>
+                    <form id="paymentForm" class="dialog_form" novalidate>
+                        <p class="section_title">Información personal</p>
+                        <fieldset class="field_section">
+                            <div class="field_group">
+                                <div class="field_wrapper">
+                                    <label for="firstName">Nombre(s)</label>
+                                    <input type="text" id="firstName" name="firstName" autofocus autocomplete="name" onkeydown="return event.key != 'Enter';">
+                                    <p id="paymentFormErrorFN" class="helper_text error_message small_size"></p>
+                                </div>
+                                <div class="field_wrapper">
+                                    <label for="lastName">Apellido(s)</label>
+                                    <input type="text" id="lastName" name="lastName" autocomplete="family-name" onkeydown="return event.key != 'Enter';">
+                                    <p id="paymentFormErrorLN" class="helper_text error_message small_size"></p>
+                                </div>
+                            </div> 
+                            <div class="field_group">
+                                <div class="field_wrapper">
+                                    <label for="paymentEmail">Correo Electrónico</label>
+                                    <input type="email" id="paymentEmail" name="email" autocomplete="email" onkeydown="return event.key != 'Enter';" class="email_input">
+                                    <p id="paymentEmailErrorE" class="helper_text error_message small_size"></p>
+                                </div>
+                                <div class="field_wrapper">
+                                    <label for="phone">Teléfono</label>
+                                    <input type="tel" id="phone" name="phone" autocomplete="tel" onkeydown="return event.key != 'Enter';">
+                                    <p id="paymentFormErrorPh" class="helper_text error_message small_size"></p>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <p class="section_title">Información de envío</p>
+                        <fieldset class="field_section">
+                            <div class="field_group">
+                                <div class="field_wrapper">
+                                    <label for="street">Calle & Número</label>
+                                    <input type="text" id="street" name="street" onkeydown="return event.key != 'Enter';">
+                                    <p id="paymentFormErrorStr" class="helper_text error_message small_size"></p>
+                                </div>
+                                <div class="field_wrapper">
+                                    <label for="neighborhood">Colonia</label>
+                                    <input type="text" id="neighborhood" name="neighborhood" onkeydown="return event.key != 'Enter';">
+                                    <p id="paymentFormErrorNh" class="helper_text error_message small_size"></p>
+                                </div>
+                            </div>
+                            <div class="field_group">
+                                <div class="field_wrapper">
+                                    <label for="city">Ciudad</label>
+                                    <input type="text" id="city" name="city" autocomplete="city" onkeydown="return event.key != 'Enter';">
+                                    <p id="paymentFormErrorCi" class="helper_text error_message small_size"></p>
+                                </div> 
+                                <div class="field_wrapper">
+                                    <label for="zipcode">Código Postal</label>
+                                    <input type="postal-code" id="zipcode" name="zipcode" autocomplete="postal-code" onkeydown="return event.key != 'Enter';">
+                                    <p id="paymentFormErrorZ" class="helper_text error_message small_size"></p>
+                                </div>
+                            </div>
+                            <div class="field_group">
+                                <div class="field_wrapper">
+                                    <label for="state">Estado</label>
+                                    <select id="state" name="state" onkeydown="return event.key != 'Enter';">
+                                        <option value="">Seleccione uno...</option>
+                                        <option value="Aguascalientes">Aguascalientes</option>
+                                        <option value="Baja California">Baja California</option>
+                                        <option value="Baja California Sur">Baja California Sur</option>
+                                        <option value="Campeche">Campeche</option>
+                                        <option value="Chiapas">Chiapas</option>
+                                        <option value="Chihuahua">Chihuahua</option>
+                                        <option value="CDMX">Ciudad de México</option>
+                                        <option value="Coahuila">Coahuila</option>
+                                        <option value="Colima">Colima</option>
+                                        <option value="Durango">Durango</option>
+                                        <option value="Estado de México">Estado de México</option>
+                                        <option value="Guanajuato">Guanajuato</option>
+                                        <option value="Guerrero">Guerrero</option>
+                                        <option value="Hidalgo">Hidalgo</option>
+                                        <option value="Jalisco">Jalisco</option>
+                                        <option value="Michoacán">Michoacán</option>
+                                        <option value="Morelos">Morelos</option>
+                                        <option value="Nayarit">Nayarit</option>
+                                        <option value="Nuevo León">Nuevo León</option>
+                                        <option value="Oaxaca">Oaxaca</option>
+                                        <option value="Puebla">Puebla</option>
+                                        <option value="Querétaro">Querétaro</option>
+                                        <option value="Quintana Roo">Quintana Roo</option>
+                                        <option value="San Luis Potosí">San Luis Potosí</option>
+                                        <option value="Sinaloa">Sinaloa</option>
+                                        <option value="Sonora">Sonora</option>
+                                        <option value="Tabasco">Tabasco</option>
+                                        <option value="Tamaulipas">Tamaulipas</option>
+                                        <option value="Tlaxcala">Tlaxcala</option>
+                                        <option value="Veracruz">Veracruz</option>
+                                        <option value="Yucatán">Yucatán</option>
+                                        <option value="Zacatecas">Zacatecas</option>
+                                    </select>
+                                    <p id="paymentFormErrorSta" class="helper_text error_message small_size"></p>
+                                </div>
+                                <div class="field_wrapper">
+                                    <label for="country">País</label>
+                                    <select id="country" name="country"  onkeydown="return event.key != 'Enter';">
+                                        <option selected value="México">México</option>
+                                    </select>
+                                    <p id="paymentFormErrorCo" class="helper_text error_message small_size"></p>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="form_btns">
+                            <input type="reset" value="Limpiar" class="form_btn"/>
+                            <input type="submit" value="Continuar" class="form_btn"/>
+                        </div>
+                    </form>
+                </dialog>
             </main>
             <footer class="footer_styles">
                 @component.Footer()

@@ -14,4 +14,9 @@ func APPRouter(e *echo.Echo) {
 	e.GET("/resources", handleResourcesPage)
 	e.GET("/cart", handleCartPage)
 	e.GET("/download", handleResourceDownload)
+	e.GET("/processed", handleProcesedTransaction)
+	e.GET("/login", handleLoginPage)
+	e.POST("/login", handleLoginAuth)
+	e.POST("/logout", handleLogoutAuth)
+	e.GET("/admin", handleAdminPage)
 }

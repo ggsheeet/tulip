@@ -8,12 +8,12 @@ package component
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/ggsheet/kerigma/internal/database"
+import "github.com/ggsheet/tulip/internal/database"
 import "fmt"
 import "strconv"
 
-func formatPrice(price float32) string {
-	if price == float32(int(price)) {
+func formatPrice(price float64) string {
+	if price == float64(int(price)) {
 		return strconv.Itoa(int(price))
 	}
 	return fmt.Sprintf("%.2f", price)

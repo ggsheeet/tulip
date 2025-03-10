@@ -4,11 +4,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/ggsheet/kerigma/api"
-	"github.com/ggsheet/kerigma/app"
-	"github.com/ggsheet/kerigma/internal/database"
+	"github.com/ggsheet/tulip/api"
+	"github.com/ggsheet/tulip/app"
+	"github.com/ggsheet/tulip/internal/database"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/mercadopago/sdk-go/pkg/config"
+	"github.com/resend/resend-go/v2"
 )
 
 func main() {
@@ -31,7 +33,16 @@ func main() {
 	e := echo.New()
 	e.HideBanner = true
 
-	apiServer := api.NewAPIServer(db)
+	mpAccessToken := os.Getenv("MP_ACCESS_TOKEN")
+	cfg, err := config.New(mpAccessToken)
+	if err != nil {
+		log.Fatalf("failed to initialize Mercadopago client: %v", err)
+	}
+
+	resendApiKey := os.Getenv("RESEND_API_KEY")
+	msg := resend.NewClient(resendApiKey)
+
+	apiServer := api.NewAPIServer(db, cfg, msg)
 	apiServer.APIRouter(e)
 	log.Println("API routes initialized successfully")
 

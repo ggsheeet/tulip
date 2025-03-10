@@ -8,7 +8,7 @@ package component
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/ggsheet/kerigma/internal/database"
+import "github.com/ggsheet/tulip/internal/database"
 
 func BookInfo(book database.Book) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

@@ -7,7 +7,7 @@ import (
 )
 
 func HashPassword(password string) (string, error) {
-	// GenerateFromPassword creates a hashed password with a salt
+	// Create a hashed password with a salt
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -16,7 +16,7 @@ func HashPassword(password string) (string, error) {
 }
 
 func CheckPasswordHash(password, hash string) bool {
-	// CompareHashAndPassword compares the provided password with the stored hash
+	// Compare the provided password with the stored hash
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
@@ -29,7 +29,7 @@ func mainFunc() {
 		log.Fatalf("Failed to hash password: %v", err)
 	}
 
-	// Now you would store `hashedPassword` in your database
+	// Store `hashedPassword` in your database
 	log.Println("Hashed Password:", hashedPassword)
 
 	isMatch := CheckPasswordHash(password, hashedPassword)

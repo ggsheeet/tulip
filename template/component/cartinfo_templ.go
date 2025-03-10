@@ -26,7 +26,7 @@ func CartInfo() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"cartInfo\" class=\"cart_container\" style=\"display: none;\"><div class=\"cart_payment\"><div class=\"cart_head\"><h2>Detalles del pedido</h2></div><div id=\"cartPayment\" class=\"payment_breakdown\"><div class=\"payment_amount\"><h5>Subtotal</h5><h6 id=\"cartSub\" class=\"payment_price\"></h6></div><div class=\"payment_amount\"><h5>Envío</h5><h6 id=\"cartShip\" class=\"payment_price\"></h6></div><hr><div class=\"payment_amount\"><h5>Total</h5><h6 id=\"cartTotal\" class=\"payment_price\"></h6></div></div><div class=\"payment_button\"><button>Ir a Pagar</button></div></div></aside>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside id=\"cartInfo\" class=\"cart_container\" style=\"display: none;\"><div class=\"cart_payment\"><div class=\"cart_head\"><h2>Detalles del pedido</h2></div><div id=\"cartPayment\" class=\"payment_breakdown\"><div class=\"payment_amount\"><h5>Subtotal</h5><h6 id=\"cartSub\" class=\"payment_price\"></h6></div><div class=\"payment_amount\"><h5>Envío</h5><h6 id=\"cartShip\" class=\"payment_price\"></h6></div><hr><div class=\"payment_amount\"><h5>Total</h5><h6 id=\"cartTotal\" class=\"payment_price\"></h6></div></div><div class=\"payment_button\"><button id=\"emailDialogOpen\">Checkout <img src=\"/public/icons/mp.svg\" alt=\"mp-logo\" width=\"360\" height=\"250\"></button></div></div></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

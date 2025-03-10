@@ -174,6 +174,7 @@ func (s *PostgresDB) CreateRCategory(rCategory *RCategory) error {
 	_, err := s.db.Query(
 		createRCategoryQ,
 		&rCategory.ResourceCategory,
+		&rCategory.IsActive,
 		&rCategory.CreatedAt,
 		&rCategory.UpdatedAt,
 	)
@@ -205,6 +206,7 @@ func (s *PostgresDB) UpdateRCategory(id string, rCategory *RCategory) error {
 		updateRCategoryQ,
 		rCategoryId,
 		&rCategory.ResourceCategory,
+		&rCategory.IsActive,
 		time.Now().In(loc),
 	)
 
@@ -223,6 +225,7 @@ func (s *PostgresDB) GetRCategoryById(id string) (*RCategory, error) {
 	err := row.Scan(
 		&rCategory.ID,
 		&rCategory.ResourceCategory,
+		&rCategory.IsActive,
 		&rCategory.CreatedAt,
 		&rCategory.UpdatedAt,
 	)
@@ -250,6 +253,7 @@ func (s *PostgresDB) GetRCategories() (*[]*RCategory, error) {
 		err := rows.Scan(
 			&rCategory.ID,
 			&rCategory.ResourceCategory,
+			&rCategory.IsActive,
 			&rCategory.CreatedAt,
 			&rCategory.UpdatedAt,
 		)

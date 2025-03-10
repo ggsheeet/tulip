@@ -42,6 +42,7 @@
 	--clr-related-text: #122c6f;
 	--clr-card-tabber-hover: rgba(135, 135, 135, 0.1);
 	--clr-card-related-hover: rgba(163, 163, 163, 0.1);
+	--clr-input: #d3d5da;
 	--clr-accent: #122c6f;
 	--clr-focus: #525bd5;
 	--clr-text: #484848;
@@ -49,6 +50,8 @@
 	--clr-footer-text: #f5f5f5;
 	--clr-shadow: #888;
 	--clr-link: #4141af;
+	--clr-cta-text: #f5f5f5;
+	--clr-error: #f1163e;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,11 +65,14 @@
 		--clr-related-text: #7996e1;
 		--clr-card-tabber-hover: rgba(180, 180, 180, 0.1);
 		--clr-card-related-hover: rgb(0, 0, 0, 0.1);
+		--clr-input: #afb6c0;
 		--clr-accent: #7996e1;
 		--clr-text: #afb6c0;
 		--clr-footer: #191815;
 		--clr-shadow: #555;
 		--clr-link: #b0b0ff;
+		--clr-cta-text: #292929;
+		--clr-error: #ff5070;
 	}
 }
 
@@ -87,6 +93,20 @@ body {
 	line-height: 1;
 	border: 0;
 	margin: 0;
+}
+
+body:has(dialog[open]) {
+	overflow: auto !important;
+}
+
+h2,
+h3 {
+	display: -webkit-box;
+	line-clamp: 2;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .header_styles {

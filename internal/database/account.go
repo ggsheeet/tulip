@@ -3,8 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"strconv"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func (s *PostgresDB) createAccountTable() error {
@@ -13,25 +14,25 @@ func (s *PostgresDB) createAccountTable() error {
 	return err
 }
 
-func (s *PostgresDB) CreateAccount(account *Account) error {
-	_, err := s.db.Query(
+func (s *PostgresDB) CreateAccount(account *Account) (uuid.UUID, error) {
+	err := s.db.QueryRow(
 		createAccQ,
 		&account.FirstName,
 		&account.LastName,
 		&account.Email,
-		&account.Password,
+		&account.Phone,
 		&account.CreatedAt,
 		&account.UpdatedAt,
-	)
+	).Scan(&account.ID)
 
 	if err != nil {
-		return err
+		return uuid.Nil, fmt.Errorf("error: %v", err)
 	}
 
-	return nil
+	return account.ID, nil
 }
 
-func (s *PostgresDB) DeleteAccount(id string) error {
+func (s *PostgresDB) DeleteAccount(id uuid.UUID) error {
 	_, err := s.db.Exec(deleteAccQ, id)
 
 	if err != nil {
@@ -41,18 +42,14 @@ func (s *PostgresDB) DeleteAccount(id string) error {
 	return nil
 }
 
-func (s *PostgresDB) UpdateAccount(id string, account *Account) error {
-	accId, idErr := strconv.Atoi(id)
-	if idErr != nil {
-		return idErr
-	}
-
+func (s *PostgresDB) UpdateAccount(id uuid.UUID, account *Account) error {
 	_, err := s.db.Query(
 		updateAccQ,
-		accId,
+		id,
 		&account.FirstName,
 		&account.LastName,
 		&account.Email,
+		&account.Phone,
 		time.Now().In(loc),
 	)
 
@@ -63,7 +60,7 @@ func (s *PostgresDB) UpdateAccount(id string, account *Account) error {
 	return nil
 }
 
-func (s *PostgresDB) GetAccountById(id string) (*Account, error) {
+func (s *PostgresDB) GetAccountById(id uuid.UUID) (*Account, error) {
 	row := s.db.QueryRow(getAccQ, id)
 
 	var account Account
@@ -73,7 +70,7 @@ func (s *PostgresDB) GetAccountById(id string) (*Account, error) {
 		&account.FirstName,
 		&account.LastName,
 		&account.Email,
-		&account.Password,
+		&account.Phone,
 		&account.CreatedAt,
 		&account.UpdatedAt,
 	)
@@ -81,6 +78,31 @@ func (s *PostgresDB) GetAccountById(id string) (*Account, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("Account with uuid '%v' does not exist", id)
+		}
+		return nil, err
+	}
+
+	return &account, nil
+}
+
+func (s *PostgresDB) GetAccountByEmail(email string) (*Account, error) {
+	row := s.db.QueryRow(getAccByEmailQ, email)
+
+	var account Account
+
+	err := row.Scan(
+		&account.ID,
+		&account.FirstName,
+		&account.LastName,
+		&account.Email,
+		&account.Phone,
+		&account.CreatedAt,
+		&account.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Printf("Account with email '%v' does not exist", email)
 		}
 		return nil, err
 	}
@@ -103,7 +125,7 @@ func (s *PostgresDB) GetAccounts() (*[]*Account, error) {
 			&account.FirstName,
 			&account.LastName,
 			&account.Email,
-			&account.Password,
+			&account.Phone,
 			&account.CreatedAt,
 			&account.UpdatedAt,
 		)

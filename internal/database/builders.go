@@ -1,18 +1,23 @@
 package database
 
-import "time"
+import (
+	"time"
 
-func NewAccount(firstName, lastName, email string) *Account {
+	"github.com/google/uuid"
+)
+
+func NewAccount(firstName, lastName, email, phone string) *Account {
 	return &Account{
 		FirstName: firstName,
 		LastName:  lastName,
 		Email:     email,
+		Phone:     phone,
 		CreatedAt: time.Now().In(loc),
 		UpdatedAt: time.Now().In(loc),
 	}
 }
 
-func NewBook(title string, author string, description string, coverUrl string, isbn string, price float32, stock int, salesCount int, isActive bool, letterId int, versionId int, coverId int, publisherId int, categoryId int) *Book {
+func NewBook(title string, author string, description string, coverUrl string, isbn string, price float64, stock int, salesCount int, isActive bool, letterId int, versionId int, coverId int, publisherId int, categoryId int) *Book {
 	return &Book{
 		Title:       title,
 		Author:      author,
@@ -65,9 +70,10 @@ func NewPublisher(publisherName string) *Publisher {
 	}
 }
 
-func NewBCategory(bookCategory string) *BCategory {
+func NewBCategory(bookCategory string, isActive bool) *BCategory {
 	return &BCategory{
 		BookCategory: bookCategory,
+		IsActive:     isActive,
 		CreatedAt:    time.Now().In(loc),
 		UpdatedAt:    time.Now().In(loc),
 	}
@@ -86,9 +92,10 @@ func NewArticle(title string, author string, excerpt string, description string,
 	}
 }
 
-func NewACategory(articleCategory string) *ACategory {
+func NewACategory(articleCategory string, isActive bool) *ACategory {
 	return &ACategory{
 		ArticleCategory: articleCategory,
+		IsActive:        isActive,
 		CreatedAt:       time.Now().In(loc),
 		UpdatedAt:       time.Now().In(loc),
 	}
@@ -107,38 +114,49 @@ func NewResource(title string, author string, description string, coverUrl strin
 	}
 }
 
-func NewRCategory(resourceCategory string) *RCategory {
+func NewRCategory(resourceCategory string, isActive bool) *RCategory {
 	return &RCategory{
 		ResourceCategory: resourceCategory,
+		IsActive:         isActive,
 		CreatedAt:        time.Now().In(loc),
 		UpdatedAt:        time.Now().In(loc),
 	}
 }
 
-func NewOrder(firstName string, lastName string, address string, quantity int, total float32, bookId int, accountId string) *Order {
+func NewOrder(address string, total float64, paymentId int, isFulfilled bool, status string, accountId uuid.UUID) *Order {
 	return &Order{
-		FirstName: firstName,
-		LastName:  lastName,
-		Address:   address,
+		Address:     address,
+		Total:       total,
+		PaymentID:   paymentId,
+		IsFulfilled: isFulfilled,
+		Status:      status,
+		AccountID:   accountId,
+		CreatedAt:   time.Now().In(loc),
+		UpdatedAt:   time.Now().In(loc),
+	}
+}
+
+func NewBookOrder(quantity int, bookId int, orderId int) *BookOrder {
+	return &BookOrder{
 		Quantity:  quantity,
-		Total:     total,
 		BookID:    bookId,
-		AccountID: accountId,
+		OrderID:   orderId,
 		CreatedAt: time.Now().In(loc),
 		UpdatedAt: time.Now().In(loc),
 	}
 }
 
-func UpdateAccount(firstName, lastName, email string) *Account {
+func UpdateAccount(firstName, lastName, email, phone string) *Account {
 	return &Account{
 		FirstName: firstName,
 		LastName:  lastName,
 		Email:     email,
+		Phone:     phone,
 		UpdatedAt: time.Now().In(loc),
 	}
 }
 
-func UpdateBook(title string, author string, description string, coverUrl string, isbn string, price float32, stock int, salesCount int, isActive bool, letterId int, versionId int, coverId int, publisherId int, categoryId int) *Book {
+func UpdateBook(title string, author string, description string, coverUrl string, isbn string, price float64, stock int, salesCount int, isActive bool, letterId int, versionId int, coverId int, publisherId int, categoryId int) *Book {
 	return &Book{
 		Title:       title,
 		Author:      author,
@@ -186,9 +204,10 @@ func UpdatePublisher(publisherName string) *Publisher {
 	}
 }
 
-func UpdateBCategory(bookCategory string) *BCategory {
+func UpdateBCategory(bookCategory string, isActive bool) *BCategory {
 	return &BCategory{
 		BookCategory: bookCategory,
+		IsActive:     isActive,
 		UpdatedAt:    time.Now().In(loc),
 	}
 }
@@ -205,9 +224,10 @@ func UpdateArticle(title string, author string, excerpt, description string, cov
 	}
 }
 
-func UpdateACategory(articleCategory string) *ACategory {
+func UpdateACategory(articleCategory string, isActive bool) *ACategory {
 	return &ACategory{
 		ArticleCategory: articleCategory,
+		IsActive:        isActive,
 		UpdatedAt:       time.Now().In(loc),
 	}
 }
@@ -224,21 +244,32 @@ func UpdateResource(title string, author string, description string, coverUrl st
 	}
 }
 
-func UpdateRCategory(resourceCategory string) *RCategory {
+func UpdateRCategory(resourceCategory string, isActive bool) *RCategory {
 	return &RCategory{
 		ResourceCategory: resourceCategory,
+		IsActive:         isActive,
 		UpdatedAt:        time.Now().In(loc),
 	}
 }
 
-func UpdateOrder(firstName string, lastName string, address string, quantity int, total float32, bookId int, accountId string) *Order {
+func UpdateOrder(address string, total float64, paymentId int, isFulfilled bool, status string, accountId uuid.UUID) *Order {
 	return &Order{
-		FirstName: firstName,
-		LastName:  lastName,
-		Address:   address,
-		Total:     total,
+		Address:     address,
+		Total:       total,
+		PaymentID:   paymentId,
+		IsFulfilled: isFulfilled,
+		Status:      status,
+		AccountID:   accountId,
+		CreatedAt:   time.Now().In(loc),
+		UpdatedAt:   time.Now().In(loc),
+	}
+}
+
+func UpdateBookOrder(quantity int, bookId int, orderId int) *BookOrder {
+	return &BookOrder{
+		Quantity:  quantity,
 		BookID:    bookId,
-		AccountID: accountId,
+		OrderID:   orderId,
 		UpdatedAt: time.Now().In(loc),
 	}
 }
