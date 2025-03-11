@@ -76,12 +76,6 @@
 	}
 }
 
-@media (prefers-reduced-motion: no-preference) {
-	html {
-		scroll-behavior: smooth;
-	}
-}
-
 html {
 	font-family: var(--font-dmsans);
 	background: var(--clr-background);
