@@ -81,7 +81,6 @@ func handleIndexPage(c echo.Context) error {
 	origin := os.Getenv("AUTH_ORIGIN")
 	token := os.Getenv("AUTH_TOKEN")
 
-	log.Printf("origin: %v", origin)
 	page := 1
 	limit := 10
 	if pageParam := c.QueryParam("page"); pageParam != "" {
