@@ -24,6 +24,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./server.crt:/var/lib/postgresql/data/server.crt
       - ./server.key:/var/lib/postgresql/data/server.key
+      - ./root.crt:/usr/local/share/ca-certificates/root.crt
 
 volumes:
   pgdata:
