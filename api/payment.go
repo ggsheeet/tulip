@@ -100,6 +100,13 @@ func (s *MPServer) handleGeneratePreference(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Failed to process account: %v", err)})
 	}
 
+	var notificationUrl string
+	if environment == "development" || environment == "docker" {
+		notificationUrl = "https://4vj2j6tv-8080.usw3.devtunnels.ms/notification"
+	} else {
+		notificationUrl = origin + "/notification"
+	}
+
 	client := preference.NewClient(s.cfg)
 	request := preference.Request{
 		Items:             items,
@@ -109,7 +116,7 @@ func (s *MPServer) handleGeneratePreference(c echo.Context) error {
 		PaymentMethods:    &paymentMethods,
 		BinaryMode:        true,
 		ExternalReference: accId.String(),
-		NotificationURL:   "https://4vj2j6tv-8080.usw3.devtunnels.ms/notification",
+		NotificationURL:   notificationUrl,
 	}
 
 	resource, err := client.Create(context.Background(), request)
