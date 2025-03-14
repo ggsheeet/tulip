@@ -17,5 +17,5 @@ func GetDatabaseURL() string {
 		return connStr + " sslmode=disable"
 	}
 
-	return connStr + " sslmode=verify-full"
+	return connStr + " sslmode=verify-full sslrootcert=/var/lib/postgresql/data/server.crt"
 }
