@@ -20,5 +20,7 @@ CMD ["air", "-c", ".air.toml"]
 FROM scratch AS production
 COPY --from=builder /build/tulip /tulip
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY ./server.crt /var/lib/postgresql/data/server.crt
+COPY ./server.key /var/lib/postgresql/data/server.key
 # EXPOSE 8080
 CMD ["/tulip"]
