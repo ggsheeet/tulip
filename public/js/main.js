@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			const formData = {
 				...Object.fromEntries(Object.entries(personalInfo).map(([key, el]) => [key, el.value.trim()])),
 				street: sanitizeInput(document.getElementById("street").value),
-				neighborhood: sanitizeInput(document.getElementById("neighborhood").value),
+				streetNumber: sanitizeInput(document.getElementById("streetNumber").value),
 				city: sanitizeInput(document.getElementById("city").value),
 				zipcode: sanitizeZip(document.getElementById("zipcode").value),
 				state: sanitizeInput(document.getElementById("state").value),
@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 			const addressFields = [
 				{ id: "street", label: "Calle & número" },
-				{ id: "neighborhood", label: "Colonia" },
+				{ id: "streetNumber", label: "Colonia" },
 				{ id: "city", label: "Ciudad" },
 				{ id: "zipcode", label: "Código postal" },
 				{ id: "state", label: "Estado" },
@@ -581,7 +581,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			document.getElementById("paymentEmailErrorE").textContent = "";
 			document.getElementById("paymentFormErrorPh").textContent = "";
 			document.getElementById("paymentFormErrorStr").textContent = "";
-			document.getElementById("paymentFormErrorNh").textContent = "";
+			document.getElementById("paymentFormErrorStrN").textContent = "";
 			document.getElementById("paymentFormErrorCi").textContent = "";
 			document.getElementById("paymentFormErrorZ").textContent = "";
 			document.getElementById("paymentFormErrorSta").textContent = "";
@@ -639,34 +639,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			.catch((error) => console.error("Error submitting form:", error));
 	}
 
-	function processPayment() {
-    const formData = sessionStorage.getItem("formData");
-    if (!formData) {
-        console.error("No order data found in session storage.");
-        return;
-    }
-
-    const queryParams = new URLSearchParams(window.location.search);
-    const paymentId = queryParams.get("payment_id");
-    const status = queryParams.get("status");
-
-    if (!paymentId || status !== "approved") {
-        console.error("Invalid payment ID or payment was not approved.");
-        return;
-    }
-
-    fetch(`/api/payment/confirmed?payment_id=${paymentId}`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: formData,
-    })
-		.then((response) => response.json())
-		.then((data) => {
-			console.log("Response from server:", data);
-		})
-		.catch((error) => console.error("Error hitting endpoint:", error));
-	}
-
 	function initProcessedPage() {
 		const orderStatus = document.getElementById("orderStatus")
 		if (orderStatus && orderStatus.innerText === "Transacción Exitosa") {
@@ -675,7 +647,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			const emailEl = document.getElementById("registeredEmail")
 			if (emailEl) emailEl.innerText = formData.email
 			initShop()
-			processPayment()
 		}
 	}
 

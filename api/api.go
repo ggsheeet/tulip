@@ -108,5 +108,5 @@ func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup.DELETE("/order/:id", s.order.handleDeleteOrder)
 
 	apiGroup.POST("/payment/checkout", s.payment.handleGeneratePreference)
-	apiGroup.POST("/payment/confirmed", s.payment.handleConfirmedTransaction)
+	apiGroup.GET("/payment/confirmed", s.payment.handleConfirmedTransaction)
 }

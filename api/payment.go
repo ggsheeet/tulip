@@ -17,6 +17,7 @@ import (
 )
 
 func (s *MPServer) handleGeneratePreference(c echo.Context) error {
+	environment := os.Getenv("ENVIRONMENT")
 	origin := os.Getenv("AUTH_ORIGIN")
 
 	var form app.Form
@@ -24,10 +25,7 @@ func (s *MPServer) handleGeneratePreference(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request format"})
 	}
 
-	items, _, _, err := parseForm(form)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
+	items := parseForm(form)
 	shipping, err := strconv.ParseFloat(os.Getenv("SHIPPING_COST"), 64)
 	if err != nil {
 		return err
@@ -43,15 +41,34 @@ func (s *MPServer) handleGeneratePreference(c echo.Context) error {
 		Number:   form.Phone,
 	}
 
-	payer := preference.PayerRequest{
-		Name:  fmt.Sprintf("%v %v", form.FirstName, form.LastName),
-		Email: fmt.Sprintf("%v", form.Email),
-		Phone: phone,
+	var payer preference.PayerRequest
+	if environment == "development" || environment == "docker" {
+		payer = preference.PayerRequest{
+			Name:  fmt.Sprintf("%v %v", form.FirstName, form.LastName),
+			Email: "test_user_123456@testuser.com",
+			Phone: phone,
+		}
+	} else {
+		payer = preference.PayerRequest{
+			Name:  fmt.Sprintf("%v %v", form.FirstName, form.LastName),
+			Email: form.Email,
+			Phone: phone,
+		}
+	}
+
+	receiverAddress := preference.ReceiverAddressRequest{
+		ZipCode:      form.ZipCode,
+		StreetName:   form.Street,
+		StreetNumber: form.StreetNumber,
+		CountryName:  form.Country,
+		StateName:    form.State,
+		CityName:     form.City,
 	}
 
 	shipments := preference.ShipmentsRequest{
-		Mode: "not_specified",
-		Cost: shipping,
+		Mode:            "not_specified",
+		Cost:            shipping,
+		ReceiverAddress: &receiverAddress,
 	}
 
 	excludedPaymentMethods := []preference.ExcludedPaymentMethodRequest{
@@ -70,15 +87,31 @@ func (s *MPServer) handleGeneratePreference(c echo.Context) error {
 		Installments:           3,
 	}
 
+	accReq := database.AccountRequest{
+		FirstName: form.FirstName,
+		LastName:  form.LastName,
+		Email:     form.Email,
+		Phone:     form.Phone,
+	}
+
+	var accId uuid.UUID
+	accId, err = s.getAccountId(accReq)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Failed to process account: %v", err)})
+	}
+
 	client := preference.NewClient(s.cfg)
 	request := preference.Request{
-		Items:          items,
-		Payer:          &payer,
-		Shipments:      &shipments,
-		BackURLs:       backurls,
-		PaymentMethods: &paymentMethods,
-		BinaryMode:     true,
+		Items:             items,
+		Payer:             &payer,
+		Shipments:         &shipments,
+		BackURLs:          backurls,
+		PaymentMethods:    &paymentMethods,
+		BinaryMode:        true,
+		ExternalReference: accId.String(),
+		NotificationURL:   "https://4vj2j6tv-8080.usw3.devtunnels.ms/notification",
 	}
+
 	resource, err := client.Create(context.Background(), request)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to create preference"})
@@ -115,12 +148,15 @@ func (s *MPServer) handleConfirmedTransaction(c echo.Context) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return c.String(resp.StatusCode, fmt.Sprintf("Failed to fetch payment: %s", resp.Status))
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return c.JSON(resp.StatusCode, map[string]string{
+			"error": fmt.Sprintf("Failed to fetch payment: %s, details: %s", resp.Status, string(bodyBytes)),
+		})
 	}
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "Failed to read response body")
+		return c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to read response body: %v", err))
 	}
 
 	var payment app.PaymentData
@@ -141,37 +177,22 @@ func (s *MPServer) handleConfirmedTransaction(c echo.Context) error {
 		return c.JSON(http.StatusConflict, echo.Map{"error": "Order already exists"})
 	}
 
-	var form app.Form
-	if err := c.Bind(&form); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request format"})
+	if payment.ExternalReference == nil || *payment.ExternalReference == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Missing or null external reference"})
 	}
-
-	_, orderBooks, total, err := parseForm(form)
+	accId, err := uuid.Parse(*payment.ExternalReference)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-	}
-
-	accReq := database.AccountRequest{
-		FirstName: form.FirstName,
-		LastName:  form.LastName,
-		Email:     form.Email,
-		Phone:     form.Phone,
-	}
-
-	var accId uuid.UUID
-	accId, err = s.getAccountId(accReq)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Failed to process account: %v", err)})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid external reference UUID"})
 	}
 
 	orderReq := database.OrderRequest{
-		Address:     fmt.Sprintf("%v, %v, %v, %v, %v, %v", form.Street, form.Neighborhood, form.City, form.ZipCode, form.State, form.Country),
-		Total:       total,
-		PaymentID:   paymentId,
+		Address:     fmt.Sprintf("%v, %v, %v, %v, %v, %v", payment.AdditionalInfo.ShipmentsInfo.ReceiverAddress.StreetName, payment.AdditionalInfo.ShipmentsInfo.ReceiverAddress.StreetNumber, payment.AdditionalInfo.ShipmentsInfo.ReceiverAddress.CityName, payment.AdditionalInfo.ShipmentsInfo.ReceiverAddress.ZipCode, payment.AdditionalInfo.ShipmentsInfo.ReceiverAddress.StateName, "México"),
+		Total:       float64(payment.TransactionDetails.TotalPaidAmount),
+		PaymentID:   payment.ID,
 		IsFulfilled: false,
 		Status:      "processing",
 		AccountID:   accId,
-		OrderBooks:  orderBooks,
+		OrderBooks:  payment.AdditionalInfo.ItemsInfo,
 	}
 
 	err = s.createOrder(orderReq)
@@ -179,39 +200,34 @@ func (s *MPServer) handleConfirmedTransaction(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Failed to create order: %v", err)})
 	}
 
-	shipping, err := strconv.ParseFloat(os.Getenv("SHIPPING_COST"), 64)
+	acc, err := s.a.GetAccountById(accId)
 	if err != nil {
-		return fmt.Errorf("failed to parse shipping cost: %v", err)
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Failed to get account email: %v", err)})
 	}
 
 	emailData := app.EmailData{
-		FirstName:   accReq.FirstName,
-		Email:       accReq.Email,
+		FirstName:   acc.FirstName,
+		LastName:    acc.LastName,
+		Email:       acc.Email,
 		OrderNumber: paymentIdString,
-		SubTotal:    total - shipping,
-		Shipping:    shipping,
-		Total:       total,
-		Cart:        orderBooks,
+		SubTotal:    float64(payment.TransactionAmount),
+		Shipping:    float64(payment.ShippingAmount),
+		Total:       float64(payment.TransactionDetails.TotalPaidAmount),
+		Cart:        payment.AdditionalInfo.ItemsInfo,
 	}
 
 	emailId, err := s.m.HandlePurchaseConfirmation(emailData)
 	if err != nil {
-		return err
+		c.JSON(http.StatusInternalServerError, fmt.Errorf("failed to send confirmation email: %v", err))
 	}
-	fmt.Println(fmt.Printf("email sent: %v", emailId))
 
-	return c.JSON(http.StatusCreated, echo.Map{"message": "Order created successfully"})
+	fmt.Println("email sent: ", emailId)
+
+	return c.JSON(http.StatusOK, echo.Map{"message": "Order created successfully"})
 }
 
-func parseForm(form app.Form) ([]preference.ItemRequest, []database.OrderBook, float64, error) {
+func parseForm(form app.Form) []preference.ItemRequest {
 	var items []preference.ItemRequest
-	var orderBooks []database.OrderBook
-	total := 0.00
-
-	shipping, err := strconv.ParseFloat(os.Getenv("SHIPPING_COST"), 64)
-	if err != nil {
-		return nil, nil, 0, fmt.Errorf("failed to parse shipping cost: %v", err)
-	}
 
 	for _, item := range form.Cart {
 		items = append(items, preference.ItemRequest{
@@ -224,21 +240,9 @@ func parseForm(form app.Form) ([]preference.ItemRequest, []database.OrderBook, f
 			CurrencyID:  "MXN",
 			PictureURL:  item.PictureURL,
 		})
-
-		orderBooks = append(orderBooks, database.OrderBook{
-			BookID:      item.Id,
-			Title:       item.Title,
-			Description: item.Description,
-			Quantity:    item.Quantity,
-			Price:       float64(item.UnitPrice),
-			CoverURL:    item.PictureURL,
-			BCategory:   item.CategoryID,
-		})
-
-		total += float64(item.Quantity) * float64(item.UnitPrice)
 	}
 
-	return items, orderBooks, total + shipping, nil
+	return items
 }
 
 func (s *MPServer) getAccountId(accReq database.AccountRequest) (uuid.UUID, error) {
@@ -275,11 +279,21 @@ func (s *MPServer) createOrder(orderReq database.OrderRequest) error {
 	}
 
 	for _, bookOrder := range bookOrders {
-		if err := s.o.CreateBookOrder(&bookOrder, orderId); err != nil {
+		bookId, err := strconv.Atoi(bookOrder.ID)
+		if err != nil || bookId <= 0 {
 			return err
 		}
 
-		if err := s.b.UpdateBookStock(bookOrder.BookID, bookOrder.Quantity); err != nil {
+		bookQuantity, err := strconv.Atoi(bookOrder.Quantity)
+		if err != nil || bookQuantity <= 0 {
+			return err
+		}
+
+		if err := s.o.CreateBookOrder(bookQuantity, bookId, orderId); err != nil {
+			return err
+		}
+
+		if err := s.b.UpdateBookStock(bookQuantity, bookId); err != nil {
 			return err
 		}
 	}

@@ -640,7 +640,7 @@ func handleCartPage(c echo.Context) error {
 	return Render(c, layout.Cart())
 }
 
-func handleProcesedTransaction(c echo.Context) error {
+func handleProcesedPage(c echo.Context) error {
 	paymentId := ""
 	status := ""
 	if paymentIdParam := c.QueryParam("payment_id"); paymentIdParam != "null" {
@@ -655,6 +655,43 @@ func handleProcesedTransaction(c echo.Context) error {
 	}
 
 	return Render(c, layout.Processed(paymentId, status))
+}
+
+func handlePaymentNotification(c echo.Context) error {
+	origin := os.Getenv("AUTH_ORIGIN")
+	token := os.Getenv("AUTH_TOKEN")
+
+	var notification Notification
+	if err := c.Bind(&notification); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request format"})
+	}
+	log.Printf("Received webhook: %+v", notification)
+
+	url := fmt.Sprintf("%s/api/payment/confirmed?payment_id=%s", origin, notification.Data.ID)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	req.Header.Add("Authorization", "Bearer "+token)
+	req.Header.Add("Origin", origin)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("failed to create order: %v", err)})
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, _ := io.ReadAll(resp.Body)
+	log.Println("Response from order confirmation:", string(bodyBytes))
+
+	if resp.StatusCode != http.StatusOK {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": fmt.Sprintf("Failed to confirm order: %s", resp.Status),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Order successfully created"})
 }
 
 func handleLoginPage(c echo.Context) error {

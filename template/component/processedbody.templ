@@ -8,7 +8,7 @@ templ ProcessedBody(paymentId string, status string) {
         <p>Tu número de pedido es: <span id="paymentId">#{ paymentId }</span></p>
         <p>El seguimiento de tu pedido será a través del correo electrónico que nos proporacionaste, donde recibirás una confirmación de tu compra en pocos minutos.</p>
         <p>Correo registrado: <span id="registeredEmail"></span></p>
-        <p>Para dudas o aclaraciones, contáctanos directamente al correo: <span>publicacionestulip@gmail.com</span></p>
+        <p class="support_message">Para dudas o aclaraciones, contáctanos directamente al correo: <a href="mailto:contacto@publicacionestulip.org">contacto@publicacionestulip.org</a></p>
     } else {
         <h2>¡Oh no! Tuvimos un problema al registrar tu compra</h2>
         <p>Por favor regresa al carrito he intenta de nuevo</p>

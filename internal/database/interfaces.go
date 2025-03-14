@@ -79,5 +79,5 @@ type OrderInterface interface {
 	GetUnfulfilledOrders() (*[]*Order, error)
 	GetFulfilledOrders() (*[]*Order, error)
 	CreateOrder(*Order) (int, error)
-	CreateBookOrder(*OrderBook, int) error
+	CreateBookOrder(int, int, int) error
 }

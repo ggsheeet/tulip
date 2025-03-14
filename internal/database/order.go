@@ -180,8 +180,8 @@ func (s *PostgresDB) createBookOrderTable() error {
 	return err
 }
 
-func (s *PostgresDB) CreateBookOrder(orderBook *OrderBook, orderId int) error {
-	bookOrder := NewBookOrder(orderBook.Quantity, orderBook.BookID, orderId)
+func (s *PostgresDB) CreateBookOrder(bookQuantity int, bookId int, orderId int) error {
+	bookOrder := NewBookOrder(bookQuantity, bookId, orderId)
 
 	_, err := s.db.Exec(
 		createBookOrderQ,

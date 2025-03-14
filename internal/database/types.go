@@ -233,13 +233,11 @@ type Order struct {
 }
 
 type OrderBook struct {
-	BookID      int     `json:"id"`
-	Title       string  `json:"title"`
-	Description string  `json:"description"`
-	CoverURL    string  `json:"coverUrl"`
-	Price       float64 `json:"price"`
-	Quantity    int     `json:"quantity"`
-	BCategory   string  `json:"bCategory"`
+	ID         string `json:"id"`
+	Title      string `json:"title"`
+	PictureURL string `json:"picture_url"`
+	Quantity   string `json:"quantity"`
+	UnitPrice  string `json:"unit_price"`
 }
 
 type BookOrder struct {

@@ -44,7 +44,7 @@ func ProcessedBody(paymentId string, status string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></p><p>El seguimiento de tu pedido será a través del correo electrónico que nos proporacionaste, donde recibirás una confirmación de tu compra en pocos minutos.</p><p>Correo registrado: <span id=\"registeredEmail\"></span></p><p>Para dudas o aclaraciones, contáctanos directamente al correo: <span>publicacionestulip@gmail.com</span></p>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></p><p>El seguimiento de tu pedido será a través del correo electrónico que nos proporacionaste, donde recibirás una confirmación de tu compra en pocos minutos.</p><p>Correo registrado: <span id=\"registeredEmail\"></span></p><p class=\"support_message\">Para dudas o aclaraciones, contáctanos directamente al correo: <a href=\"mailto:contacto@publicacionestulip.org\">contacto@publicacionestulip.org</a></p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
