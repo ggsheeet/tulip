@@ -21,7 +21,6 @@ FROM alpine:latest AS production
 RUN apk add --no-cache bash ca-certificates
 COPY --from=builder /build/tulip /tulip
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY ./postgresql.conf /var/lib/postgresql/data/postgresql.conf
 COPY ./server.crt /etc/ssl/certs/server.crt
 COPY ./server.key /etc/ssl/private/server.key
 RUN chmod 600 /etc/ssl/private/server.key && chmod 644 /etc/ssl/certs/server.crt
