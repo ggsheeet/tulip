@@ -17,7 +17,8 @@ EXPOSE 8080
 CMD ["air", "-c", ".air.toml"]
 
 # STAGE 3: Create the final minimal image for production
-FROM scratch AS production
+FROM alpine:latest AS production
+RUN apk add --no-cache bash ca-certificates
 COPY --from=builder /build/tulip /tulip
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY ./server.crt /var/lib/postgresql/data/server.crt
