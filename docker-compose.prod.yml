@@ -22,8 +22,6 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./server.crt:/var/lib/postgresql/data/server.crt
-      - ./server.key:/var/lib/postgresql/data/server.key
 
 volumes:
   pgdata:
