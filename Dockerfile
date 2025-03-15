@@ -23,6 +23,5 @@ COPY --from=builder /build/tulip /tulip
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY ./server.crt /etc/ssl/certs/server.crt
 COPY ./server.key /etc/ssl/private/server.key
-RUN chmod 644 /etc/ssl/certs/server.crt
 # EXPOSE 8080
 CMD ["/tulip"]
