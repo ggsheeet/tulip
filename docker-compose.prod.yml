@@ -24,7 +24,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./server.crt:/etc/ssl/certs/server.crt
       - ./server.key:/etc/ssl/private/server.key
-    command: bash -c "chmod 600 /etc/ssl/private/server.key && chmod 644 /etc/ssl/certs/server.crt && postgres -c 'ssl=on' -c 'ssl_cert_file=/etc/ssl/certs/server.crt' -c 'ssl_key_file=/etc/ssl/private/server.key'"
+    command: bash -c "chmod 600 /etc/ssl/private/server.key && chmod 644 /etc/ssl/certs/server.crt && postgres -D /var/lib/postgresql/data -c 'ssl=on' -c 'ssl_cert_file=/etc/ssl/certs/server.crt' -c 'ssl_key_file=/etc/ssl/private/server.key'"
     user: postgres
 
 volumes:
