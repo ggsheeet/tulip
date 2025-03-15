@@ -2,12 +2,22 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-var loc, _ = time.LoadLocation("America/Monterrey")
+var loc *time.Location
+
+func init() {
+	var err error
+	loc, err = time.LoadLocation("America/Mexico_City")
+	if err != nil {
+		fmt.Println("Failed to load timezone, defaulting to UTC:", err)
+		loc = time.UTC
+	}
+}
 
 type PostgresDB struct {
 	db *sql.DB
