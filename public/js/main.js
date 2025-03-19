@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				(acc, item) => acc + item.quantity * item.price,
 				0
 			)
-			finalPrice = totalCartPrice + 100
+			finalPrice = totalCartPrice + 190
 			let renderTotalPrice = totalCartPrice * 100
 			
 			const cartSub = document.getElementById('cartSub')
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					currency: "MXN",
 					currencyDisplay: "narrowSymbol",
 					maximumFractionDigits: 2,
-				  }).format(100)}`
+				  }).format(190)}`
 			}
 			const cartTotal = document.getElementById('cartTotal')
 			if (cartTotal) {
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					currency: "MXN",
 					currencyDisplay: "narrowSymbol",
 					maximumFractionDigits: 2,
-				  }).format((renderTotalPrice + 10000) / 100)}`
+				  }).format((renderTotalPrice + 19000) / 100)}`
 			}
 		}
 	}
