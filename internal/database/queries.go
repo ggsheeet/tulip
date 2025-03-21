@@ -473,7 +473,7 @@ var updateBookStock = `
     UPDATE book
     SET 
         stock = GREATEST(stock - $2, 0),
-				sales_count = $2,
+				sales_count = sales_count + $2,
         is_active = CASE WHEN stock - $2 <= 0 THEN FALSE ELSE is_active END, 
         updated_at = $3
     WHERE id = $1

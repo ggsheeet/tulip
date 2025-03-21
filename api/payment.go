@@ -300,7 +300,7 @@ func (s *MPServer) createOrder(orderReq database.OrderRequest) error {
 			return err
 		}
 
-		if err := s.b.UpdateBookStock(bookQuantity, bookId); err != nil {
+		if err := s.b.UpdateBookStock(bookId, bookQuantity); err != nil {
 			return err
 		}
 	}
