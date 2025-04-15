@@ -56,6 +56,14 @@ templ Resources(resources []database.Resource, rcategories []database.RCategory,
             <footer class="footer_styles">
                 @component.Footer()
             </footer>
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-5E9C4LCVTF"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', 'G-5E9C4LCVTF');
+            </script>
         </body>
     </html>
 }
