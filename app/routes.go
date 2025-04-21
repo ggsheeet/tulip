@@ -20,4 +20,5 @@ func APPRouter(e *echo.Echo) {
 	e.POST("/login", handleLoginAuth)
 	e.POST("/logout", handleLogoutAuth)
 	e.GET("/admin", handleAdminPage)
+	e.GET("/sitemap", handleSitemap)
 }

@@ -47,6 +47,7 @@ func main() {
 	log.Println("API routes initialized successfully")
 
 	e.GET("/*", echoWrapHandler(public()))
+	app.FS = publicFS
 
 	app.APPRouter(e)
 	log.Println("Application routes initialized successfully")

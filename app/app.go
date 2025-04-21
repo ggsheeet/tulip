@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"math"
 	"net/http"
@@ -17,6 +18,8 @@ import (
 	"github.com/ggsheet/tulip/template/layout"
 	"github.com/labstack/echo/v4"
 )
+
+var FS fs.FS
 
 func fetchData(url string, origin string, token string, page int, limit int, category int, order string, itemId int, result interface{}, wg *sync.WaitGroup, errChan chan<- error, paginate bool, filter bool) {
 	defer wg.Done()
@@ -742,4 +745,23 @@ func handleAdminPage(c echo.Context) error {
 	}
 
 	return c.HTML(http.StatusOK, "<h1>Welcome to Admin Dashboard</h1><a href='/logout'>Logout</a>")
+}
+
+func handleSitemap(c echo.Context) error {
+	if os.Getenv("ENVIRONMENT") == "development" {
+		file, err := os.Open("sitemap.xml")
+		if err != nil {
+			return echo.NewHTTPError(http.StatusNotFound, "Sitemap not found")
+		}
+		defer file.Close()
+		return c.Stream(http.StatusOK, "application/xml", file)
+	}
+
+	// Use fs.ReadFile instead of FS.ReadFile
+	file, err := fs.ReadFile(FS, "sitemap.xml")
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Sitemap not found")
+	}
+
+	return c.Blob(http.StatusOK, "application/xml", file)
 }
