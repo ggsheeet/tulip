@@ -798,3 +798,26 @@ func handleSitemap(c echo.Context) error {
 
 	return c.Blob(http.StatusOK, "application/xml", file)
 }
+
+// Debugging
+func handleTestEmail(c echo.Context) error {
+	origin := os.Getenv("AUTH_ORIGIN")
+	token := os.Getenv("AUTH_TOKEN")
+
+	url := fmt.Sprintf("%s/api/test-email", origin)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+	req.Header.Add("Authorization", "Bearer "+token)
+	req.Header.Add("Origin", origin)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("failed to send email: %v", err)})
+	}
+	defer resp.Body.Close()
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Email sent successfully"})
+}

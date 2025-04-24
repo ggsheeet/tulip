@@ -22,4 +22,7 @@ func APPRouter(e *echo.Echo) {
 	e.POST("/logout", handleLogoutAuth)
 	e.GET("/admin", handleAdminPage)
 	e.GET("/sitemap", handleSitemap)
+
+	// Debugging
+	e.GET("/test-email", handleTestEmail)
 }

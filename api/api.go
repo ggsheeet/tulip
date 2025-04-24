@@ -109,4 +109,7 @@ func (s *APIServer) APIRouter(e *echo.Echo) {
 
 	apiGroup.POST("/payment/checkout", s.payment.handleGeneratePreference)
 	apiGroup.GET("/payment/confirmed", s.payment.handleConfirmedTransaction)
+
+	// Debugging
+	apiGroup.GET("/test-email", s.mailing.handleTestEmail)
 }

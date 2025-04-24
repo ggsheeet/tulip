@@ -7,6 +7,7 @@ import (
 
 	"github.com/ggsheet/tulip/app"
 	"github.com/ggsheet/tulip/internal/database"
+	"github.com/labstack/echo/v4"
 	"github.com/resend/resend-go/v2"
 )
 
@@ -39,6 +40,9 @@ func (s *ResendServer) HandlePurchaseConfirmation(emailData app.EmailData) (stri
 	if err != nil {
 		return "", fmt.Errorf("error loading email template: %v", err)
 	}
+
+	// Debugging
+	fmt.Printf("Loaded customer template (len %d): %s\n", len(emailTemplate), emailTemplate)
 
 	orderSummary := generateOrderSummary(emailData.Cart)
 
@@ -79,6 +83,8 @@ func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error loading email template: %v", err)
 	}
+	// Debugging
+	fmt.Printf("Loaded admin template (len %d): %s\n", len(emailTemplate), emailTemplate)
 
 	orderSummary := generateOrderSummary(emailData.Cart)
 
@@ -100,10 +106,35 @@ func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
 		Html:    emailContent,
 	}
 
+	// Debugging
+	fmt.Printf("Sending email to customer with: %+v\n", params)
+
 	sent, err := s.msg.Emails.Send(params)
 	if err != nil {
 		return "", fmt.Errorf("error sending confirmation email to admin: %s", err)
 	}
 
+	// Debugging
+	fmt.Printf("Email response: %+v\n", sent)
+	fmt.Printf("Email error: %v\n", err)
+
 	return sent.Id, nil
+}
+
+// Debugging
+func (s *ResendServer) handleTestEmail(c echo.Context) error {
+	params := &resend.SendEmailRequest{
+		From:    "Publicaciones Tulip <contacto@publicacionestulip.org>",
+		To:      []string{"gigisheet@gmail.com"},
+		Subject: "Test Email",
+		Html:    "<p>Hello from Resend!</p>",
+	}
+
+	sent, err := s.msg.Emails.Send(params)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println(sent.Id)
+	return nil
 }
