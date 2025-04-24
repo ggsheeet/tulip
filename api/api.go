@@ -111,5 +111,5 @@ func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup.GET("/payment/confirmed", s.payment.handleConfirmedTransaction)
 
 	// Debugging
-	apiGroup.GET("/test-email", s.mailing.handleTestEmail)
+	// apiGroup.GET("/test-email", s.mailing.handleTestEmail)
 }

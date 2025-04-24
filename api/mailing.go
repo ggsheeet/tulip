@@ -2,13 +2,11 @@ package api
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
 	"github.com/ggsheet/tulip/app"
 	"github.com/ggsheet/tulip/internal/database"
-	"github.com/labstack/echo/v4"
 	"github.com/resend/resend-go/v2"
 )
 
@@ -36,14 +34,14 @@ func generateOrderSummary(cart []database.OrderBook) string {
 }
 
 func (s *ResendServer) HandlePurchaseConfirmation(emailData app.EmailData) (string, error) {
-	templatePath := "template/email/order_confirmation.html"
+	templatePath := "public/html/order_confirmation.html"
 	emailTemplate, err := loadTemplate(templatePath)
 	if err != nil {
 		return "", fmt.Errorf("error loading email template: %v", err)
 	}
 
 	// Debugging
-	log.Printf("Loaded customer template (len %d): %s\n", len(emailTemplate), emailTemplate)
+	// log.Printf("Loaded customer template (len %d): %s\n", len(emailTemplate), emailTemplate)
 
 	orderSummary := generateOrderSummary(emailData.Cart)
 
@@ -79,13 +77,13 @@ func (s *ResendServer) HandlePurchaseConfirmation(emailData app.EmailData) (stri
 }
 
 func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
-	templatePath := "template/email/admin_order_notification.html"
+	templatePath := "public/html/admin_order_notification.html"
 	emailTemplate, err := loadTemplate(templatePath)
 	if err != nil {
 		return "", fmt.Errorf("error loading email template: %v", err)
 	}
 	// Debugging
-	log.Printf("Loaded admin template (len %d): %s\n", len(emailTemplate), emailTemplate)
+	// log.Printf("Loaded admin template (len %d): %s\n", len(emailTemplate), emailTemplate)
 
 	orderSummary := generateOrderSummary(emailData.Cart)
 
@@ -108,7 +106,7 @@ func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
 	}
 
 	// Debugging
-	log.Printf("Sending email to customer with: %+v\n", params)
+	// fmt.Println("Sending email to customer with: ", params)
 
 	sent, err := s.msg.Emails.Send(params)
 	if err != nil {
@@ -116,26 +114,26 @@ func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
 	}
 
 	// Debugging
-	fmt.Printf("Email response: %+v\n", sent)
-	fmt.Printf("Email error: %v\n", err)
+	// fmt.Println("Email response: ", sent)
+	// fmt.Println("Email error: ", err)
 
 	return sent.Id, nil
 }
 
 // Debugging
-func (s *ResendServer) handleTestEmail(c echo.Context) error {
-	params := &resend.SendEmailRequest{
-		From:    "Publicaciones Tulip <contacto@publicacionestulip.org>",
-		To:      []string{"gigisheet@gmail.com"},
-		Subject: "Test Email",
-		Html:    "<p>Hello from Resend!</p>",
-	}
+// func (s *ResendServer) handleTestEmail(c echo.Context) error {
+// 	params := &resend.SendEmailRequest{
+// 		From:    "Publicaciones Tulip <contacto@publicacionestulip.org>",
+// 		To:      []string{"gigisheet@gmail.com"},
+// 		Subject: "Test Email",
+// 		Html:    "<p>Hello from Resend!</p>",
+// 	}
 
-	sent, err := s.msg.Emails.Send(params)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	fmt.Println(sent.Id)
-	return nil
-}
+// 	sent, err := s.msg.Emails.Send(params)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return err
+// 	}
+// 	fmt.Println(sent.Id)
+// 	return nil
+// }

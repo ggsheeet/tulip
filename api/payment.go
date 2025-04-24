@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -226,12 +225,13 @@ func (s *MPServer) handleConfirmedTransaction(c echo.Context) error {
 
 	emailId, err := s.m.HandlePurchaseConfirmation(emailData)
 	if err != nil {
-		log.Printf("Email error: %v", err)
+		fmt.Println("Error sending emails: ", err)
 		c.JSON(http.StatusInternalServerError, fmt.Errorf("failed to send confirmation email: %v", err))
 	}
 
-	log.Printf("email sent: ", emailId)
-	os.Stdout.Sync()
+	fmt.Println("emails sent: ", emailId)
+	// Debug
+	// os.Stdout.Sync()
 
 	return c.JSON(http.StatusOK, echo.Map{"message": "Order created successfully"})
 }
