@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -42,7 +43,7 @@ func (s *ResendServer) HandlePurchaseConfirmation(emailData app.EmailData) (stri
 	}
 
 	// Debugging
-	fmt.Printf("Loaded customer template (len %d): %s\n", len(emailTemplate), emailTemplate)
+	log.Printf("Loaded customer template (len %d): %s\n", len(emailTemplate), emailTemplate)
 
 	orderSummary := generateOrderSummary(emailData.Cart)
 
@@ -56,7 +57,7 @@ func (s *ResendServer) HandlePurchaseConfirmation(emailData app.EmailData) (stri
 	).Replace(emailTemplate)
 
 	params := &resend.SendEmailRequest{
-		From:    "contacto@publicacionestulip.org",
+		From:    "Publicaciones Tulip <contacto@publicacionestulip.org>",
 		To:      []string{emailData.Email},
 		Subject: "Gracias por tu orden en TULIP!",
 		Html:    emailContent,
@@ -84,7 +85,7 @@ func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
 		return "", fmt.Errorf("error loading email template: %v", err)
 	}
 	// Debugging
-	fmt.Printf("Loaded admin template (len %d): %s\n", len(emailTemplate), emailTemplate)
+	log.Printf("Loaded admin template (len %d): %s\n", len(emailTemplate), emailTemplate)
 
 	orderSummary := generateOrderSummary(emailData.Cart)
 
@@ -107,7 +108,7 @@ func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
 	}
 
 	// Debugging
-	fmt.Printf("Sending email to customer with: %+v\n", params)
+	log.Printf("Sending email to customer with: %+v\n", params)
 
 	sent, err := s.msg.Emails.Send(params)
 	if err != nil {
