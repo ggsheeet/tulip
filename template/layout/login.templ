@@ -1,0 +1,64 @@
+package layout
+
+import "github.com/ggsheet/tulip/template/component"
+
+templ Login() {
+    <!DOCTYPE html>
+    <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Tulip Admin</title>
+            <meta name="description" content="Panel Administrador Publicaciones Tulip" />
+            <meta name="robots" content="all">
+            <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+            <meta
+                property="og:title"
+                content="Tulip Admin"
+            />
+            <meta
+                property="og:description"
+                content="Panel Administrador Publicaciones Tulip"
+            />
+            <meta property="og:locale" content="es"/>
+            <meta property="og:site_name" content="Tulip Admin"/>
+            <meta property="og:url" content="https://www.publicacionestulip.org/login"/>
+            <meta property="og:type" content="website"/>
+            <meta property="og:image" content="https://storage.googleapis.com/tulip-storage/og-default.png"/>
+            <meta name="keywords" content="admin, login" />
+            <link rel="canonical" href="https://www.publicacionestulip.org/login" />
+            <link rel='shortcut icon' href="favicon.ico" />
+            <link rel="preload" href="/public/css/reset.css" as="style"/>
+            <link rel="preload" href="/public/css/global.css" as="style"/>
+            <link rel="preload" href="/public/css/main.css" as="style"/>
+            <link rel="preload" href="/public/fonts/DMSans-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+            <link rel="preload" href="/public/fonts/DMSans-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+            <link rel="preload" href="/public/fonts/DMSans-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+            <link rel="stylesheet" href="/public/css/reset.css">
+            <link rel="stylesheet" href="/public/css/global.css">
+            <link rel="stylesheet" href="/public/css/main.css">
+            <script type="text/javascript" src="/public/js/login.js" defer></script>
+            <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
+        </head>
+        <body>
+            <div id="snackBar" class="snack_bar">
+                <div class="snack_text">
+                </div>
+            </div>
+            <header class="header_styles">
+                // @component.Nav()
+            </header>
+            <main class="main_styles">
+				<section class="login_wrapper">
+					<h1>Bienvenido!</h1>
+					<h3>Inicia sesión con tu cuenta para continuar</h3>
+              		@component.LoginForm()
+				</section>
+            </main>
+            // <footer class="footer_styles">
+            //     @component.Footer()
+            // </footer>
+        </body>
+    </html>
+}

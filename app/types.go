@@ -33,8 +33,8 @@ type PaymentData struct {
 	Status             string             `json:"status"`
 	AdditionalInfo     AdditionalInfo     `json:"additional_info"`
 	ExternalReference  *string            `json:"external_reference"`
-	ShippingAmount     int                `json:"shipping_amount"`
-	TransactionAmount  int                `json:"transaction_amount"`
+	ShippingAmount     float64            `json:"shipping_amount"`
+	TransactionAmount  float64            `json:"transaction_amount"`
 	TransactionDetails TransactionDetails `json:"transaction_details"`
 }
 
@@ -61,7 +61,7 @@ type Payer struct {
 }
 
 type TransactionDetails struct {
-	TotalPaidAmount int `json:"total_paid_amount"`
+	TotalPaidAmount float64 `json:"total_paid_amount"`
 }
 
 type EmailData struct {

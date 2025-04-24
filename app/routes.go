@@ -17,6 +17,7 @@ func APPRouter(e *echo.Echo) {
 	e.GET("/processed", handleProcesedPage)
 	e.POST("/notification", handlePaymentNotification)
 	e.GET("/login", handleLoginPage)
+	e.GET("/auth", handleAuthCheck)
 	e.POST("/login", handleLoginAuth)
 	e.POST("/logout", handleLogoutAuth)
 	e.GET("/admin", handleAdminPage)

@@ -68,7 +68,7 @@ func (s *ResendServer) HandlePurchaseConfirmation(emailData app.EmailData) (stri
 		return "", err
 	}
 
-	sentEmailIds := fmt.Sprintf("customer: %s, admin: %s", sentCustomer, sentAdmin)
+	sentEmailIds := fmt.Sprintf("customer: %s, admin: %s", sentCustomer.Id, sentAdmin)
 
 	return sentEmailIds, nil
 }
@@ -102,7 +102,7 @@ func (s *ResendServer) sendAdminEmail(emailData app.EmailData) (string, error) {
 
 	sent, err := s.msg.Emails.Send(params)
 	if err != nil {
-		return "", fmt.Errorf("error sending confirmation email to customer: %s", err)
+		return "", fmt.Errorf("error sending confirmation email to admin: %s", err)
 	}
 
 	return sent.Id, nil

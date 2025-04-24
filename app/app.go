@@ -670,6 +670,10 @@ func handlePaymentNotification(c echo.Context) error {
 	}
 	log.Printf("Received webhook: %+v", notification)
 
+	if notification.Data.ID == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Order ID cannot be empty"})
+	}
+
 	url := fmt.Sprintf("%s/api/payment/confirmed?payment_id=%s", origin, notification.Data.ID)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -697,40 +701,67 @@ func handlePaymentNotification(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"message": "Order successfully created"})
 }
 
+func handleAuthCheck(c echo.Context) error {
+	cookieName := os.Getenv("COOKIE_NAME")
+	cookieValue := os.Getenv("COOKIE_VALUE")
+
+	cookie, err := c.Cookie(cookieName)
+	if err != nil || cookie.Value != cookieValue {
+		return c.JSON(http.StatusForbidden, map[string]string{"error": "User must login"})
+	}
+
+	if cookie.Value == cookieValue {
+		return c.JSON(http.StatusOK, map[string]string{"error": "User authenticated"})
+	}
+	return c.JSON(http.StatusForbidden, map[string]string{"error": "Unknown error occured"})
+}
+
 func handleLoginPage(c echo.Context) error {
-	html := `
-		<form hx-post="/login" hx-target="#error" hx-swap="innerHTML">
-			<input type="email" name="email" placeholder="Email" required>
-			<input type="password" name="password" placeholder="Password" required>
-			<button type="submit">Login</button>
-		</form>
-		<div id="error"></div>
-	`
-	return c.HTML(http.StatusOK, html)
+	return Render(c, layout.Login())
 }
 
 func handleLoginAuth(c echo.Context) error {
-	adminEmail := os.Getenv("ADMIN_EMAIL_DEV")
-	adminPassword := os.Getenv("ADMIN_PASSWORD_DEV")
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
+	cookieName := os.Getenv("COOKIE_NAME")
+	cookieValue := os.Getenv("COOKIE_VALUE")
 
 	inputEmail := c.FormValue("adminEmail")
 	inputPassword := c.FormValue("adminPassword")
 
 	if inputEmail == adminEmail && inputPassword == adminPassword {
 		cookie := new(http.Cookie)
-		cookie.Name = "authSession"
-		cookie.Value = "TulipAdminAuthenticated"
+		cookie.Name = cookieName
+		cookie.Value = cookieValue
 		cookie.Path = "/"
 		cookie.Expires = time.Now().Add(24 * time.Hour)
 		c.SetCookie(cookie)
-		return c.Redirect(http.StatusSeeOther, "/admin")
+
+		return c.JSON(http.StatusOK, map[string]string{
+			"redirect": "/admin",
+		})
 	}
-	return c.HTML(http.StatusUnauthorized, "<p style='color:red;'>Invalid credentials</p>")
+
+	emailError := ""
+	passwordError := ""
+
+	if inputEmail != adminEmail {
+		emailError = "Correo incorrecto"
+	}
+	if inputPassword != adminPassword {
+		passwordError = "Contraseña incorrecta"
+	}
+
+	return c.JSON(http.StatusUnauthorized, map[string]string{
+		"emailError":    emailError,
+		"passwordError": passwordError,
+	})
 }
 
 func handleLogoutAuth(c echo.Context) error {
+	cookieName := os.Getenv("COOKIE_NAME")
 	cookie := new(http.Cookie)
-	cookie.Name = "authSession"
+	cookie.Name = cookieName
 	cookie.Value = ""
 	cookie.Path = "/"
 	cookie.MaxAge = -1
@@ -739,12 +770,15 @@ func handleLogoutAuth(c echo.Context) error {
 }
 
 func handleAdminPage(c echo.Context) error {
-	cookie, err := c.Cookie("authSession")
-	if err != nil || cookie.Value != "TulipAdminAuthenticated" {
+	cookieName := os.Getenv("COOKIE_NAME")
+	cookieValue := os.Getenv("COOKIE_VALUE")
+	cookie, err := c.Cookie(cookieName)
+	if err != nil || cookie.Value != cookieValue {
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}
 
-	return c.HTML(http.StatusOK, "<h1>Welcome to Admin Dashboard</h1><a href='/logout'>Logout</a>")
+	c.Response().Header().Set("X-Robots-Tag", "noindex, nofollow")
+	return Render(c, layout.Admin())
 }
 
 func handleSitemap(c echo.Context) error {
@@ -757,7 +791,6 @@ func handleSitemap(c echo.Context) error {
 		return c.Stream(http.StatusOK, "application/xml", file)
 	}
 
-	// Use fs.ReadFile instead of FS.ReadFile
 	file, err := fs.ReadFile(FS, "sitemap.xml")
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Sitemap not found")
