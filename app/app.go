@@ -783,7 +783,7 @@ func handleAdminPage(c echo.Context) error {
 
 func handleSitemap(c echo.Context) error {
 	if os.Getenv("ENVIRONMENT") == "development" {
-		file, err := os.Open("sitemap.xml")
+		file, err := os.Open("public/sitemap.xml")
 		if err != nil {
 			return echo.NewHTTPError(http.StatusNotFound, "Sitemap not found")
 		}
@@ -791,7 +791,7 @@ func handleSitemap(c echo.Context) error {
 		return c.Stream(http.StatusOK, "application/xml", file)
 	}
 
-	file, err := fs.ReadFile(FS, "sitemap.xml")
+	file, err := fs.ReadFile(FS, "public/sitemap.xml")
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Sitemap not found")
 	}

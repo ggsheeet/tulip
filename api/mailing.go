@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -11,11 +12,28 @@ import (
 )
 
 func loadTemplate(filePath string) (string, error) {
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", err
+	isDev := os.Getenv("ENVIRONMENT") == "development"
+
+	if isDev {
+		content, err := os.ReadFile(filePath)
+		if err != nil {
+			return "", err
+		}
+		return string(content), nil
+	} else {
+		file, err := app.FS.Open(filePath)
+		if err != nil {
+			return "", err
+		}
+		defer file.Close()
+
+		content, err := io.ReadAll(file)
+		if err != nil {
+			return "", err
+		}
+
+		return string(content), nil
 	}
-	return string(content), nil
 }
 
 func generateOrderSummary(cart []database.OrderBook) string {
