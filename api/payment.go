@@ -225,11 +225,10 @@ func (s *MPServer) handleConfirmedTransaction(c echo.Context) error {
 
 	emailId, err := s.m.HandlePurchaseConfirmation(emailData)
 	if err != nil {
-		fmt.Println("Error sending emails: ", err)
-		c.JSON(http.StatusInternalServerError, fmt.Errorf("failed to send confirmation email: %v", err))
+		fmt.Printf("Error sending confirmation emails for payment %s: %v\n", paymentIdString, err)
+	} else {
+		fmt.Printf("Confirmation emails sent successfully for payment %s: %s\n", paymentIdString, emailId)
 	}
-
-	fmt.Println("emails sent: ", emailId)
 	// Debug
 	// os.Stdout.Sync()
 

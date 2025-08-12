@@ -1,7 +1,7 @@
 # Multi-stage go image build
 
 # STAGE 1: Build the executable
-FROM golang:1.23 AS builder
+FROM golang:1.24-alpine AS builder
 WORKDIR /build
 COPY . .
 RUN go mod download
@@ -9,7 +9,7 @@ RUN go mod download
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o /build/tulip
 
 # STAGE 2: Development stage (for live reload)
-FROM golang:1.23 AS dev
+FROM golang:1.24-alpine AS dev
 WORKDIR /app
 COPY --from=builder /build .
 RUN go install github.com/air-verse/air@latest

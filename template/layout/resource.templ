@@ -2,6 +2,7 @@ package layout
 
 import "github.com/ggsheet/tulip/internal/database"
 import "github.com/ggsheet/tulip/template/component"
+import "fmt"
 
 templ Resource(resource database.Resource, resources []database.Resource) {
     <!DOCTYPE html>
@@ -23,11 +24,11 @@ templ Resource(resource database.Resource, resources []database.Resource) {
             />
             <meta property="og:locale" content="es"/>
             <meta property="og:site_name" content="Publicaciones Tulip"/>
-            <meta property="og:url" content="https://www.publicacionestulip.org/resource"/>
+            <meta property="og:url" content={fmt.Sprintf("https://publicacionestulip.org/resource?id=%d&category=%d", resource.ID, resource.CategoryID)}/>
             <meta property="og:type" content="website"/>
             <meta property="og:image" content={resource.CoverURL}/>
             <meta name="keywords" content="libreria, recursos, pdf, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
-            <link rel="canonical" href="https://www.publicacionestulip.org/resource" />
+            <link rel="canonical" href={fmt.Sprintf("https://publicacionestulip.org/resource?id=%d&category=%d", resource.ID, resource.CategoryID)} />
             <link rel="shortcut icon" href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>

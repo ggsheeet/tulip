@@ -2,6 +2,7 @@ package layout
 
 import "github.com/ggsheet/tulip/template/component"
 import "github.com/ggsheet/tulip/internal/database"
+import "fmt"
 
 templ Book(book database.Book, books []database.Book) {
     <!DOCTYPE html>
@@ -23,12 +24,12 @@ templ Book(book database.Book, books []database.Book) {
             />
             <meta property="og:locale" content="es"/>
             <meta property="og:site_name" content="Publicaciones Tulip"/>
-            <meta property="og:url" content="https://www.publicacionestulip.org/book"/>
+            <meta property="og:url" content={fmt.Sprintf("https://publicacionestulip.org/book?id=%d&category=%d", book.ID, book.CategoryID)}/>
             <meta property="og:type" content="website"/>
             <meta property="og:image" content={book.CoverURL}/>
             <meta name="keywords" content="libreria, libros, cristiana, tienda, reformada, presbiteriana, cristo, dios, leer, blog, lectura, teologia" />
             <meta name="format-detection" content="telephone=no">
-            <link rel="canonical" href="https://www.publicacionestulip.org/book" />
+            <link rel="canonical" href={fmt.Sprintf("https://publicacionestulip.org/book?id=%d&category=%d", book.ID, book.CategoryID)} />
             <link rel="shortcut icon" href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>
