@@ -181,7 +181,8 @@ func (s *MPServer) handleConfirmedTransaction(c echo.Context) error {
 		return err
 	}
 	if existingOrder != orderNotFound {
-		return c.JSON(http.StatusConflict, echo.Map{"error": "Order already exists"})
+		fmt.Printf("Order already exists for payment %s (order ID: %d). Webhook processed successfully.\n", paymentIdString, existingOrder)
+		return c.JSON(http.StatusOK, echo.Map{"message": "Order already processed"})
 	}
 
 	if payment.ExternalReference == nil || *payment.ExternalReference == "" {
