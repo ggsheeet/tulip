@@ -1,0 +1,289 @@
+package component
+
+import "slices"
+import "fmt"
+import "strconv"
+import "time"
+
+type CollectiveTableData struct {
+	Books TableData
+	Articles TableData
+	Resources TableData
+	BookCategories TableData
+	ArticleCategories TableData
+	ResourceCategories TableData
+	Publishers TableData
+	Versions TableData
+	Letters TableData
+	Covers TableData
+	Orders TableData
+	BooksPage int
+	ArticlesPage int
+	ResourcesPage int
+	BookCategoriesPage int
+	ArticleCategoriesPage int
+	ResourceCategoriesPage int
+	PublishersPage int
+	VersionsPage int
+	LettersPage int
+	CoversPage int
+	OrdersPage int
+	BooksTotalPages int
+	ArticlesTotalPages int
+	ResourcesTotalPages int
+	BookCategoriesTotalPages int
+	ArticleCategoriesTotalPages int
+	ResourceCategoriesTotalPages int
+	PublishersTotalPages int
+	VersionsTotalPages int
+	LettersTotalPages int
+	CoversTotalPages int
+	OrdersTotalPages int
+	ActiveTab string
+}
+
+type TableData struct {
+  Fields []TableField `json:"fields"`
+  Items []TableItem `json:"items"`
+}
+
+type TableField struct {
+  Value string `json:"value"`
+}
+
+type TableItem struct {
+  Key string `json:"key"`
+  Values []any `json:"values"`
+}
+
+var validTableActions = []string{
+	"delete",
+	"edit",
+	"view",
+	"activate",
+	"deactivate",
+}
+
+var validStatuses = []string{
+	"true",
+	"false",
+}
+
+var orderStatusesMap = map[string]string{
+	"processing": "Procesando",
+    "delivered": "Entregado",
+    "returned": "Devuelto",
+}
+
+func parseTableValues(data any) string {
+	if data == nil {
+		return ""
+	}
+
+	switch v := data.(type) {
+	case int:
+		return strconv.Itoa(v)
+	case int32:
+		return strconv.Itoa(int(v))
+	case int64:
+		return strconv.Itoa(int(v))
+	case string:
+		return v
+	case bool:
+		return strconv.FormatBool(v)
+	case float64:
+		return strconv.FormatFloat(v, 'f', -1, 64)
+	case float32:
+		return strconv.FormatFloat(float64(v), 'f', -1, 32)
+	case time.Time:
+		return formatDate(v)
+	case []byte:
+		return string(v)
+	}
+	return ""
+}
+
+func formatStatus(status string) string {
+	switch status {
+	case "true":
+		return "Activo"
+	case "false":
+		return "Inactivo"
+	}
+	return ""
+}
+
+var iconMap = map[string]string{
+	"delete": "trash-2",
+	"edit": "edit-2",
+	"view": "eye",
+	"activate": "power",
+	"deactivate": "pause",
+}
+
+templ Table(tableData TableData, id string, tableType string) {
+  <div class="table_container" id={ id }>
+    <table>
+      <thead>
+        <tr>
+          for _, field := range tableData.Fields {
+            <th>
+              { field.Value }
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        for _, item := range tableData.Items {
+          <tr>
+            for _, value := range item.Values {
+              <td>
+                {{ parsedValue := parseTableValues(value) }}
+                if exists := slices.Contains(validTableActions, parsedValue); exists {
+                  @TableButton(tableType, parsedValue, item.Key)
+                } else if exists := slices.Contains(validStatuses, parsedValue); exists {
+                  { formatStatus(parsedValue) }
+                } else if _, ok := orderStatusesMap[parsedValue]; ok {
+                  { orderStatusesMap[parsedValue] }
+                } else {
+                  { parsedValue }
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+templ TableButton(tableType, action, key string) {
+    if action == "view" {
+        <a
+            href={ templ.URL(fmt.Sprintf("/admin/order?id=%s", key)) }
+            class={ "custom_cta", "custom_cta_xs", action }>
+            <i data-lucide={ iconMap[action] }></i>
+        </a>
+    } else if action == "edit" {
+		<a
+			href={ templ.URL(fmt.Sprintf("/admin/edit/%s?id=%s", tableType, key)) }
+			class={ "custom_cta", "custom_cta_xs", action }>
+			<i data-lucide={ iconMap[action] }></i>
+		</a>
+	} else {
+		<button
+			hx-put={ fmt.Sprintf("/admin/%s/%s?id=%s", tableType, action, key) }
+			hx-target="closest .admin_section"
+			hx-swap="outerHTML"
+			key={ key }
+			data-action={ action }
+			type="button"
+			class={ "custom_cta", "custom_cta_xs", action }>
+			<i data-lucide={ iconMap[action] }></i>
+		</button>
+	}
+}
+
+templ AdminTableSection(tableData TableData, currentPage int, totalPages int, tabType string) {
+    <div class="admin_section">
+        <div class="admin_header">
+            switch tabType {
+                case "book":
+                    <h2>Gestión de Libros</h2>
+                case "article":
+                    <h2>Gestión de Artículos</h2>
+                case "resource":
+                    <h2>Gestión de Recursos</h2>
+                case "bcategory":
+                    <h2>Gestión de Categorías de Libros</h2>
+                case "acategory":
+                    <h2>Gestión de Categorías de Artículos</h2>
+                case "rcategory":
+                    <h2>Gestión de Categorías de Recursos</h2>
+                case "publisher":
+                    <h2>Gestión de Editoriales</h2>
+                case "version":
+                    <h2>Gestión de Versiones</h2>
+                case "letter":
+                    <h2>Gestión de Cartas</h2>
+                case "cover":
+                    <h2>Gestión de Portadas</h2>
+                case "order":
+                    <h2>Gestión de Pedidos</h2>
+            }
+            if tabType != "order" {
+                <div class="header_actions">
+                    <button class="custom_cta create_btn" data-type={ tabType }>
+                        <i data-lucide="plus"></i> 
+                        switch tabType {
+                            case "book":
+                                Crear Libro
+                            case "article":
+                                Crear Artículo
+                            case "resource":
+                                Crear Recurso
+                            case "bcategory":
+                                Crear Categoría de Libro
+                            case "acategory":
+                                Crear Categoría de Artículo
+                            case "rcategory":
+                                Crear Categoría de Recurso
+                            case "publisher":
+                                Crear Editorial
+                            case "version":
+                                Crear Versión
+                            case "letter":
+                                Crear Carta
+                            case "cover":
+                                Crear Portada
+                        }
+                    </button>
+                </div>
+            }
+        </div>
+        <div class="table_container">
+            @Table(tableData, fmt.Sprintf("table_%s", tabType), tabType)
+            if totalPages > 1 {
+                <div class="admin_pagination">
+                    @AdminPagination(currentPage, totalPages, tabType)
+                </div>
+            }
+        </div>
+    </div>
+}
+
+templ AdminPagination(currentPage int, totalPages int, tabType string) {
+    <nav class="controls">
+        <button
+            type="button"
+            hx-get={ fmt.Sprintf("/admin?tab=%s&%s_page=%d", tabType, tabType, currentPage-1) }
+            hx-target="#admin_table_content"
+            hx-swap="innerHTML"
+            data-direction="prev"
+            data-page={ formatInts(currentPage) }
+            data-pages={ formatInts(totalPages) }
+            data-tab={ tabType }
+            class="pagination_btn"
+        >
+            Anterior
+        </button>
+        <p>
+            Pag. 
+            <span>{ formatInts(currentPage) }</span> 
+            de { formatInts(totalPages) }
+        </p>
+        <button
+            type="button"
+            hx-get={ fmt.Sprintf("/admin?tab=%s&%s_page=%d", tabType, tabType, currentPage+1) }
+            hx-target="#admin_table_content"
+            hx-swap="innerHTML"
+            data-direction="next"
+            data-page={ formatInts(currentPage) }
+            data-pages={ formatInts(totalPages) }
+            data-tab={ tabType }
+            class="pagination_btn"
+        >
+            Siguiente
+        </button>
+    </nav>
+}

@@ -2,6 +2,7 @@
 
 # STAGE 1: Build the executable
 FROM golang:1.24-alpine AS builder
+ENV GOTOOLCHAIN=auto
 WORKDIR /build
 COPY . .
 RUN go mod download
@@ -10,6 +11,7 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o /build/tulip
 
 # STAGE 2: Development stage (for live reload)
 FROM golang:1.24-alpine AS dev
+ENV GOTOOLCHAIN=auto
 WORKDIR /app
 COPY --from=builder /build .
 RUN go install github.com/air-verse/air@latest

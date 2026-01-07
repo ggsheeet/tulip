@@ -17,6 +17,7 @@ type BookInterface interface {
 	UpdateBookStock(int, int) error
 	GetBookById(string) (*Book, error)
 	GetBooks(int, int, int, string, int, string) (*[]*Book, error)
+	GetBooksAdmin(int, int) (*[]*Book, error)
 	CreateBook(*Book) error
 	DeleteLetter(string) error
 	UpdateLetter(string, *Letter) error
@@ -74,8 +75,12 @@ type ResourceInterface interface {
 type OrderInterface interface {
 	DeleteOrder(string) error
 	UpdateOrder(string, *Order) error
+	UpdateOrderStatus(string, string) error
 	GetOrderById(string) (*Order, error)
+	GetOrderByIdAdmin(string) (*Order, error)
+	GetOrderWithBooksAdmin(string) (*Order, []BookOrder, []Book, error)
 	GetOrderByPaymentId(int) (int, error)
+	GetOrders(int, int) (*[]*Order, error)
 	GetUnfulfilledOrders() (*[]*Order, error)
 	GetFulfilledOrders() (*[]*Order, error)
 	CreateOrder(*Order) (int, error)

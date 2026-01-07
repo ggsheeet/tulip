@@ -76,6 +76,33 @@ func (s *BookHandlers) handleGetBooks(c echo.Context) error {
 	return c.JSON(http.StatusOK, books)
 }
 
+func (s *BookHandlers) handleGetBooksAdmin(c echo.Context) error {
+	page := 1
+	limit := 10
+
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		var err error
+		page, err = strconv.Atoi(pageParam)
+		if err != nil || page <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid page number")
+		}
+	}
+
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		var err error
+		limit, err = strconv.Atoi(limitParam)
+		if err != nil || limit <= 0 {
+			return c.JSON(http.StatusBadRequest, "Invalid limit number")
+		}
+	}
+
+	books, err := s.db.GetBooksAdmin(page, limit)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, "Error fetching books")
+	}
+	return c.JSON(http.StatusOK, books)
+}
+
 func (s *BookHandlers) handleGetBookById(c echo.Context) error {
 	id := c.Param("id")
 	book, err := s.db.GetBookById(id)

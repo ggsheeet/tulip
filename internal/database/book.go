@@ -233,6 +233,58 @@ func (s *PostgresDB) GetBooks(page int, limit int, category int, order string, b
 	return &books, nil
 }
 
+func (s *PostgresDB) GetBooksAdmin(page int, limit int) (*[]*Book, error) {
+	offset := (page - 1) * limit
+	query := getBooksQ
+	query += " ORDER BY id DESC LIMIT $1 OFFSET $2"
+	args := []interface{}{}
+	args = append(args, limit, offset)
+
+	rows, err := s.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	books := []*Book{}
+	for rows.Next() {
+		book := new(Book)
+		err := rows.Scan(
+			&book.ID,
+			&book.Title,
+			&book.Author,
+			&book.Description,
+			&book.CoverURL,
+			&book.ISBN,
+			&book.Price,
+			&book.Stock,
+			&book.SalesCount,
+			&book.IsActive,
+			&book.LetterID,
+			&book.LetterType,
+			&book.VersionID,
+			&book.BibleVersion,
+			&book.CoverID,
+			&book.CoverType,
+			&book.PublisherID,
+			&book.PublisherName,
+			&book.CategoryID,
+			&book.BookCategory,
+			&book.CreatedAt,
+			&book.UpdatedAt,
+			&book.RecordCount,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		books = append(books, book)
+	}
+
+	return &books, nil
+}
+
 func (s *PostgresDB) createLetterTable() error {
 	_, err := s.db.Exec(createLetterTabQ)
 

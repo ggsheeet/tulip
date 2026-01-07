@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		const cartBooksWithDetails = books.map((book) => {
 			const cartItem = cart[book.id];
 			
-			if (book.stock === 0) {
+			if (book.stock === 0 || book.isActive === false) {
 				delete cart[book.id]
 				showSnackbar(`Lo sentimos, "${book.title}" ya no está disponible, lo hemos quitado de tu carrito.`)
 				cartUpdated = true

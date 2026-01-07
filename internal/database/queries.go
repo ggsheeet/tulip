@@ -370,8 +370,8 @@ var getOrderQ = `
 	LEFT JOIN bookorder bo ON bo.order_id = o.id
 	LEFT JOIN book b ON bo.book_id = b.id
 	WHERE o.is_fulfilled != TRUE 
-	AND o.status == 'processing'
-	WHERE id = $1
+	AND o.status = 'processing'
+	AND o.id = $1
 `
 
 var getOrderByPaymentIdQ = `
@@ -429,6 +429,26 @@ var getResourcesQ = `
 
 var getRCategoriesQ = `SELECT * FROM rcategory WHERE is_active = true ORDER BY id ASC`
 
+var getOrdersQ = `
+	SELECT 
+		o.id, o.address, o.total, o.payment_id, o.is_fulfilled, o.status, o.account_id,
+		a.first_name, a.last_name, a.email, a.phone, o.created_at, o.updated_at,
+		COUNT(*) OVER() AS "record_count"
+	FROM "order" o
+	LEFT JOIN account a ON o.account_id = a.id
+`
+
+var getOrderByIdAdminQ = `
+	SELECT 
+		o.id, o.address, o.total, o.payment_id, o.is_fulfilled, o.status, o.account_id, o.created_at, o.updated_at,
+		bo.id as bookorder_id, bo.quantity, bo.book_id, bo.order_id, bo.created_at as bookorder_created_at, bo.updated_at as bookorder_updated_at,
+		b.id as book_id, b.title, b.description, b.price, b.cover_url, b.is_active as book_is_active, b.created_at as book_created_at, b.updated_at as book_updated_at
+	FROM "order" o
+	LEFT JOIN bookorder bo ON bo.order_id = o.id
+	LEFT JOIN book b ON bo.book_id = b.id
+	WHERE o.id = $1
+`
+
 var getUnfulfilledOrdersQ = `
 	SELECT
 		o.id, o.address, o.total, o.is_fulfilled, o.account_id,
@@ -440,7 +460,7 @@ var getUnfulfilledOrdersQ = `
 	LEFT JOIN bookorder bo ON bo.order_id = o.id
 	LEFT JOIN book b ON bo.book_id = b.id
 	WHERE o.is_fulfilled != TRUE 
-	AND o.status == 'processing';
+	AND o.status = 'processing';
 `
 
 var getFulfilledOrdersQ = `
@@ -454,7 +474,7 @@ var getFulfilledOrdersQ = `
 	LEFT JOIN bookorder bo ON bo.order_id = o.id
 	LEFT JOIN book b ON bo.book_id = b.id
 	WHERE o.is_fulfilled = TRUE 
-	AND o.status == 'delivered';
+	AND o.status = 'delivered';
 `
 
 var updateAccQ = `
@@ -540,15 +560,27 @@ var updateOrderQ = `
     WHERE id = $1
 `
 
+var updateOrderStatusQ = `
+    UPDATE "order"
+    SET status = $1
+    WHERE id = $2
+`
+
 var updatePaymentIdQ = `
     UPDATE "order"
     SET payment_id = $2
     WHERE id = $1
 `
 
+var unfulfillOrderQ = `
+    UPDATE "order"
+    SET is_fulfilled = FALSE, updated_at = NOW()
+    WHERE id = $1
+`
+
 var fulfillOrderQ = `
     UPDATE "order"
-    SET is_fulfilled = TRUE, updated_at = $2
+    SET is_fulfilled = TRUE, updated_at = NOW()
     WHERE id = $1
 `
 

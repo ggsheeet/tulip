@@ -1,0 +1,182 @@
+package layout
+
+import "github.com/ggsheet/tulip/template/component"
+import "github.com/ggsheet/tulip/internal/database"
+import "strconv"
+import "fmt"
+
+type OrderData struct {
+	Order database.Order
+	Account database.Account
+	OrderBooks []database.BookOrder
+	Books []database.Book
+}
+
+templ Order(data OrderData) {
+  {{ backUrl := "/admin?tab=order&admin_tab=on" }}
+	<!DOCTYPE html>
+	<html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Detalles del Pedido #{ strconv.Itoa(data.Order.ID) } - Tulip</title>
+      <meta name="description" content="Panel Administrador Publicaciones Tulip" />
+      <meta name="robots" content="all">
+      <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+      <meta
+          property="og:title"
+          content="Tulip Admin"
+      />
+      <meta
+          property="og:description"
+          content="Panel Administrador Publicaciones Tulip"
+      />
+      <meta property="og:locale" content="es"/>
+      <meta property="og:site_name" content="Tulip Admin"/>
+      <meta property="og:url" content="https://publicacionestulip.org/admin"/>
+      <meta property="og:type" content="website"/>
+      <meta property="og:image" content="https://storage.googleapis.com/tulip-storage/og-default.png"/>
+      <meta name="keywords" content="admin, libros, cristiana, tienda, presbiteriana, reformada, cristo, dios, leer, blog, articulos, recursos, lectura, teologia" />
+      <meta name="robots" content="noindex, nofollow">
+      <link rel="canonical" href="https://publicacionestulip.org/admin" />
+      <link rel='shortcut icon' href="favicon.ico" />
+      <link rel="preload" href="/public/css/reset.css" as="style"/>
+      <link rel="preload" href="/public/css/global.css" as="style"/>
+      <link rel="preload" href="/public/css/admin.css" as="style"/>
+      <link rel="preload" href="/public/fonts/DMSans-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+      <link rel="preload" href="/public/fonts/DMSans-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+      <link rel="preload" href="/public/fonts/DMSans-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+      <link rel="stylesheet" href="/public/css/reset.css">
+      <link rel="stylesheet" href="/public/css/global.css">
+      <link rel="stylesheet" href="/public/css/admin.css">
+      <script type="text/javascript" src="/public/js/admin.js" defer></script>
+      <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
+      <script type="text/javascript" src="/public/js/lucide.min.js" defer></script>
+  </head>
+  <body>
+      <div id="snackBar" class="snack_bar">
+        <div class="snack_text">
+        </div>
+      </div>
+      <header class="header_styles">
+          @component.Nav("admin")
+      </header>
+			<main class="main_styles">
+        <div class="admin_header">
+          <h2>Detalles del Pedido #{ strconv.Itoa(data.Order.ID) }</h2>
+          <div class="header_actions">
+            <a href={ backUrl } class="custom_cta_xs">
+              <i data-lucide="arrow-left"></i>
+              Volver al Panel
+            </a>
+          </div>
+        </div>
+        
+        <div class="form_container">
+          <!-- Order Information -->
+          <div class="form_header">
+            <h3>Información del Pedido</h3>
+          </div>
+          
+          <div class="field_section">
+            <div class="field_wrapper">
+              <label>ID del Pedido:</label>
+              <span>{ strconv.Itoa(data.Order.ID) }</span>
+            </div>
+            
+            <div class="field_wrapper">
+              <label>Total:</label>
+              <span>${ fmt.Sprintf("%.2f", data.Order.Total) }</span>
+            </div>
+            
+            <div class="field_wrapper">
+              <label for="orderStatus">Estado:</label>
+              <form hx-post={ fmt.Sprintf("/admin/order/status?id=%s", strconv.Itoa(data.Order.ID)) } hx-target="#statusMessage" hx-swap="innerHTML" hx-trigger="change">
+                <select id="orderStatus" name="status" class="status_select">
+                  <option value="processing" selected?={ data.Order.Status == "processing" }>Procesando</option>
+                  <option value="delivered" selected?={ data.Order.Status == "delivered" }>Entregado</option>
+                  <option value="returned" selected?={ data.Order.Status == "returned" }>Devuelto</option>
+                </select>
+              </form>
+              <div id="statusMessage" style="margin-top: 0.5rem;"></div>
+            </div>
+            
+            <div class="field_wrapper">
+              <label>Dirección de Envío:</label>
+              <span>{ data.Order.Address }</span>
+            </div>
+            
+            <div class="field_wrapper">
+              <label>Fecha del Pedido:</label>
+              <span>{ data.Order.CreatedAt.Format("02/01/2006 15:04") }</span>
+            </div>
+            
+            <div class="field_wrapper">
+              <label>Cumplido:</label>
+              <span>
+                if data.Order.IsFulfilled {
+                  Sí
+                } else {
+                  No
+                }
+              </span>
+            </div>
+          </div>
+          
+          <!-- Customer Information -->
+          <div class="form_header">
+            <h3>Información del Cliente</h3>
+          </div>
+          
+          <div class="field_section">
+            <div class="field_wrapper">
+              <label>Nombre:</label>
+              <span>{ data.Account.FirstName } { data.Account.LastName }</span>
+            </div>
+            
+            <div class="field_wrapper">
+              <label>Email:</label>
+              <span>{ data.Account.Email }</span>
+            </div>
+            
+            <div class="field_wrapper">
+              <label>Teléfono:</label>
+              <span>{ data.Account.Phone }</span>
+            </div>
+          </div>
+          
+          <!-- Order Items -->
+          <div class="form_header">
+            <h3>Artículos del Pedido</h3>
+          </div>
+          
+          <div class="table_container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Libro</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                for i, orderBook := range data.OrderBooks {
+                  {{ book := data.Books[i] }}
+                  <tr>
+                    <td>{ book.Title }</td>
+                    <td>{ strconv.Itoa(orderBook.Quantity) }</td>
+                    <td>${ fmt.Sprintf("%.2f", book.Price) }</td>
+                    <td>${ fmt.Sprintf("%.2f", book.Price * float64(orderBook.Quantity)) }</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+			</main>
+			<script src="/public/js/admin.js"></script>
+		</body>
+	</html>
+}

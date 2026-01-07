@@ -1,0 +1,172 @@
+package layout
+
+import "github.com/ggsheet/tulip/template/component"
+
+type EditFormData struct {
+	Type             string
+	Book             *component.BookEditData
+	Article          *component.ArticleEditData
+	Resource         *component.ResourceEditData
+	BookCategory     *component.BookCategoryEditData
+	ArticleCategory  *component.ArticleCategoryEditData
+	ResourceCategory *component.ResourceCategoryEditData
+	Publisher        *component.PublisherEditData
+	Version          *component.VersionEditData
+	Letter           *component.LetterEditData
+	Cover            *component.CoverEditData
+}
+
+templ Edit(data EditFormData) {
+  {{ backUrl := "/admin" }}
+  if data.Type == "book" {
+    {{ backUrl = "/admin?tab=book&admin_tab=on" }}
+  } else if data.Type == "article" {
+    {{ backUrl = "/admin?tab=article&admin_tab=on" }}
+  } else if data.Type == "resource" {
+    {{ backUrl = "/admin?tab=resource&admin_tab=on" }}
+  } else if data.Type == "bcategory" {
+    {{ backUrl = "/admin?tab=bcategory&admin_tab=on" }}
+  } else if data.Type == "acategory" {
+    {{ backUrl = "/admin?tab=acategory&admin_tab=on" }}
+  } else if data.Type == "rcategory" {
+    {{ backUrl = "/admin?tab=rcategory&admin_tab=on" }}
+  } else if data.Type == "publisher" {
+    {{ backUrl = "/admin?tab=publisher&admin_tab=on" }}
+  } else if data.Type == "version" {
+    {{ backUrl = "/admin?tab=version&admin_tab=on" }}
+  } else if data.Type == "letter" {
+    {{ backUrl = "/admin?tab=letter&admin_tab=on" }}
+  } else if data.Type == "cover" {
+    {{ backUrl = "/admin?tab=cover&admin_tab=on" }}
+  }
+	<!DOCTYPE html>
+	<html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>
+				switch data.Type {
+					case "book":
+						Editar Libro - Tulip
+					case "article":
+						Editar Artículo - Tulip
+					case "resource":
+						Editar Recurso - Tulip
+					case "bcategory":
+						Editar Categoría de Libro - Tulip
+					case "acategory":
+						Editar Categoría de Artículo - Tulip
+					case "rcategory":
+						Editar Categoría de Recurso - Tulip
+					case "publisher":
+						Editar Editorial - Tulip
+					case "version":
+						Editar Versión Bíblica - Tulip
+					case "letter":
+						Editar Tipo de Letra - Tulip
+					case "cover":
+						Editar Tipo de Cubierta - Tulip
+				}
+			</title>
+      <meta name="description" content="Panel Administrador Publicaciones Tulip" />
+      <meta name="robots" content="all">
+      <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+      <meta
+          property="og:title"
+          content="Tulip Admin"
+      />
+      <meta
+          property="og:description"
+          content="Panel Administrador Publicaciones Tulip"
+      />
+      <meta property="og:locale" content="es"/>
+      <meta property="og:site_name" content="Tulip Admin"/>
+      <meta property="og:url" content="https://publicacionestulip.org/admin"/>
+      <meta property="og:type" content="website"/>
+      <meta property="og:image" content="https://storage.googleapis.com/tulip-storage/og-default.png"/>
+      <meta name="keywords" content="admin, libros, cristiana, tienda, presbiteriana, reformada, cristo, dios, leer, blog, articulos, recursos, lectura, teologia" />
+      <meta name="robots" content="noindex, nofollow">
+      <link rel="canonical" href="https://publicacionestulip.org/admin" />
+      <link rel='shortcut icon' href="favicon.ico" />
+      <link rel="preload" href="/public/css/reset.css" as="style"/>
+      <link rel="preload" href="/public/css/global.css" as="style"/>
+      <link rel="preload" href="/public/css/admin.css" as="style"/>
+      <link rel="preload" href="/public/fonts/DMSans-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+      <link rel="preload" href="/public/fonts/DMSans-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+      <link rel="preload" href="/public/fonts/DMSans-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
+      <link rel="stylesheet" href="/public/css/reset.css">
+      <link rel="stylesheet" href="/public/css/global.css">
+      <link rel="stylesheet" href="/public/css/admin.css">
+      <script type="text/javascript" src="/public/js/admin.js" defer></script>
+      <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
+      <script type="text/javascript" src="/public/js/lucide.min.js" defer></script>
+  </head>
+  <body>
+      <div id="snackBar" class="snack_bar">
+        <div class="snack_text">
+        </div>
+      </div>
+      <header class="header_styles">
+          @component.Nav("admin")
+      </header>
+			<main class="main_styles">
+        <div class="admin_header">
+          <h2>
+            switch data.Type {
+              case "book":
+                Editar Libro
+              case "article":
+                Editar Artículo
+              case "resource":
+                Editar Recurso
+              case "bcategory":
+                Editar Categoría de Libro
+              case "acategory":
+                Editar Categoría de Artículo
+              case "rcategory":
+                Editar Categoría de Recurso
+              case "publisher":
+                Editar Editorial
+              case "version":
+                Editar Versión Bíblica
+              case "letter":
+                Editar Tipo de Letra
+              case "cover":
+                Editar Tipo de Cubierta
+            }
+          </h2>
+          <div class="header_actions">
+            <a href={ backUrl } class="custom_cta_xs">
+              <i data-lucide="arrow-left"></i>
+              Volver al Panel
+            </a>
+          </div>
+        </div>
+        switch data.Type {
+          case "book":
+            @component.BookEditForm(data.Book)
+          case "article":
+            @component.ArticleEditForm(data.Article)
+          case "resource":
+            @component.ResourceEditForm(data.Resource)
+          case "bcategory":
+            @component.BookCategoryEditForm(data.BookCategory)
+          case "acategory":
+            @component.ArticleCategoryEditForm(data.ArticleCategory)
+          case "rcategory":
+            @component.ResourceCategoryEditForm(data.ResourceCategory)
+          case "publisher":
+            @component.PublisherEditForm(data.Publisher)
+          case "version":
+            @component.VersionEditForm(data.Version)
+          case "letter":
+            @component.LetterEditForm(data.Letter)
+          case "cover":
+            @component.CoverEditForm(data.Cover)
+        }
+			</main>
+			<script src="/public/js/admin.js"></script>
+		</body>
+	</html>
+}

@@ -1,6 +1,8 @@
 package layout
 
-templ Admin() {
+import "github.com/ggsheet/tulip/template/component"
+
+templ Admin(tableData component.CollectiveTableData) {
     <!DOCTYPE html>
     <html lang="es">
         <head>
@@ -30,17 +32,16 @@ templ Admin() {
             <link rel='shortcut icon' href="favicon.ico" />
             <link rel="preload" href="/public/css/reset.css" as="style"/>
             <link rel="preload" href="/public/css/global.css" as="style"/>
-            <link rel="preload" href="/public/css/main.css" as="style"/>
             <link rel="preload" href="/public/css/admin.css" as="style"/>
             <link rel="preload" href="/public/fonts/DMSans-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
             <link rel="preload" href="/public/fonts/DMSans-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
             <link rel="preload" href="/public/fonts/DMSans-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous"/>
             <link rel="stylesheet" href="/public/css/reset.css">
             <link rel="stylesheet" href="/public/css/global.css">
-            <link rel="stylesheet" href="/public/css/main.css">
             <link rel="stylesheet" href="/public/css/admin.css">
             <script type="text/javascript" src="/public/js/admin.js" defer></script>
             <script type="text/javascript" src="/public/js/htmx.min.js" defer></script>
+            <script type="text/javascript" src="/public/js/lucide.min.js" defer></script>
         </head>
         <body>
             <div id="snackBar" class="snack_bar">
@@ -48,16 +49,203 @@ templ Admin() {
                 </div>
             </div>
             <header class="header_styles">
-                // @component.Nav()
+                @component.Nav("admin")
             </header>
             <main class="main_styles">
-                <div class="">
-                  Welcome
+                <div class="admin_panel">
+                    <input
+                        type="radio"
+                        id="book_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=book"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "book" || tableData.ActiveTab == "" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="book_tab" class="admin_tab_label">
+                        <i data-lucide="book-open"></i>
+                        <span>Libros</span>
+                    </label>
+                    <input
+                        type="radio"
+                        id="article_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=article"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "article" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="article_tab" class="admin_tab_label">
+                        <i data-lucide="file-text"></i>
+                        <span>Artículos</span>
+                    </label>
+                    <input
+                        type="radio"
+                        id="resource_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=resource"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "resource" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="resource_tab" class="admin_tab_label">
+                        <i data-lucide="folder"></i>
+                        <span>Recursos</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="bcategory_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=bcategory"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "bcategory" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="bcategory_tab" class="admin_tab_label">
+                        <i data-lucide="book-open-check"></i>
+                        <span>Categorías Libros</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="acategory_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=acategory"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "acategory" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="acategory_tab" class="admin_tab_label">
+                        <i data-lucide="file-check"></i>
+                        <span>Categorías Artículos</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="rcategory_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=rcategory"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "rcategory" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="rcategory_tab" class="admin_tab_label">
+                        <i data-lucide="folder-check"></i>
+                        <span>Categorías Recursos</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="publisher_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=publisher"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "publisher" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="publisher_tab" class="admin_tab_label">
+                        <i data-lucide="building"></i>
+                        <span>Editoriales</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="version_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=version"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "version" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="version_tab" class="admin_tab_label">
+                        <i data-lucide="book-copy"></i>
+                        <span>Versiones Bíblicas</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="letter_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=letter"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "letter" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="letter_tab" class="admin_tab_label">
+                        <i data-lucide="type"></i>
+                        <span>Tipos de Letra</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="cover_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=cover"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "cover" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="cover_tab" class="admin_tab_label">
+                        <i data-lucide="image"></i>
+                        <span>Tipos de Cubierta</span>
+                    </label>
+                    
+                    <input
+                        type="radio"
+                        id="order_tab"
+                        name="admin_tab"
+                        hx-get="/admin?tab=order"
+                        hx-target="#admin_table_content"
+                        hx-swap="innerHTML"
+                        if tableData.ActiveTab == "order" { checked }
+                        class="admin_tab_radio"
+                    />
+                    <label for="order_tab" class="admin_tab_label">
+                        <i data-lucide="shopping-cart"></i>
+                        <span>Pedidos</span>
+                    </label>
+                    
+                    <div id="admin_table_content">
+                        switch tableData.ActiveTab {
+                            case "book":
+                                @component.AdminTableSection(tableData.Books, tableData.BooksPage, tableData.BooksTotalPages, "book")
+                            case "article":
+                                @component.AdminTableSection(tableData.Articles, tableData.ArticlesPage, tableData.ArticlesTotalPages, "article")
+                            case "resource":
+                                @component.AdminTableSection(tableData.Resources, tableData.ResourcesPage, tableData.ResourcesTotalPages, "resource")
+                            case "bcategory":
+                                @component.AdminTableSection(tableData.BookCategories, tableData.BookCategoriesPage, tableData.BookCategoriesTotalPages, "bcategory")
+                            case "acategory":
+                                @component.AdminTableSection(tableData.ArticleCategories, tableData.ArticleCategoriesPage, tableData.ArticleCategoriesTotalPages, "acategory")
+                            case "rcategory":
+                                @component.AdminTableSection(tableData.ResourceCategories, tableData.ResourceCategoriesPage, tableData.ResourceCategoriesTotalPages, "rcategory")
+                            case "publisher":
+                                @component.AdminTableSection(tableData.Publishers, tableData.PublishersPage, tableData.PublishersTotalPages, "publisher")
+                            case "version":
+                                @component.AdminTableSection(tableData.Versions, tableData.VersionsPage, tableData.VersionsTotalPages, "version")
+                            case "letter":
+                                @component.AdminTableSection(tableData.Letters, tableData.LettersPage, tableData.LettersTotalPages, "letter")
+                            case "cover":
+                                @component.AdminTableSection(tableData.Covers, tableData.CoversPage, tableData.CoversTotalPages, "cover")
+                            case "order":
+                                @component.AdminTableSection(tableData.Orders, tableData.OrdersPage, tableData.OrdersTotalPages, "order")
+                            default:
+                                @component.AdminTableSection(tableData.Books, tableData.BooksPage, tableData.BooksTotalPages, "book")
+                        }
+                    </div>
                 </div>
             </main>
-            // <footer class="footer_styles">
-            //     @component.Footer()
-            // </footer>
         </body>
     </html>
 }

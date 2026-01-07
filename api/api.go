@@ -39,7 +39,7 @@ func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup.Use(timeoutMiddleware(5 * time.Second))
 	apiGroup.Use(middleware.BodyLimit("2M"))
 	apiGroup.Use(middleware.RateLimiterWithConfig(middleware.RateLimiterConfig{
-		Store: middleware.NewRateLimiterMemoryStore(rate.Limit(10)),
+		Store: middleware.NewRateLimiterMemoryStore(rate.Limit(20)),
 		IdentifierExtractor: func(c echo.Context) (string, error) {
 			return c.RealIP(), nil
 		},
@@ -52,6 +52,7 @@ func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup.DELETE("/account/:id", s.account.handleDeleteAccount)
 
 	apiGroup.Any("/book", s.book.handleBook)
+	apiGroup.GET("/book/admin", s.book.handleGetBooksAdmin)
 	apiGroup.GET("/book/:id", s.book.handleGetBookById)
 	apiGroup.PUT("/book/:id", s.book.handleUpdateBook)
 	apiGroup.DELETE("/book/:id", s.book.handleDeleteBook)
@@ -104,6 +105,8 @@ func (s *APIServer) APIRouter(e *echo.Echo) {
 	apiGroup.Any("/order", s.order.handleOrder)
 	apiGroup.GET("/order/fulffiled", s.order.handleGetFulfilledOrders)
 	apiGroup.GET("/order/:id", s.order.handleGetOrderById)
+	apiGroup.GET("/order/admin/:id", s.order.handleGetOrderByIdAdmin)
+	apiGroup.PUT("/order/status/:id", s.order.handleUpdateOrderStatus)
 	apiGroup.PUT("/order/:id", s.order.handleUpdateOrder)
 	apiGroup.DELETE("/order/:id", s.order.handleDeleteOrder)
 

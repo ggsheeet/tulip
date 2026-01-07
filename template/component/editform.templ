@@ -1,0 +1,1017 @@
+package component
+
+import "fmt"
+import "strconv"
+import "github.com/ggsheet/tulip/internal/database"
+
+type BookEditData struct {
+	Book database.Book
+	Letters []database.Letter
+	Versions []database.Version
+	Covers []database.Cover
+	Publishers []database.Publisher
+	Categories []database.BCategory
+}
+
+type ArticleEditData struct {
+	Article database.Article
+	Categories []database.ACategory
+}
+
+type ResourceEditData struct {
+	Resource database.Resource
+	Categories []database.RCategory
+}
+
+type BookCreateData struct {
+	Letters []database.Letter
+	Versions []database.Version
+	Covers []database.Cover
+	Publishers []database.Publisher
+	Categories []database.BCategory
+}
+
+type ArticleCreateData struct {
+	Categories []database.ACategory
+}
+
+type ResourceCreateData struct {
+	Categories []database.RCategory
+}
+
+// New entity data structures
+type BookCategoryEditData struct {
+	Category database.BCategory
+}
+
+type BookCategoryCreateData struct {
+}
+
+type ArticleCategoryEditData struct {
+	Category database.ACategory
+}
+
+type ArticleCategoryCreateData struct {
+}
+
+type ResourceCategoryEditData struct {
+	Category database.RCategory
+}
+
+type ResourceCategoryCreateData struct {
+}
+
+type PublisherEditData struct {
+	Publisher database.Publisher
+}
+
+type PublisherCreateData struct {
+}
+
+type VersionEditData struct {
+	Version database.Version
+}
+
+type VersionCreateData struct {
+}
+
+type LetterEditData struct {
+	Letter database.Letter
+}
+
+type LetterCreateData struct {
+}
+
+type CoverEditData struct {
+	Cover database.Cover
+}
+
+type CoverCreateData struct {
+}
+
+templ BookEditForm(data *BookEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/book/update?id=%d", data.Book.ID)) }>
+        <div class="form_header">
+			<h3>Información del Libro</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="title">Título *</label>
+                <input type="text" id="title" name="title" value={ data.Book.Title } required maxlength="255" minlength="1"/>
+                <div class="helper_text">Máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="author">Autor *</label>
+                <input type="text" id="author" name="author" value={ data.Book.Author } required maxlength="255" minlength="1"/>
+                <div class="helper_text">Máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="isbn">ISBN</label>
+                <input type="text" id="isbn" name="isbn" value={ data.Book.ISBN } maxlength="255"/>
+                <div class="helper_text">Opcional, máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="price">Precio *</label>
+                <input type="number" step="0.01" min="0" max="99999999.99" id="price" name="price" value={ fmt.Sprintf("%.2f", data.Book.Price) } required/>
+                <div class="helper_text">Valor entre 0 y 99,999,999.99</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="stock">Stock *</label>
+                <input type="number" min="0" max="2147483647" id="stock" name="stock" value={ strconv.Itoa(data.Book.Stock) } required/>
+                <div class="helper_text">Número entero positivo</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="coverUrl">URL de Portada *</label>
+                <input type="url" id="coverUrl" name="coverUrl" value={ data.Book.CoverURL } required maxlength="255"/>
+                <div class="helper_text">URL válida, máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper single_column">
+                <label for="description">Descripción *</label>
+                <textarea id="description" name="description" required maxlength="300" minlength="1">{ data.Book.Description }</textarea>
+                <div class="helper_text">Máximo 300 caracteres</div>
+            </div>
+        </div>
+
+        <div class="form_header">
+			<h3>Categorización</h3>
+		</div>
+        
+        <div class="field_section">
+			<div class="field_wrapper">
+				<label for="categoryId">Categoría *</label>
+				<select id="categoryId" name="categoryId" required>
+					<option value="">Seleccionar categoría</option>
+					for _, category := range data.Categories {
+						<option value={ strconv.Itoa(category.ID) } selected?={ category.ID == data.Book.CategoryID }>
+							{ category.BookCategory }
+						</option>
+					}
+				</select>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="letterId">Tipo de Letra</label>
+				<select id="letterId" name="letterId">
+					<option value="">Seleccionar tipo</option>
+					for _, letter := range data.Letters {
+						<option value={ strconv.Itoa(letter.ID) } selected?={ letter.ID == data.Book.LetterID }>
+							{ letter.LetterType }
+						</option>
+					}
+				</select>
+			</div>
+            
+			<div class="field_wrapper">
+				<label for="versionId">Versión Bíblica</label>
+				<select id="versionId" name="versionId">
+					<option value="">Seleccionar versión</option>
+					for _, version := range data.Versions {
+						<option value={ strconv.Itoa(version.ID) } selected?={ version.ID == data.Book.VersionID }>
+							{ version.BibleVersion }
+						</option>
+					}
+				</select>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="coverId">Tipo de Cubierta</label>
+				<select id="coverId" name="coverId">
+					<option value="">Seleccionar cubierta</option>
+					for _, cover := range data.Covers {
+						<option value={ strconv.Itoa(cover.ID) } selected?={ cover.ID == data.Book.CoverID }>
+							{ cover.CoverType }
+						</option>
+					}
+				</select>
+			</div>
+            
+            <div class="field_wrapper">
+                <label for="publisherId">Editorial</label>
+                <select id="publisherId" name="publisherId">
+                    <option value="">Seleccionar editorial</option>
+                    for _, publisher := range data.Publishers {
+                        <option value={ strconv.Itoa(publisher.ID) } selected?={ publisher.ID == data.Book.PublisherID }>
+                            { publisher.PublisherName }
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form_header">
+			<h3>Estado</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+				<div class="radio_checkbox_wrapper">
+					<label>
+						<input type="checkbox" name="isActive" value="true" checked?={ data.Book.IsActive }/>
+						Libro activo
+					</label>
+				</div>
+            </div>
+        </div>
+
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Libro"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ ArticleEditForm(data *ArticleEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/article/update?id=%d", data.Article.ID)) }>
+        <div class="form_header">
+			<h3>Información del Artículo</h3>
+		</div>
+        
+        <div class="field_section">
+			<div class="field_wrapper">
+				<label for="title">Título *</label>
+				<input type="text" id="title" name="title" value={ data.Article.Title } required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="author">Autor *</label>
+				<input type="text" id="author" name="author" value={ data.Article.Author } required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+		
+			<div class="field_wrapper">
+				<label for="coverUrl">URL de Portada *</label>
+				<input type="url" id="coverUrl" name="coverUrl" value={ data.Article.CoverURL } required maxlength="255"/>
+				<div class="helper_text">URL válida, máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="categoryId">Categoría *</label>
+				<select id="categoryId" name="categoryId" required>
+					<option value="">Seleccionar categoría</option>
+					for _, category := range data.Categories {
+						<option value={ strconv.Itoa(category.ID) } selected?={ category.ID == data.Article.CategoryID }>
+							{ category.ArticleCategory }
+						</option>
+					}
+				</select>
+			</div>
+            
+            <div class="field_wrapper single_column">
+                <label for="excerpt">Extracto *</label>
+                <textarea id="excerpt" name="excerpt" required maxlength="200" minlength="1">{ data.Article.Excerpt }</textarea>
+                <div class="helper_text">Máximo 200 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper single_column">
+                <label for="description">Descripción *</label>
+                <textarea id="description" name="description" required minlength="1">{ data.Article.Description }</textarea>
+                <div class="helper_text">Descripción completa del artículo</div>
+            </div>
+        </div>
+
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Artículo"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ ResourceEditForm(data *ResourceEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/resource/update?id=%d", data.Resource.ID)) }>
+        <div class="form_header">
+			<h3>Información del Recurso</h3>
+		</div>
+        
+        <div class="field_section">
+			<div class="field_wrapper">
+				<label for="title">Título *</label>
+				<input type="text" id="title" name="title" value={ data.Resource.Title } required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="author">Autor *</label>
+				<input type="text" id="author" name="author" value={ data.Resource.Author } required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+            
+			<div class="field_wrapper">
+				<label for="coverUrl">URL de Portada *</label>
+				<input type="url" id="coverUrl" name="coverUrl" value={ data.Resource.CoverURL } required maxlength="255"/>
+				<div class="helper_text">URL válida, máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="resourceUrl">URL del Recurso *</label>
+				<input type="url" id="resourceUrl" name="resourceUrl" value={ data.Resource.ResourceURL } required maxlength="255"/>
+				<div class="helper_text">URL válida del archivo/recurso, máximo 255 caracteres</div>
+			</div>
+            
+            <div class="field_wrapper">
+                <label for="categoryId">Categoría *</label>
+                <select id="categoryId" name="categoryId" required>
+                    <option value="">Seleccionar categoría</option>
+                    for _, category := range data.Categories {
+                        <option value={ strconv.Itoa(category.ID) } selected?={ category.ID == data.Resource.CategoryID }>
+                            { category.ResourceCategory }
+                        </option>
+                    }
+                </select>
+            </div>
+            
+            <div class="field_wrapper single_column">
+                <label for="description">Descripción *</label>
+                <textarea id="description" name="description" required maxlength="300" minlength="1">{ data.Resource.Description }</textarea>
+                <div class="helper_text">Máximo 300 caracteres</div>
+            </div>
+        </div>
+
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Recurso"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ BookCreateForm(data *BookCreateData) {
+    <form class="form_container" method="POST" action="/admin/book/create">
+        <div class="form_header">
+			<h3>Información del Libro</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="title">Título *</label>
+                <input type="text" id="title" name="title" required maxlength="255" minlength="1"/>
+                <div class="helper_text">Máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="author">Autor *</label>
+                <input type="text" id="author" name="author" required maxlength="255" minlength="1"/>
+                <div class="helper_text">Máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="isbn">ISBN</label>
+                <input type="text" id="isbn" name="isbn" maxlength="255"/>
+                <div class="helper_text">Opcional, máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="price">Precio *</label>
+                <input type="number" step="0.01" min="0" max="99999999.99" id="price" name="price" required/>
+                <div class="helper_text">Valor entre 0 y 99,999,999.99</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="stock">Stock *</label>
+                <input type="number" min="0" max="2147483647" id="stock" name="stock" required/>
+                <div class="helper_text">Número entero positivo</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <label for="coverUrl">URL de Portada *</label>
+                <input type="url" id="coverUrl" name="coverUrl" required maxlength="255"/>
+                <div class="helper_text">URL válida, máximo 255 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper single_column">
+                <label for="description">Descripción *</label>
+                <textarea id="description" name="description" required maxlength="300" minlength="1"></textarea>
+                <div class="helper_text">Máximo 300 caracteres</div>
+            </div>
+        </div>
+
+        <div class="form_header">
+			<h3>Categorización</h3>
+		</div>
+        
+        <div class="field_section">
+			<div class="field_wrapper">
+				<label for="categoryId">Categoría *</label>
+				<select id="categoryId" name="categoryId" required>
+					<option value="">Seleccionar categoría</option>
+					for _, category := range data.Categories {
+						<option value={ strconv.Itoa(category.ID) }>
+							{ category.BookCategory }
+						</option>
+					}
+				</select>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="letterId">Tipo de Letra</label>
+				<select id="letterId" name="letterId">
+					<option value="">Seleccionar tipo</option>
+					for _, letter := range data.Letters {
+						<option value={ strconv.Itoa(letter.ID) }>
+							{ letter.LetterType }
+						</option>
+					}
+				</select>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="versionId">Versión Bíblica</label>
+				<select id="versionId" name="versionId">
+					<option value="">Seleccionar versión</option>
+					for _, version := range data.Versions {
+						<option value={ strconv.Itoa(version.ID) }>
+							{ version.BibleVersion }
+						</option>
+					}
+				</select>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="coverId">Tipo de Cubierta</label>
+				<select id="coverId" name="coverId">
+					<option value="">Seleccionar cubierta</option>
+					for _, cover := range data.Covers {
+						<option value={ strconv.Itoa(cover.ID) }>
+							{ cover.CoverType }
+						</option>
+					}
+				</select>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="publisherId">Editorial</label>
+				<select id="publisherId" name="publisherId">
+					<option value="">Seleccionar editorial</option>
+					for _, publisher := range data.Publishers {
+						<option value={ strconv.Itoa(publisher.ID) }>
+							{ publisher.PublisherName }
+						</option>
+					}
+				</select>
+			</div>
+        </div>
+
+        <div class="form_header">
+			<h3>Estado</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+				<div class="radio_checkbox_wrapper">
+					<label>
+						<input type="checkbox" name="isActive" value="true" checked/>
+						Libro activo
+					</label>
+				</div>
+            </div>
+        </div>
+
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Libro"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ ArticleCreateForm(data *ArticleCreateData) {
+    <form class="form_container" method="POST" action="/admin/article/create">
+        <div class="form_header">
+			<h3>Información del Artículo</h3>
+		</div>
+        
+        <div class="field_section">
+			<div class="field_wrapper">
+				<label for="title">Título *</label>
+				<input type="text" id="title" name="title" required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="author">Autor *</label>
+				<input type="text" id="author" name="author" required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+		
+			<div class="field_wrapper">
+				<label for="coverUrl">URL de Portada *</label>
+				<input type="url" id="coverUrl" name="coverUrl" required maxlength="255"/>
+				<div class="helper_text">URL válida, máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="categoryId">Categoría *</label>
+				<select id="categoryId" name="categoryId" required>
+					<option value="">Seleccionar categoría</option>
+					for _, category := range data.Categories {
+						<option value={ strconv.Itoa(category.ID) }>
+							{ category.ArticleCategory }
+						</option>
+					}
+				</select>
+			</div>
+            
+            <div class="field_wrapper single_column">
+                <label for="excerpt">Extracto *</label>
+                <textarea id="excerpt" name="excerpt" required maxlength="200" minlength="1"></textarea>
+                <div class="helper_text">Máximo 200 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper single_column">
+                <label for="description">Descripción *</label>
+                <textarea id="description" name="description" required minlength="1"></textarea>
+                <div class="helper_text">Descripción completa del artículo</div>
+            </div>
+        </div>
+
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Artículo"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ ResourceCreateForm(data *ResourceCreateData) {
+    <form class="form_container" method="POST" action="/admin/resource/create">
+        <div class="form_header">
+			<h3>Información del Recurso</h3>
+		</div>
+        
+        <div class="field_section">
+			<div class="field_wrapper">
+				<label for="title">Título *</label>
+				<input type="text" id="title" name="title" required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="author">Autor *</label>
+				<input type="text" id="author" name="author" required maxlength="255" minlength="1"/>
+				<div class="helper_text">Máximo 255 caracteres</div>
+			</div>
+            
+			<div class="field_wrapper">
+				<label for="coverUrl">URL de Portada *</label>
+				<input type="url" id="coverUrl" name="coverUrl" required maxlength="255"/>
+				<div class="helper_text">URL válida, máximo 255 caracteres</div>
+			</div>
+			
+			<div class="field_wrapper">
+				<label for="resourceUrl">URL del Recurso *</label>
+				<input type="url" id="resourceUrl" name="resourceUrl" required maxlength="255"/>
+				<div class="helper_text">URL válida del archivo/recurso, máximo 255 caracteres</div>
+			</div>
+            
+            <div class="field_wrapper">
+                <label for="categoryId">Categoría *</label>
+                <select id="categoryId" name="categoryId" required>
+                    <option value="">Seleccionar categoría</option>
+                    for _, category := range data.Categories {
+                        <option value={ strconv.Itoa(category.ID) }>
+                            { category.ResourceCategory }
+                        </option>
+                    }
+                </select>
+            </div>
+            
+            <div class="field_wrapper single_column">
+                <label for="description">Descripción *</label>
+                <textarea id="description" name="description" required maxlength="300" minlength="1"></textarea>
+                <div class="helper_text">Máximo 300 caracteres</div>
+            </div>
+        </div>
+
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Recurso"/>
+			</div>
+        </div>
+    </form>
+}
+
+// Book Category Forms
+templ BookCategoryEditForm(data *BookCategoryEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/bcategory/update?id=%d", data.Category.ID)) }>
+        <div class="form_header">
+			<h3>Editar Categoría de Libro</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="book_category">Nombre de la Categoría *</label>
+                <input type="text" id="book_category" name="book_category" value={ data.Category.BookCategory } required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <div class="radio_checkbox_wrapper">
+                    <input type="checkbox" id="is_active" name="is_active" if data.Category.IsActive { checked }/>
+                    <label for="is_active">Categoría Activa</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=bcategory'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Categoría"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ BookCategoryCreateForm(data *BookCategoryCreateData) {
+    <form class="form_container" method="POST" action="/admin/bcategory/create">
+        <div class="form_header">
+			<h3>Crear Nueva Categoría de Libro</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="book_category">Nombre de la Categoría *</label>
+                <input type="text" id="book_category" name="book_category" required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <div class="radio_checkbox_wrapper">
+                    <input type="checkbox" id="is_active" name="is_active" checked/>
+                    <label for="is_active">Categoría Activa</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=bcategory'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Categoría"/>
+			</div>
+        </div>
+    </form>
+}
+
+// Article Category Forms
+templ ArticleCategoryEditForm(data *ArticleCategoryEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/acategory/update?id=%d", data.Category.ID)) }>
+        <div class="form_header">
+			<h3>Editar Categoría de Artículo</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="article_category">Nombre de la Categoría *</label>
+                <input type="text" id="article_category" name="article_category" value={ data.Category.ArticleCategory } required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <div class="radio_checkbox_wrapper">
+                    <input type="checkbox" id="is_active" name="is_active" if data.Category.IsActive { checked }/>
+                    <label for="is_active">Categoría Activa</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=acategory'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Categoría"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ ArticleCategoryCreateForm(data *ArticleCategoryCreateData) {
+    <form class="form_container" method="POST" action="/admin/acategory/create">
+        <div class="form_header">
+			<h3>Crear Nueva Categoría de Artículo</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="article_category">Nombre de la Categoría *</label>
+                <input type="text" id="article_category" name="article_category" required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <div class="radio_checkbox_wrapper">
+                    <input type="checkbox" id="is_active" name="is_active" checked/>
+                    <label for="is_active">Categoría Activa</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=acategory'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Categoría"/>
+			</div>
+        </div>
+    </form>
+}
+
+// Resource Category Forms
+templ ResourceCategoryEditForm(data *ResourceCategoryEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/rcategory/update?id=%d", data.Category.ID)) }>
+        <div class="form_header">
+			<h3>Editar Categoría de Recurso</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="resource_category">Nombre de la Categoría *</label>
+                <input type="text" id="resource_category" name="resource_category" value={ data.Category.ResourceCategory } required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <div class="radio_checkbox_wrapper">
+                    <input type="checkbox" id="is_active" name="is_active" if data.Category.IsActive { checked }/>
+                    <label for="is_active">Categoría Activa</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=rcategory'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Categoría"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ ResourceCategoryCreateForm(data *ResourceCategoryCreateData) {
+    <form class="form_container" method="POST" action="/admin/rcategory/create">
+        <div class="form_header">
+			<h3>Crear Nueva Categoría de Recurso</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="resource_category">Nombre de la Categoría *</label>
+                <input type="text" id="resource_category" name="resource_category" required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+            
+            <div class="field_wrapper">
+                <div class="radio_checkbox_wrapper">
+                    <input type="checkbox" id="is_active" name="is_active" checked/>
+                    <label for="is_active">Categoría Activa</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=rcategory'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Categoría"/>
+			</div>
+        </div>
+    </form>
+}
+
+// Publisher Forms
+templ PublisherEditForm(data *PublisherEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/publisher/update?id=%d", data.Publisher.ID)) }>
+        <div class="form_header">
+			<h3>Editar Editorial</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="publisher_name">Nombre de la Editorial *</label>
+                <input type="text" id="publisher_name" name="publisher_name" value={ data.Publisher.PublisherName } required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=publisher'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Editorial"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ PublisherCreateForm(data *PublisherCreateData) {
+    <form class="form_container" method="POST" action="/admin/publisher/create">
+        <div class="form_header">
+			<h3>Crear Nueva Editorial</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="publisher_name">Nombre de la Editorial *</label>
+                <input type="text" id="publisher_name" name="publisher_name" required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=publisher'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Editorial"/>
+			</div>
+        </div>
+    </form>
+}
+
+// Version Forms
+templ VersionEditForm(data *VersionEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/version/update?id=%d", data.Version.ID)) }>
+        <div class="form_header">
+			<h3>Editar Versión Bíblica</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="bible_version">Nombre de la Versión *</label>
+                <input type="text" id="bible_version" name="bible_version" value={ data.Version.BibleVersion } required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=version'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Versión"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ VersionCreateForm(data *VersionCreateData) {
+    <form class="form_container" method="POST" action="/admin/version/create">
+        <div class="form_header">
+			<h3>Crear Nueva Versión Bíblica</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="bible_version">Nombre de la Versión *</label>
+                <input type="text" id="bible_version" name="bible_version" required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=version'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Versión"/>
+			</div>
+        </div>
+    </form>
+}
+
+// Letter Forms
+templ LetterEditForm(data *LetterEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/letter/update?id=%d", data.Letter.ID)) }>
+        <div class="form_header">
+			<h3>Editar Tipo de Letra</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="letter_type">Tipo de Letra *</label>
+                <input type="text" id="letter_type" name="letter_type" value={ data.Letter.LetterType } required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=letter'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Tipo"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ LetterCreateForm(data *LetterCreateData) {
+    <form class="form_container" method="POST" action="/admin/letter/create">
+        <div class="form_header">
+			<h3>Crear Nuevo Tipo de Letra</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="letter_type">Tipo de Letra *</label>
+                <input type="text" id="letter_type" name="letter_type" required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=letter'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Tipo"/>
+			</div>
+        </div>
+    </form>
+}
+
+// Cover Forms
+templ CoverEditForm(data *CoverEditData) {
+    <form class="form_container" method="POST" action={ templ.URL(fmt.Sprintf("/admin/cover/update?id=%d", data.Cover.ID)) }>
+        <div class="form_header">
+			<h3>Editar Tipo de Cubierta</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="cover_type">Tipo de Cubierta *</label>
+                <input type="text" id="cover_type" name="cover_type" value={ data.Cover.CoverType } required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=cover'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Actualizar Tipo"/>
+			</div>
+        </div>
+    </form>
+}
+
+templ CoverCreateForm(data *CoverCreateData) {
+    <form class="form_container" method="POST" action="/admin/cover/create">
+        <div class="form_header">
+			<h3>Crear Nuevo Tipo de Cubierta</h3>
+		</div>
+        
+        <div class="field_section">
+            <div class="field_wrapper">
+                <label for="cover_type">Tipo de Cubierta *</label>
+                <input type="text" id="cover_type" name="cover_type" required maxlength="100" minlength="2"/>
+                <div class="helper_text">Máximo 100 caracteres</div>
+            </div>
+        </div>
+        
+        <div class="form_btns">
+			<div class="field_wrapper">
+            	<input type="reset" class="form_btn" onclick="window.location.href='/admin?tab=cover'" value="Cancelar"/>
+			</div>
+			<div class="field_wrapper">
+            	<input type="submit" class="form_btn" value="Crear Tipo"/>
+			</div>
+        </div>
+    </form>
+}
