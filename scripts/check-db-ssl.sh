@@ -12,12 +12,25 @@ cd "$PROJECT_DIR"
 echo "--- 1. Certificate files on disk ---"
 for f in server.crt server.key; do
   if [[ -f "$f" ]]; then
-    echo "OK  $f exists ($(wc -c < "$f") bytes)"
-    openssl x509 -in server.crt -noout -subject -dates 2>/dev/null || echo "WARN  $f is not a valid PEM certificate"
+    size=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f" 2>/dev/null || echo "?")
+    echo "OK  $f exists (${size} bytes)"
   else
-    echo "MISSING  $f  (generate with: bash scripts/generate-db-certs.sh)"
+    echo "MISSING  $f  (generate with: bash scripts/generate-db-certs.sh --force)"
   fi
 done
+
+if [[ -f server.crt ]]; then
+  openssl x509 -in server.crt -noout -subject -dates 2>/dev/null || echo "WARN  server.crt is not a valid PEM certificate"
+  if openssl x509 -in server.crt -noout -checkend 0 2>/dev/null; then
+    echo "OK  server.crt is currently valid"
+  else
+    echo "FAIL  server.crt is EXPIRED — run: bash scripts/generate-db-certs.sh --force"
+  fi
+fi
+
+if [[ -f server.key && ! -r server.key ]]; then
+  echo "NOTE  server.key is not readable by $(whoami) (owned by mac) — that is OK if Postgres container can read it"
+fi
 echo
 
 echo "--- 2. App container environment ---"
