@@ -23,7 +23,5 @@ FROM alpine:latest AS production
 RUN apk add --no-cache bash ca-certificates
 COPY --from=builder /build/tulip /tulip
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY ./server.crt /etc/ssl/certs/server.crt
-COPY ./server.key /etc/ssl/private/server.key
 # EXPOSE 8080
 CMD ["/tulip"]

@@ -18,12 +18,11 @@ services:
     image: postgres:16
     env_file:
       - .env.docker
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./server.crt:/etc/ssl/certs/server.crt
-      - ./server.key:/etc/ssl/private/server.key
+      # Self-signed certs for Postgres TLS (see scripts/check-db-ssl.sh)
+      - ./server.crt:/etc/ssl/certs/server.crt:ro
+      - ./server.key:/etc/ssl/private/server.key:ro
 
 volumes:
   pgdata:

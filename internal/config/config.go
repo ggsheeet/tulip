@@ -13,9 +13,9 @@ func GetDatabaseURL() string {
 	environment := os.Getenv("ENVIRONMENT")
 	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s", dbHost, dbUser, dbPassword, dbName)
 
-	if environment == "development" || environment == "docker" {
+	if environment == "development" {
 		return connStr + " sslmode=disable"
 	}
 
-	return connStr + " sslmode=verify-full sslrootcert=/etc/ssl/certs/server.crt"
+	return connStr + " sslmode=require"
 }
