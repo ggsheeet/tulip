@@ -30,9 +30,20 @@ fi
 if [[ -f server.crt || -f server.key ]]; then
   backup="certs-backup-$(date +%Y%m%d-%H%M%S)"
   mkdir -p "$backup"
-  [[ -f server.crt ]] && cp server.crt "$backup/"
-  [[ -f server.key ]] && cp server.key "$backup/"
-  echo "Backed up old certs to $backup/"
+  for f in server.crt server.key; do
+    if [[ ! -f "$f" ]]; then
+      continue
+    fi
+    if cp "$f" "$backup/" 2>/dev/null; then
+      continue
+    fi
+    if command -v sudo >/dev/null && sudo cp "$f" "$backup/" 2>/dev/null; then
+      echo "NOTE  backed up $f using sudo (file was not readable as $(whoami))"
+      continue
+    fi
+    echo "WARN  could not backup $f — it will be overwritten"
+  done
+  echo "Backed up old certs to $backup/ (where permissions allowed)"
 fi
 
 echo "Generating self-signed certificate (valid 10 years)..."
@@ -44,6 +55,9 @@ openssl req -x509 -newkey rsa:2048 -nodes \
 
 chmod 600 server.key
 chmod 644 server.crt
+dir_owner=$(stat -c '%U' . 2>/dev/null || stat -f '%Su' .)
+chown "$dir_owner:$dir_owner" server.crt server.key 2>/dev/null || \
+  sudo chown "$dir_owner:$dir_owner" server.crt server.key
 
 echo "Created server.crt and server.key"
 openssl x509 -in server.crt -noout -subject -dates
