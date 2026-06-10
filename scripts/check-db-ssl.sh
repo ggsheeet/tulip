@@ -29,12 +29,13 @@ if [[ -f server.crt ]]; then
 fi
 
 if [[ -f server.key ]]; then
-  key_owner=$(stat -c '%U' server.key 2>/dev/null || stat -f '%Su' server.key)
-  if [[ "$key_owner" != "root" ]]; then
-    echo "FAIL  server.key is owned by $key_owner — Postgres requires root (or postgres user)"
-    echo "      Fix: sudo chown root:root server.key server.crt && sudo docker compose -f docker-compose.prod.yml restart tulip_db"
+  key_uid=$(stat -c '%u' server.key 2>/dev/null || stat -f '%u' server.key)
+  if [[ "$key_uid" == "999" ]]; then
+    echo "OK  server.key is owned by postgres (uid 999)"
   else
-    echo "OK  server.key is owned by root"
+    key_owner=$(stat -c '%U' server.key 2>/dev/null || stat -f '%Su' server.key)
+    echo "FAIL  server.key is owned by $key_owner (uid $key_uid) — Postgres Docker needs uid 999"
+    echo "      Fix: sudo chown 999:999 server.key server.crt && sudo docker compose -f docker-compose.prod.yml restart tulip_db"
   fi
 fi
 echo

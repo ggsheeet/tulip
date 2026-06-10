@@ -55,12 +55,13 @@ openssl req -x509 -newkey rsa:2048 -nodes \
 
 chmod 600 server.key
 chmod 644 server.crt
-# Postgres refuses to start if a bind-mounted key is owned by a non-root user.
+# Postgres Docker (uid 999) must own bind-mounted TLS files — not mac, not root-only 600.
+postgres_uid=999
 if command -v sudo >/dev/null; then
-  sudo chown root:root server.key server.crt
+  sudo chown "${postgres_uid}:${postgres_uid}" server.key server.crt
 else
-  chown root:root server.key server.crt 2>/dev/null || \
-    echo "WARN  run: sudo chown root:root server.key server.crt"
+  chown "${postgres_uid}:${postgres_uid}" server.key server.crt 2>/dev/null || \
+    echo "WARN  run: sudo chown 999:999 server.key server.crt"
 fi
 
 echo "Created server.crt and server.key"
