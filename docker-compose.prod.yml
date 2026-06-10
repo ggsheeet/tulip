@@ -18,6 +18,9 @@ services:
     image: postgres:16
     env_file:
       - .env.docker
+    # Bound to VM localhost only — use an SSH tunnel for TablePlus (not open to the internet).
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       # Self-signed certs for Postgres TLS (see scripts/check-db-ssl.sh)
