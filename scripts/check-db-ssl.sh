@@ -28,8 +28,14 @@ if [[ -f server.crt ]]; then
   fi
 fi
 
-if [[ -f server.key && ! -r server.key ]]; then
-  echo "NOTE  server.key is not readable by $(whoami) (owned by mac) — that is OK if Postgres container can read it"
+if [[ -f server.key ]]; then
+  key_owner=$(stat -c '%U' server.key 2>/dev/null || stat -f '%Su' server.key)
+  if [[ "$key_owner" != "root" ]]; then
+    echo "FAIL  server.key is owned by $key_owner — Postgres requires root (or postgres user)"
+    echo "      Fix: sudo chown root:root server.key server.crt && sudo docker compose -f docker-compose.prod.yml restart tulip_db"
+  else
+    echo "OK  server.key is owned by root"
+  fi
 fi
 echo
 

@@ -55,9 +55,13 @@ openssl req -x509 -newkey rsa:2048 -nodes \
 
 chmod 600 server.key
 chmod 644 server.crt
-dir_owner=$(stat -c '%U' . 2>/dev/null || stat -f '%Su' .)
-chown "$dir_owner:$dir_owner" server.crt server.key 2>/dev/null || \
-  sudo chown "$dir_owner:$dir_owner" server.crt server.key
+# Postgres refuses to start if a bind-mounted key is owned by a non-root user.
+if command -v sudo >/dev/null; then
+  sudo chown root:root server.key server.crt
+else
+  chown root:root server.key server.crt 2>/dev/null || \
+    echo "WARN  run: sudo chown root:root server.key server.crt"
+fi
 
 echo "Created server.crt and server.key"
 openssl x509 -in server.crt -noout -subject -dates
